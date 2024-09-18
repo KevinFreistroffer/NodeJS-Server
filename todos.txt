@@ -1,0 +1,20 @@
+codes starting from 1st /auth folder 1****
+streams 2****
+etc.
+
+IResponseBody > IResponse
+
+} catch {
+	return next(error) ????
+}
+
+set eventemitter types
+
+validate journal edit title entry category body
+
+unify simplify responses.
+
+
+edit the put request to a delete request
+
+shouldnt return an actual error. Should return generic error and log the error

@@ -1,0 +1,18 @@
+export const statusCodes = {
+  user_not_found: 404,
+  users_not_found: 404,
+  resource_not_found: 404,
+  invalid_usernameOrEmail_and_password: 401,
+  invalid_password: 401,
+  invalid_request: 400,
+  missing_parameters: 400,
+  missing_body_fields: 422,
+  access_denied: 403,
+  username_or_email_already_registered: 409,
+  username_not_available: 409,
+  email_not_available: 409,
+  caught_error: 500,
+  error_inserting_user: 500,
+  could_not_update: 500,
+  success: 200,
+};

@@ -1,0 +1,22 @@
+{
+  "exclude": ["./coverage", "./dist", "jest.config.js"],
+  "include": ["./src", "src/**/*", "__tests__"],
+  "ts-node": {
+    "transpileOnly": true,
+    "files": true
+  },
+  // "files": ["./types.d.ts", "./src/server.ts"],
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "commonjs",
+    "rootDir": "./",
+    "moduleResolution": "node",
+    "checkJs": true,
+    "outDir": "./dist",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "noImplicitAny": true,
+    "skipLibCheck": true
+  }
+}

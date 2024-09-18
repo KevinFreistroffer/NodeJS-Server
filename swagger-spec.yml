@@ -1,0 +1,1170 @@
+info:
+  title: "Node Express Server"
+  version: "1.0.0"
+  description: "Node Express Server With User Creation, Authentication, Password Reset using Email Verification and JWT's."
+openapi: "3.0.0"
+paths:
+  "/user/users":
+    get:
+      description: "Gets all users."
+      tags:
+        - User
+      responses:
+        "200":
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/User"
+              example:
+                success: true
+                message: "Successfully fetched all users."
+                data: []
+        "500":
+          description: "Caught error"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/User"
+              example:
+                success: false
+                message: "An error occurred. Error: something went wrong."
+                data: null
+  "/auth/bearer":
+    post:
+      description: "Authenticate with a JWT"
+      tags:
+        - User
+      requestBody:
+        description: "A JWT to authenticate with"
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                token:
+                  type: string
+            example:
+              token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIiLCJpYXQiOjE1OTYwNzQwNzcsImV4cCI6MTU5NjA3NzY3N30.5f3b3b3b3b3b3b3b3b3b3b3b3b"
+      responses:
+        "200":
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  userExists:
+                    type: boolean
+                    example: true
+                  loggedIn:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "User is logged in."
+                  data:
+                    description: "The users MongoDB document _id or undefined if no doc."
+                    type: string
+                    nullable: true
+                    example: "5f3b3b3b3b3b3b3b3b3b3b3b"
+
+        "422":
+          description: "Invalid request body"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  userExists:
+                    type: boolean
+                    example: false
+                  loggedIn:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Invalid request body."
+                  data:
+                    description: "The users MongoDB document _id or undefined if no doc."
+                    type: string
+                    nullable: true
+                    example: null
+        "500":
+          description: "Caught error"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  userExists:
+                    type: boolean
+                    example: false
+                  loggedIn:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "An error occurred. Error: something went wrong."
+                  data:
+                    description: "The users MongoDB document _id or undefined if no doc."
+                    type: string
+                    nullable: true
+                    example: null
+  "/user/username-available":
+    post:
+      description: "Checks if a username is assigned to a user."
+      tags:
+        - User
+      requestBody:
+        description: "The username to query with"
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+            example:
+              username: "username123"
+      responses:
+        "200":
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  usernameAvailable:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Username is available."
+        "422":
+          description: "Invalid request body"
+          content:
+            application/json:
+              schema:
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  usernameAvailable:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Invalid request body."
+        "500":
+          description: "Caught error"
+          content:
+            application/json:
+              schema:
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  usernameAvailable:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "An error occurred. Error: something went wrong."
+  "/user/email-available":
+    post:
+      description: "Checks if an email is available."
+      tags:
+        - User
+      requestBody:
+        description: "The email to query with"
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+            example:
+              email: "my@email.com"
+      responses:
+        "200":
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  emailAvailable:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Email is available."
+        "422":
+          description: "Invalid request body"
+          content:
+            application/json:
+              schema:
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  emailAvailable:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Invalid request body."
+        "500":
+          description: "Caught error"
+          content:
+            application/json:
+              schema:
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  emailAvailable:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "An error occurred. Error: something went wrong."
+  "/user/forgot-password":
+    post:
+      description: Sends a password reset email.
+      tags:
+        - User
+      requestBody:
+        description: the email address of the account to request a password reset email to.
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+            example:
+              email: my@email.com
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Password reset email sent."
+                  data:
+                    description: "The users MongoDB document _id or undefined if no doc."
+                    type: string
+                    nullable: true
+                    example: "5f3b3b3b3b3b3b3b3b3b3b3b"
+        "422":
+          description: Invalid request body
+          content:
+            application/json:
+              schema:
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Invalid request body."
+                  data:
+                    description: "The users MongoDB document _id or undefined if no doc."
+                    type: string
+                    nullable: true
+                    example: null
+        "500":
+          description: Caught error
+          content:
+            application/json:
+              schema:
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "An error occurred. Error: something went wrong."
+                  data:
+                    description: "The users MongoDB document _id or undefined if no doc."
+                    type: string
+                    nullable: true
+                    example: null
+  "/user/login":
+    post:
+      description: Logs a user in.
+      tags:
+        - User
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                usernameOrEmail:
+                  type: string
+                password:
+                  type: string
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                properties:
+                  message:
+                    type: string
+                    enum: [success]
+                    example: "success"
+                  data:
+                    type: object
+                    properties:
+                      description:
+                        type: string
+                        example: "Successfully logged in."
+                      code:
+                        type: number
+                        enum: [2000]
+                      jwtToken:
+                        type: string
+                        nullable: true
+                        example: zqpmxwonceib123
+        "422":
+          description: Invalid request body
+          content:
+            application/json:
+              schema:
+                properties:
+                  message:
+                    type: string
+                    enum: [error]
+                    example: "error"
+                  data:
+                    type: object
+                    properties:
+                      description:
+                        type: string
+                        example: "Invalid request body."
+                      code:
+                        type: number
+                        enum: [1012]
+        "500":
+          description: Caught error
+          content:
+            application/json:
+              schema:
+                properties:
+                  message:
+                    type: string
+                    enum: [error]
+                    example: "error"
+                  data:
+                    type: object
+                    properties:
+                      description:
+                        type: string
+                        example: "An error was caught. Error: something went wrong."
+                      code:
+                        type: number
+                        enum: [1018]
+  "/user/reset-password":
+    post:
+      description: Sends a password reset email.
+      tags:
+        - User
+      requestBody:
+        description: "JWT and the new password."
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                token:
+                  type: string
+                password:
+                  type: string
+            example:
+              token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIiLCJpYXQiOjE1OTYwNzQwNzcsImV4cCI6MTU5NjA3NzY3N30.5f3b3b3b3b3b3b3b3b3b3b3b3b"
+              password: "newpassw0rd"
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  userFound:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: string
+                    nullable: true
+              example:
+                success: true
+                userFound: true
+                message: "Reset password email sent."
+                data: "123objectId321"
+        "422":
+          description: Invalid request body
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  userFound:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: string
+                    nullable: true
+              example:
+                success: false
+                userFound: false
+                message: "Invalid request body."
+                data: null
+        "500":
+          description: Caught error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  userFound:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: string
+                    nullable: true
+              example:
+                success: false
+                userFound: false
+                message: "An error occurred. Error: something went wrong."
+                data: null
+  "/user/create":
+    post:
+      description: Creates a new user.
+      tags:
+        - User
+      requestBody:
+        description: "A username, email and a password."
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+            example:
+              username: "username123"
+              email: "my@email.com"
+              password: "newpassw0rd"
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  usernameAvailable:
+                    type: boolean
+                    example: true
+                  emailAvailable:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Successfully created the user."
+                  data:
+                    description: "The users MongoDB document _id or undefined if no doc."
+                    type: string
+                    nullable: true
+                    example: "5f3b3b3b3b3b3b3b3b3b3b3b"
+        "422":
+          description: Invalid request body
+          content:
+            application/json:
+              schema:
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  usernameAvailable:
+                    type: boolean
+                    example: false
+                  emailAvailable:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Invalid request body."
+                  data:
+                    description: "The users MongoDB document _id or undefined if no doc."
+                    type: string
+                    nullable: true
+                    example: null
+        "500":
+          description: Caught error
+          content:
+            application/json:
+              schema:
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  usernameAvailable:
+                    type: boolean
+                    example: false
+                  emailAvailable:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "An error occurred. Error: something went wrong."
+                  data:
+                    description: "The users MongoDB document _id or undefined if no doc."
+                    type: string
+                    nullable: true
+                    example: null
+  "/user/delete-all": # TODO delete this. Onlu for testing.
+    delete:
+      description: Deletes all users.
+      tags:
+        - User
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Successfully deleted all users."
+        "500":
+          description: Caught error
+          content:
+            application/json:
+              schema:
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "An error occurred. Error: something went wrong."
+  "/user/journal/create":
+    post:
+      description: "Saves a journal."
+      tags:
+        - Journal
+      requestBody:
+        description: "User's document ID and the journal to save."
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: string
+                title:
+                  type: string
+                entry:
+                  type: string
+                category:
+                  type: string
+            example:
+              userId: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"
+              title: "Journal"
+              entry: "A journal about things."
+              category: "Today"
+      responses:
+        "200":
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    $ref: "#/components/schemas/User"
+              example:
+                success: true
+                message: "Journal saved."
+                data:
+                  {
+                    "username": "user1",
+                    "email": "email@gmail.com",
+                    "journals": [],
+                    "journalCategories": [],
+                  }
+        "422":
+          description: "Invalid request body"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    nullable: true
+              example:
+                success: false
+                message: "Invalid request body."
+                data: null
+        "500":
+          description: "Caught error"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    nullable: true
+              example:
+                success: false
+                message: "An error occurred. Error: something went wrong."
+                data: null
+  "/user/journal/edit":
+    post:
+      description: "Edits a journals title, entry and/or category."
+      tags:
+        - Journal
+      requestBody:
+        description: "The title, entry or category is required."
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: string
+                journalId:
+                  type: string
+                title:
+                  type: string
+                  nullable: true
+                entry:
+                  type: string
+                  nullable: true
+                category:
+                  type: string
+                  nullable: true
+            example:
+              userId: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"
+              journalId: "eyJhbGciOiJIUzI1NiI4234242423423VCJ9"
+              title: "New Title"
+              entry: "New entry"
+              category: "New Category"
+      responses:
+        "200":
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    allOf:
+                      - $ref: "#/components/schemas/User"
+                      - nullable: true
+              example:
+                success: true
+                message: "Journal edited."
+                data:
+                  {
+                    "username": "user1",
+                    "email": "email@gmail.com",
+                    "journals": [],
+                    "journalCategories": [],
+                  }
+        "422":
+          description: "Invalid request body"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    nullable: true
+              example:
+                success: false
+                message: "Invalid request body."
+                data: null
+        "500":
+          description: "Caught error"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    nullable: true
+              example:
+                success: false
+                message: "An error occurred. Error: something went wrong."
+                data: null
+  "/user/journal/journals/{userId}":
+    get:
+      summary: "Get a users journals."
+      tags:
+        - Journal
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: string
+          description: "The users document ID"
+          example: "666655343535a02523522ac32423"
+      responses:
+        "200":
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    allOf:
+                      - $ref: "#/components/schemas/User"
+              example:
+                success: true
+                message: "Successfully fetched the journals."
+                data:
+                  {
+                    "username": "user1",
+                    "email": "email@gmail.com",
+                    "journals": [],
+                    "journalCategories": [],
+                  }
+        "422":
+          description: "Invalid request body"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    nullable: true
+              example:
+                success: false
+                message: "Invalid request body."
+                data: null
+        "500":
+          description: "Caught error"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    nullable: true
+              example:
+                success: false
+                message: "An error occurred. Error: something went wrong."
+                data: null
+  "/user/journal/delete":
+    put:
+      description: "Deletes journal(s)."
+      tags:
+        - Journal
+      requestBody:
+        description: "A users document ID and a list of journal document id's."
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  description: "The user's document id."
+                  type: string
+                journalIds:
+                  description: "The journal document id(s)."
+                  type: array
+                  items:
+                    type: string
+            example:
+              userId: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"
+              journalIds: ["423221", "421221"]
+      responses:
+        "200":
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    allOf:
+                      - $ref: "#/components/schemas/User"
+                      - nullable: true
+              example:
+                success: true
+                message: "Journal(s) deleted."
+                data:
+                  {
+                    "username": "user1",
+                    "email": "email@gmail.com",
+                    "journals": [],
+                    "journalCategories": [],
+                  }
+        "422":
+          description: "Invalid request body"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    nullable: true
+              example:
+                success: false
+                message: "Invalid request body."
+                data: null
+        "500":
+          description: "Caught error"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    nullable: true
+              example:
+                success: false
+                message: "An error occurred. Error: something went wrong."
+                data: null
+  "/user/journal/category/create":
+    post:
+      description: "Saves a new category."
+      tags:
+        - Journal
+      requestBody:
+        description: "A users document ID and a category string."
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  description: "The user's document id."
+                  type: string
+                category:
+                  description: "The category string."
+                  type: string
+            example:
+              userId: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"
+              category: "New Category"
+      responses:
+        "200":
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    allOf:
+                      - $ref: "#/components/schemas/User"
+                      - nullable: true
+              example:
+                success: true
+                message: "Category saved."
+                data:
+                  {
+                    "username": "user1",
+                    "email": "email@gmail.com",
+                    "journals": [],
+                    "journalCategories": ["New Category"],
+                  }
+        "422":
+          description: "Invalid request body"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    nullable: true
+              example:
+                success: false
+                message: "Invalid request body."
+                data: null
+        "500":
+          description: "Caught error"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    nullable: true
+              example:
+                success: false
+                message: "An error occurred. Error: something went wrong."
+                data: null
+  "/user/journal/create-many":
+    post:
+      description: "Saves a category on the journal(s)."
+      tags:
+        - Journal
+      requestBody:
+        description: "A users document ID, the journal document id's, and a category string."
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  description: "The user's document id."
+                  type: string
+                journalIds:
+                  description: "The journal document id(s)."
+                  type: array
+                  items:
+                    type: string
+                category:
+                  description: "The category string."
+                  type: string
+            example:
+              userId: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"
+              journalIds:
+                [
+                  "eyJhbGciOifgIUzI1NiIsInR5cCI6IkpXVCJ9",
+                  "eyJhbhgiOiJIUzI1NiIsInR5cCI6IkpXVCJ9",
+                ]
+              category: "New Category"
+      responses:
+        "200":
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    allOf:
+                      - $ref: "#/components/schemas/User"
+                      - nullable: true
+              example:
+                success: true
+                message: "Journals updated."
+                data:
+                  {
+                    "username": "user1",
+                    "email": "email@gmail.com",
+                    "journals": [],
+                    "journalCategories": ["New Category"],
+                  }
+        "422":
+          description: "Invalid request body"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    nullable: true
+              example:
+                success: false
+                message: "Invalid request body."
+                data: null
+        "500":
+          description: "Caught error"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    nullable: true
+              example:
+                success: false
+                message: "An error occurred. Error: something went wrong."
+                data: null
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        username:
+          type: string
+        email:
+          type: string
+          format: email
+        journals:
+          type: array
+          items:
+            $ref: "#/components/schemas/Journal"
+        journalCategories:
+          type: array
+          items:
+            type: object
+            properties:
+              category:
+                type: string
+              selected:
+                type: boolean
+    Journal:
+      type: object
+      properties:
+        title:
+          type: string
+          example: "Journal 1"
+        entry:
+          type: string
+          example: "Journal 1"
+        category:
+          type: string
+        date:
+          type: string
+        selected:
+          type: boolean
+tags:
+  - name: User
+    description: "Create a new user | Authenticate a user | Password Reset Email Sending | Email availability | Usernamesername availability"
