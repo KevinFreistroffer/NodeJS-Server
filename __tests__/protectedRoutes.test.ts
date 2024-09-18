@@ -86,18 +86,6 @@ app.use("/user/journal/delete", journalDeleteRoute);
 app.use("/user/journal/category/create-many", createManyJournalCategoryRoute);
 app.use("/user/journal/category/delete", journalCategoryDeleteRoute);
 app.use("/user/journal/category/edit", journalCategoryEditRoute);
-// app.use(
-//   "/user/journal/deleteSelectedJournals",
-//   journalDeleteSelectedJournalsRoute
-// );
-// app.use(
-//   "/user/journal/deleteSelectedCategories",
-//   journalDeleteSelectedCategoriesRoute
-// );
-// app.use(
-//   "/user/journal/updateJournalCategories",
-//   journalUpdateJournalCategoriesRoute
-// );
 
 beforeEach(() => {
   jest.clearAllMocks();
