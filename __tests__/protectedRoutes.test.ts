@@ -35,9 +35,17 @@ jest.mock("../src/operations/user_operations", () => ({
   updateOne: jest.fn(),
   insertOne: jest.fn(),
 }));
-// jest.mock("../src/middleware", () => ({
-//   verifyToken: jest.fn((req, res, next) => next()),
-// }));
+jest.mock("../src/middleware", () => ({
+  verifyToken: jest.fn((req, res, next) => {
+    const authHeader = req.headers["authorization"];
+
+    if (authHeader === `Bearer ${process.env.TEST_TOKEN}`) {
+      next();
+    } else {
+      res.sendStatus(401);
+    }
+  }),
+}));
 
 const app = express();
 const usersRoute = require("../src/router/routes/user/users");
@@ -95,7 +103,7 @@ beforeEach(() => {
 /**
  * /user/users
  */
-describe.only("Protected Routes - /user/users", () => {
+describe("Protected Routes - /user/users", () => {
   (findAllUsers as jest.Mock).mockResolvedValue(mockUsersWithJournals);
   it("should deny access and return 401 if no token is provided", async () => {
     const response = await request(app).get("/user/users");

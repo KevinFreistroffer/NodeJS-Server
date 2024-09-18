@@ -19,6 +19,8 @@ const router = Router();
 router.get("/", (req: Request, res: Response<IResponse>) => {
   try {
     const accessKey = req.headers["access-key"];
+    console.log("accessKey: ", accessKey);
+    console.log("process.env.API_ACCESS_KEY: ", process.env.API_ACCESS_KEY);
 
     if (
       typeof accessKey === "undefined" ||
@@ -44,6 +46,7 @@ router.get("/", (req: Request, res: Response<IResponse>) => {
 
     return res.json(responses.success(jwtToken));
   } catch (error) {
+    console.log("[/auth/bearer] Caught error. Error: ", error);
     return res
       .status(statusCodes.caught_error)
       .json(responses.caught_error(error));
