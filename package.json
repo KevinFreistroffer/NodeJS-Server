@@ -44,7 +44,8 @@
   },
   "scripts": {
     "test": "jest",
-    "start": "tsx --watch ./src/server.ts"
+    "start": "tsx --watch ./src/server.ts",
+    "build": "webpack"
   },
   "author": "",
   "license": "ISC",
