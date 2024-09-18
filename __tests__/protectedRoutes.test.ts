@@ -35,6 +35,7 @@ jest.mock("../src/operations/user_operations", () => ({
   updateOne: jest.fn(),
   insertOne: jest.fn(),
 }));
+
 jest.mock("../src/middleware", () => ({
   verifyToken: jest.fn((req, res, next) => {
     const authHeader = req.headers["authorization"];
