@@ -11,7 +11,6 @@ import { stat } from "node:fs";
 import { writeFile } from "node:fs/promises";
 
 export const convertDocToSafeUser = (UNSAFE_DOC: any): ISanitizedUser => {
-  console.log(UNSAFE_DOC, typeof UNSAFE_DOC);
   const SAFE_DOC: ISanitizedUser & { _id: ObjectId } = {
     _id: UNSAFE_DOC._id,
     username: UNSAFE_DOC.username,

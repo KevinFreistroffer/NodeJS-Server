@@ -5,11 +5,6 @@ import dotenv from "dotenv";
 dotenv.config();
 
 export const getDBURI = () => {
-  console.log("process.env.DATABASE_USERNAME", process.env.DATABASE_USERNAME);
-  console.log("process.env.DATABASE_PASSWORD", process.env.DATABASE_PASSWORD);
-  console.log("process.env.DATABASE_NAME", process.env.DATABASE_NAME);
-  const uri = `mongodb+srv://${process.env.DATABASE_USERNAME}:${process.env.DATABASE_PASSWORD}@cluster0.7xxwju7.mongodb.net/${process.env.DATABASE_NAME}?retryWrites=true&w=majority&appName=Cluster0`;
-  console.log("uri", uri);
   return (
     "mongodb+srv://" +
     encodeURIComponent(process.env.DATABASE_USERNAME || "") +
