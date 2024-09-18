@@ -38,6 +38,7 @@ jest.mock("../src/operations/user_operations", () => ({
 
 jest.mock("../src/middleware", () => ({
   verifyToken: jest.fn((req, res, next) => {
+    console.log(process.env);
     const authHeader = req.headers["authorization"];
     console.log("authHeader", authHeader);
     console.log("process.env.TEST_TOKEN", process.env.TEST_TOKEN);
@@ -105,7 +106,7 @@ beforeEach(() => {
 /**
  * /user/users
  */
-describe("Protected Routes - /user/users", () => {
+describe.only("Protected Routes - /user/users", () => {
   (findAllUsers as jest.Mock).mockResolvedValue(mockUsersWithJournals);
   it("should deny access and return 401 if no token is provided", async () => {
     const response = await request(app).get("/user/users");
