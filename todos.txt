@@ -18,3 +18,5 @@ unify simplify responses.
 edit the put request to a delete request
 
 shouldnt return an actual error. Should return generic error and log the error
+
+make sure the protected routes unit tests with middleware and env vars is safe

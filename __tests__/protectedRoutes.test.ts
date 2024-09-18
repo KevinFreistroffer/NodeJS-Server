@@ -106,7 +106,7 @@ beforeEach(() => {
 /**
  * /user/users
  */
-describe.only("Protected Routes - /user/users", () => {
+describe("Protected Routes - /user/users", () => {
   (findAllUsers as jest.Mock).mockResolvedValue(mockUsersWithJournals);
   it("should deny access and return 401 if no token is provided", async () => {
     const response = await request(app).get("/user/users");
