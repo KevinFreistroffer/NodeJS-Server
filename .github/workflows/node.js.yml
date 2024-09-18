@@ -29,6 +29,8 @@ jobs:
       # - run: npm run build --if-present
       - run: npm install
       - run: npm test
+        env:
+          TEST_TOKEN: ${{ secrets.TEST_TOKEN }} # Environment variable
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2

@@ -82,8 +82,7 @@ export default class Server {
         (req: Request, res: Response, next: NextFunction) => {
           console.log(req.baseUrl);
 
-          const adminOnlyRoutes =
-            process.env.ADMIN_ONLY_ROUTES?.split(",") || [];
+          const adminOnlyRoutes = process.env.ADMIN_ROUTES?.split(",") || [];
           const protectedRoutes =
             process.env.PROTECTED_ROUTES?.split(",") || [];
 
