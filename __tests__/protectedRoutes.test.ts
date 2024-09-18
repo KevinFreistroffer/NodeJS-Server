@@ -38,10 +38,7 @@ jest.mock("../src/operations/user_operations", () => ({
 
 jest.mock("../src/middleware", () => ({
   verifyToken: jest.fn((req, res, next) => {
-    console.log(process.env);
     const authHeader = req.headers["authorization"];
-    console.log("authHeader", authHeader);
-    console.log("process.env.TEST_TOKEN", process.env.TEST_TOKEN);
     if (authHeader === `Bearer ${process.env.TEST_TOKEN}`) {
       next();
     } else {
