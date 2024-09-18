@@ -1,7 +1,7 @@
 // "use strict";
 
 // import { users as mockUsers } from "../../../data/mock_users";
-// import config from "../../../../config";
+
 // import * as express from "express";
 // import { verify, JwtPayload } from "jsonwebtoken";
 // import * as bcrypt from "bcryptjs";

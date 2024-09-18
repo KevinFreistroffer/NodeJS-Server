@@ -1,6 +1,5 @@
 "use strict";
 
-import config from "../../../../src/config";
 import * as express from "express";
 
 import * as bcrypt from "bcryptjs";

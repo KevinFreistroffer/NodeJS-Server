@@ -1,6 +1,6 @@
 "use strict";
 
-import config from "../../../../config";
+
 import * as express from "express";
 import { IJournal, IJournalDoc, IUser } from "../../../../defs/interfaces";
 import { body, validationResult } from "express-validator";

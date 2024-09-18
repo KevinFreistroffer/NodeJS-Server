@@ -1,6 +1,5 @@
 "use strict";
 
-import config from "../../../../config";
 import express from "express";
 import moment from "moment";
 // import { User } from "../../../defs/models/user.model";

@@ -1,6 +1,6 @@
 "use strict";
 
-import config from "../../../config";
+
 import * as express from "express";
 import * as bcrypt from "bcryptjs";
 import { body, validationResult } from "express-validator";

@@ -15,6 +15,10 @@ import {
 import { responses } from "../src/defs/responses/user";
 import { mockJournal } from "../__mocks__/mock_journals";
 import { mockUser, mockUsersWithJournals } from "../__mocks__/mock_users";
+import dotenv from "dotenv";
+
+dotenv.config();
+
 jest.mock("../src/operations/user_operations", () => ({
   findOneById: jest.fn(),
   findOneByUsername: jest.fn(),
@@ -29,7 +33,6 @@ jest.mock("../src/operations/user_operations", () => ({
   updateJournalCategories: jest.fn(),
   addCategory: jest.fn(),
   updateOne: jest.fn(),
-
   insertOne: jest.fn(),
 }));
 // jest.mock("../src/middleware", () => ({
@@ -85,11 +88,6 @@ app.use("/user/journal/category/edit", journalCategoryEditRoute);
 //   journalUpdateJournalCategoriesRoute
 // );
 
-app.use("*", (req, res, next) => {
-  console.log(req.baseUrl);
-  next();
-});
-
 beforeEach(() => {
   jest.clearAllMocks();
 });
@@ -97,7 +95,7 @@ beforeEach(() => {
 /**
  * /user/users
  */
-describe("Protected Routes - /user/users", () => {
+describe.only("Protected Routes - /user/users", () => {
   (findAllUsers as jest.Mock).mockResolvedValue(mockUsersWithJournals);
   it("should deny access and return 401 if no token is provided", async () => {
     const response = await request(app).get("/user/users");
