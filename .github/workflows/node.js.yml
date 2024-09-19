@@ -32,6 +32,7 @@ jobs:
       # - run: npm ci
       # - run: npm run build --if-present
       - run: npm install
+      - run: npm run build
       - run: npm test
         env:
           TEST_TOKEN: TEST_TOKEN
@@ -49,6 +50,6 @@ jobs:
           # role-session-name: samplerolesession
       - name: Upload files to S3
         run: |
-          aws s3 sync ./ s3://krfnodeserver/ --delete
+          aws s3 sync ./dist s3://krfnodeserver/ --delete
         env:
           S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME }}
