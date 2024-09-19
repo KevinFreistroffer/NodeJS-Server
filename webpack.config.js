@@ -1,5 +1,8 @@
 const path = require("path");
 const webpack = require("webpack");
+const dotenv = require("dotenv");
+
+dotenv.config();
 
 module.exports = {
   entry: "./src/server.ts", // The entry point of your application

@@ -50,6 +50,6 @@ jobs:
           # role-session-name: samplerolesession
       - name: Upload files to S3
         run: |
-          aws s3 sync . s3://krfnodeserver/ --exclude "node_modules/*" --exclude "dist/*" --delete
+          aws s3 sync . s3://${{ secrets.S3_BUCKET_NAME }}/ --exclude "node_modules/*" --exclude "dist/*" --delete
         env:
           S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME }}
