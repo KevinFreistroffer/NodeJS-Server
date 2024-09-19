@@ -20,4 +20,11 @@ module.exports = {
     filename: "bundle.js", // The output bundled file
     path: path.resolve(__dirname, "dist"), // Output directory
   },
+  plugins: [
+    new webpack.DefinePlugin({
+      "process.env.API_URL": JSON.stringify(process.env.API_URL),
+      "process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV),
+      "process.env.SERVER_PORT": JSON.stringify(process.env.SERVER_PORT),
+    }),
+  ],
 };
