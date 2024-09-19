@@ -40,7 +40,7 @@ export default class Server {
     if (port) {
       this.port = port;
     } else {
-      this.port = parseInt(process.env.SERVER_PORT || "3001");
+      this.port = parseInt(process.env.SERVER_PORT || "80");
     }
 
     this.asyncLocalStorage = new AsyncLocalStorage();
