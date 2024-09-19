@@ -49,7 +49,7 @@ jobs:
           role-to-assume: arn:aws:iam::211125458425:role/github_repo_branch
           # role-session-name: samplerolesession
       - name: Upload files to S3
-        run: |
-          aws s3 sync . s3://${{ secrets.S3_BUCKET_NAME }}/ --exclude "node_modules/*" --exclude "dist/*" --delete
         env:
           S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME }}
+        run: |
+          aws s3 sync . s3://S3_BUCKET_NAME/ --exclude "node_modules/*" --exclude "dist/*" --delete
