@@ -40,16 +40,32 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY}}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
-      - name: "Configure AWS Credentials Action for GitHub Actions"
-        uses: aws-actions/configure-aws-credentials@v4.0.2
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY}}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
-          role-to-assume: arn:aws:iam::211125458425:role/github_repo_branch
-          # role-session-name: samplerolesession
-      - name: Upload files to S3
-        env:
-          S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME }}
+      - name: Install Render CLI
         run: |
-          aws s3 sync . s3://S3_BUCKET_NAME/ --exclude "node_modules/*" --exclude "dist/*" --delete
+          curl -LO https://github.com/render-examples/render-cli/releases/download/v1.0.4/render-linux-amd64
+          chmod +x render-linux-amd64
+          sudo mv render-linux-amd64 /usr/local/bin/render
+
+      - name: Authenticate with Render
+        env:
+          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+        run: |
+          render login --api-key $RENDER_API_KEY
+
+      - name: Deploy to Render
+        run: |
+          render deploy <service-id> --env production
+
+      # - name: "Configure AWS Credentials Action for GitHub Actions"
+      #   uses: aws-actions/configure-aws-credentials@v4.0.2
+      #   with:
+      #     aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY}}
+      #     aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      #     aws-region: us-east-1
+      #     role-to-assume: arn:aws:iam::211125458425:role/github_repo_branch
+      #     # role-session-name: samplerolesession
+      # - name: Upload files to S3
+      #   env:
+      #     S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME }}
+      #   run: |
+      #     aws s3 sync . s3://S3_BUCKET_NAME/ --exclude "node_modules/*" --exclude "dist/*" --delete
