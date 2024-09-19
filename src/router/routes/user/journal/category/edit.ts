@@ -55,7 +55,6 @@ router.put(
   "/",
   validateFields,
   async (req: express.Request, res: express.Response<IResponse>) => {
-    console.log("/user/journal/category/delete/:userId/:categoryId");
     try {
       const validatedFields = validationResult(req);
       if (!validatedFields.isEmpty()) {
@@ -91,7 +90,6 @@ router.put(
         }
       );
 
-      console.log("updatedDoc", updatedDoc);
 
       if (!updatedDoc.matchedCount) {
         return res.json(userResponses.user_not_found());
@@ -103,7 +101,6 @@ router.put(
 
       return res.json(genericResponses.success());
     } catch (error) {
-      console.log("error", error);
       res.status(500).json(genericResponses.caught_error(error));
     }
   }

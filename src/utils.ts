@@ -82,7 +82,6 @@ export const getCaughtErrorDetails = (
 // which is too much repeating, and it could get forgotten to get added to new routes.
 export const logUncaughtException = async (req: Request, res: Response) => {
   process.on("uncaughtException", async (error) => {
-    console.log("ROUTE Uncaught Exception: ", error);
     const details = getCaughtErrorDetails(error);
     const filePath = getFilePath(path.join(__dirname, "logs"), "error.log");
 

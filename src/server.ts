@@ -47,9 +47,7 @@ export default class Server {
   }
 
   setAsyncLocalStorageMsg(msg: string) {
-    console.log("Setting async local storage message: ", msg);
     this.asyncLocalStorage.run(this.errorLogId.toString(), () => {
-      console.log("Setting async local storage message: ", this.errorLogId);
       this.errorLogId++;
     });
   }
@@ -93,7 +91,6 @@ export default class Server {
           if (
             protectedRoutes.find((route) => route === req.baseUrl.toLowerCase())
           ) {
-            console.log("verifyToken middleware(()()()()()()(");
             return verifyToken(req, res, next);
           }
 
@@ -152,13 +149,13 @@ export default class Server {
           });
 
           if (!insertDoc.insertedId) {
-            console.log("Error inserting error document.");
+            throw new Error("Error inserting error document.");
           }
 
           const errorDoc = await findOneById(insertDoc.insertedId);
 
           if (!errorDoc) {
-            console.log("Error finding inserted error document.");
+            throw new Error("Error finding inserted error document.");
           }
 
           return res
@@ -194,7 +191,6 @@ export default class Server {
 
       return this.server;
     } catch (error: any) {
-      console.log("Error: ", error.stack);
       this.listener.close();
       throw error;
     }

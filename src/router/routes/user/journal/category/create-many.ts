@@ -50,7 +50,6 @@ router.post(
     try {
       const validatedFields = validationResult(req);
       if (!validatedFields.isEmpty()) {
-        console.log(validatedFields);
         return res.status(422).json(genericResponses.missing_body_fields());
       }
 

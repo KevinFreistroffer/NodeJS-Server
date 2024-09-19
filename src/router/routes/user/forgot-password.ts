@@ -39,7 +39,6 @@ router.post(
       );
 
       if (!doc.acknowledged) {
-        console.log("User not found.");
 
         return res.status(200).json(userResponses.user_not_found());
       }

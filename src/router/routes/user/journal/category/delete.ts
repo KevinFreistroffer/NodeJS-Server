@@ -21,7 +21,6 @@ const router = express.Router();
 router.delete(
   "/:userId/:categoryId",
   async (req: express.Request, res: express.Response<IResponse>) => {
-    console.log("/user/journal/category/delete/:userId/:categoryId");
     try {
       if (
         !req.params.userId ||

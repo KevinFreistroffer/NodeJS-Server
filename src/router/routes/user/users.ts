@@ -22,7 +22,6 @@ router.get(
 
       return res.json(genericResponses.success(doc));
     } catch (error) {
-      console.log("[/users] Caught error. Error: ", error);
 
       return res.status(500).json(genericResponses.caught_error(error));
     }

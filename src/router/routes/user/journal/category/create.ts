@@ -58,7 +58,6 @@ router.post(
         }
       );
 
-      console.log("doc", doc);
 
       if (!doc.matchedCount) {
         return res.json(

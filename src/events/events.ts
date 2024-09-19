@@ -25,12 +25,7 @@ try {
     }
    */
   emitter.once("newListener", function (event: any, listener: any) {
-    console.log("newListener event: ", event);
-    console.log("newListener listener: ", listener);
-
     if (event === "error") {
-      console.log("error event captured");
-
       emitter.on("error", function (err: any) {
         console.error("error captured: ", err);
       });
@@ -44,7 +39,6 @@ try {
   });
 
   let interval = setInterval(() => {
-    emitter.emit("event_logUserId", i);
     i++;
   }, 300);
 

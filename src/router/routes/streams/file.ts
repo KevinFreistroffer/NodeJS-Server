@@ -26,7 +26,6 @@ router.get(
       const filePath = getFilePath(__dirname, fileName);
 
       const status = await stat(filePath);
-      console.log("status", status);
 
       if (!status.isFile()) {
         return res
@@ -35,7 +34,6 @@ router.get(
       }
       res.json(responses.success());
     } catch (error) {
-      console.log(error);
       return next(error);
     } finally {
     }
