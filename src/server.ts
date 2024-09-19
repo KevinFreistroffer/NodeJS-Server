@@ -206,7 +206,11 @@ export default class Server {
 }
 
 export const run = () => {
-  new Server().start();
+  if (process.env.SERVER_PORT) {
+    new Server(parseInt(process.env.SERVER_PORT)).start();
+  } else {
+    new Server().start();
+  }
 };
 
 run();
