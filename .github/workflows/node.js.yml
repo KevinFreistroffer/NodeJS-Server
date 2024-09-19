@@ -45,7 +45,7 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY}}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
-          role-to-assume: github_repo_branch
+          role-to-assume: arn:aws:iam::211125458425:role/github_repo_branch
           # role-session-name: samplerolesession
       - name: Upload files to S3
         run: |
