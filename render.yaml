@@ -1,0 +1,88 @@
+# Exported from Render on 2024-09-19T22:32:57Z
+services:
+  - type: web
+    name: NodeJS-Server
+    runtime: node
+    repo: https://github.com/KevinFreistroffer/NodeJS-Server
+    plan: free
+    envVars:
+      - key: RENDER_API_KEY
+        sync: false
+      - key: ADMIN_ROUTES
+        sync: false
+      - key: PROTECTED_ROUTES
+        sync: false
+      - key: AWS_REGION
+        sync: false
+      - key: AWS_ACCESS_KEY_ID
+        sync: false
+      - key: AWS_SECRET_ACCESS_KEY
+        sync: false
+      - key: TEST_TOKEN
+        sync: false
+      - key: JWT_TOKEN_EXPIRES_IN
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: EMAIL_PASSWORD
+        sync: false
+      - key: EMAIL_FROM
+        sync: false
+      - key: API_ACCESS_KEY
+        sync: false
+      - key: DATABASE_PASSWORD
+        sync: false
+      - key: DATABASE_USERNAME
+        sync: false
+      - key: DATABASE_NAME
+        sync: false
+      - key: DATABASE_HOST
+        sync: false
+      - key: SERVER_PORT
+        sync: false
+      - key: SERVER_ONLINE
+        sync: false
+      - key: ENVIRONMENT
+        sync: false
+      - key: RENDER_API_KEY
+        sync: false
+      - key: ADMIN_ROUTES
+        sync: false
+      - key: PROTECTED_ROUTES
+        sync: false
+      - key: AWS_REGION
+        sync: false
+      - key: AWS_ACCESS_KEY_ID
+        sync: false
+      - key: AWS_SECRET_ACCESS_KEY
+        sync: false
+      - key: TEST_TOKEN
+        sync: false
+      - key: JWT_TOKEN_EXPIRES_IN
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: EMAIL_PASSWORD
+        sync: false
+      - key: EMAIL_FROM
+        sync: false
+      - key: API_ACCESS_KEY
+        sync: false
+      - key: DATABASE_PASSWORD
+        sync: false
+      - key: DATABASE_USERNAME
+        sync: false
+      - key: DATABASE_NAME
+        sync: false
+      - key: DATABASE_HOST
+        sync: false
+      - key: SERVER_PORT
+        sync: false
+      - key: SERVER_ONLINE
+        sync: false
+      - key: ENVIRONMENT
+        sync: false
+    region: oregon
+    buildCommand: npm install
+    startCommand: npm run start
+version: "1"
