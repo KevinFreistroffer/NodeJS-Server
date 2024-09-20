@@ -13,12 +13,15 @@ export const verifyToken = (
   res: Response,
   next: NextFunction
 ) => {
+  console.log("verifyBearerToken()");
   const bearerHeader = req.headers["authorization"];
+  console.log("bearerHeader", bearerHeader);
   if (!bearerHeader || typeof bearerHeader === "undefined") {
     return res.sendStatus(401);
   }
 
   const parts = bearerHeader.split(" ");
+  console.log("parts", parts);
   if (parts.length < 2) {
     return res.sendStatus(401);
   }
@@ -28,7 +31,9 @@ export const verifyToken = (
   }
 
   const token = parts[1]; // Extract token from header
+  console.log("token", token);
   jwt.verify(token, process.env.JWT_SECRET as string, (err, authData) => {
+    console.log("authData", authData);
     if (!authData || err) {
       return res.sendStatus(401);
     }
@@ -43,6 +48,8 @@ export const verifyAccessKey = (
   res: Response,
   next: NextFunction
 ) => {
+  console.log("verifyAccessKey()");
+  console.log("req.headers", req.headers);
   const accessKey = req.headers["access-key"];
 
   if (
