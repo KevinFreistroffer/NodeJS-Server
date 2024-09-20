@@ -73,10 +73,13 @@ export async function findAll(
   query: Filter<IUser>,
   sanitize: boolean
 ): Promise<IUser[] | ISanitizedUser[] | null> {
+  console.log("findAll()");
   const client = await getClient();
 
   try {
+    console.log("findAll() try");
     await client.connect();
+    console.log("findAll() connected);
     const doc = await usersCollection(client)
       .find(query, {
         projection: sanitize ? UserProjection : undefined,

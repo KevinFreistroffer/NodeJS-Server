@@ -18,11 +18,11 @@ router.get(
   "/",
   async (req: express.Request, res: express.Response<IResponse>) => {
     try {
+      console.log("/user/users", req.headers);
       const doc = await findAllUsers();
 
       return res.json(genericResponses.success(doc));
     } catch (error) {
-
       return res.status(500).json(genericResponses.caught_error(error));
     }
   }
