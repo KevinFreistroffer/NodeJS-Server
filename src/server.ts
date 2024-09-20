@@ -209,11 +209,7 @@ export default class Server {
 }
 
 export const run = () => {
-  if (process.env.SERVER_PORT) {
-    new Server(parseInt(process.env.SERVER_PORT)).start();
-  } else {
-    new Server().start();
-  }
+  new Server(parseInt(process.env.SERVER_PORT || "80")).start();
 };
 
 run();
