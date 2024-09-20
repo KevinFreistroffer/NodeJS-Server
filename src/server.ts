@@ -80,8 +80,10 @@ export default class Server {
         "*",
         (req: Request, res: Response, next: NextFunction) => {
           const adminOnlyRoutes = process.env.ADMIN_ROUTES?.split(",") || [];
+          console.log("adminOnlyRoutes", adminOnlyRoutes);
           const protectedRoutes =
             process.env.PROTECTED_ROUTES?.split(",") || [];
+          console.log("protectedRoutes", protectedRoutes);
 
           if (
             adminOnlyRoutes.find((route) => route === req.baseUrl.toLowerCase())
