@@ -79,7 +79,7 @@ export async function findAll(
   try {
     console.log("findAll() try");
     await client.connect();
-    console.log("findAll() connected);
+    console.log("findAll() connected");
     const doc = await usersCollection(client)
       .find(query, {
         projection: sanitize ? UserProjection : undefined,
