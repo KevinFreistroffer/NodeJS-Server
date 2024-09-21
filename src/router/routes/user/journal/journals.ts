@@ -1,24 +1,17 @@
 import * as express from "express";
-import { UserProjection } from "../../../../defs/models/user.model";
-import { IJournal } from "../../../../defs/interfaces";
-import { usersCollection } from "../../../../db";
 import { ObjectId } from "mongodb";
-import { verifyToken } from "../../../../middleware";
 import { responses as userResponses } from "../../../../defs/responses/user";
 import { findOneById } from "../../../../operations/user_operations";
 import {
   responses as genericResponses,
   IResponse,
 } from "../../../../defs/responses/generic_responses";
-import { logUncaughtExceptionAndReturn500Response } from "../../../../utils";
+import { handleCaughtErrorResponse } from "../../../../utils";
 const router = express.Router();
 
 router.get(
   "/:userId",
-  async (
-    req: express.Request<{ userId: string }>,
-    res: express.Response<IResponse>
-  ) => {
+  async (req: express.Request, res: express.Response<IResponse>) => {
     try {
       if (
         !req.params.userId ||
@@ -35,7 +28,7 @@ router.get(
       }
       res.status(200).json(genericResponses.success(doc.journals));
     } catch (error) {
-      res.status(500).json(genericResponses.caught_error(error));
+      return handleCaughtErrorResponse(error, req, res);
     }
   }
 );

@@ -1,21 +1,19 @@
 "use strict";
 
 import * as express from "express";
-import { UserProjection } from "../../../defs/models/user.model";
 import { body, validationResult } from "express-validator";
-import { responses as userResponses } from "../../../defs/responses/user";
-import { usersCollection } from "../../../db";
-import { verifyToken } from "../../../middleware";
+
 import { findOneByUsername } from "../../../operations/user_operations";
-import { logUncaughtExceptionAndReturn500Response } from "../../../utils";
-import { EMessageType } from "../../../defs/enums";
+
 import {
   IResponse,
   responses as genericResponses,
 } from "../../../defs/responses/generic";
 import { rateLimit } from "express-rate-limit";
+import { handleCaughtErrorResponse } from "../../../utils";
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
+
   max: 5, // Limit each IP to 5 create account requests per windowMs
   message: "Too many requests from this IP, please try again later",
 });
@@ -37,7 +35,7 @@ router.post(
       const isAvailable = !doc;
       return res.json(genericResponses.success(isAvailable));
     } catch (error) {
-      return res.status(500).json(genericResponses.caught_error(error));
+      return handleCaughtErrorResponse(error, req, res);
     }
   }
 );

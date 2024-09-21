@@ -8,21 +8,18 @@ import {
   responses as genericResponses,
 } from "../../../defs/responses/generic";
 import { responses as userResponses } from "../../../defs/responses/user";
-import { usersCollection } from "../../../db";
-import { findOneById, updateOne } from "../../../operations/user_operations";
-import { logUncaughtExceptionAndReturn500Response } from "../../../utils";
+import { updateOne } from "../../../operations/user_operations";
+import { handleCaughtErrorResponse } from "../../../utils";
 import dotenv from "dotenv";
 import { rateLimit } from "express-rate-limit";
+import passwordHash from "password-hash";
+dotenv.config();
 const limiter = rateLimit({
   windowMs: 30 * 60 * 1000, // 30 minutes
   max: 5, // Limit each IP to 5 create account requests per windowMs
   message: "Too many requests from this IP, please try again later",
 });
-
-dotenv.config();
-
 const router = express.Router();
-const passwordHash = require("password-hash");
 const validatedToken = body("token")
   .notEmpty()
   .bail()
@@ -41,10 +38,7 @@ router.post(
   limiter,
   validatedToken,
   validatedPassword,
-  async (
-    req: express.Request<any, any, { token: string; password: string }>,
-    res: express.Response<IResponse>
-  ) => {
+  async (req: express.Request, res: express.Response<IResponse>) => {
     try {
       const validatedErrors = validationResult(req).array();
 
@@ -114,7 +108,7 @@ router.post(
 
       return res.json(genericResponses.success());
     } catch (error) {
-      return res.status(500).json(genericResponses.caught_error(error));
+      return handleCaughtErrorResponse(error, req, res);
     }
   }
 );

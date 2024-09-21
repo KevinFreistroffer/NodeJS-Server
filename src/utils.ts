@@ -23,7 +23,7 @@ export const convertDocToSafeUser = (UNSAFE_DOC: any): ISanitizedUser => {
     // jwtToken: UNSAFE_DOC.jwtToken,
   };
 
-  for (let field in forbiddenResponseFields) {
+  for (const field in forbiddenResponseFields) {
     if (field in SAFE_DOC) {
       throw new Error(`${field} field is not allowed in the SAFE_DOC object.`);
     }
@@ -162,12 +162,11 @@ export const logUncaughtException = async (error: any, url: string) => {
 };
 
 export const handleCaughtErrorResponse = (
-  error: any,
+  error: unknown,
   req: Request,
   res: Response
 ) => {
   logUncaughtException(error, req.url);
-
   return res
     .status(statusCodes.caught_error)
     .json(responses.something_went_wrong());

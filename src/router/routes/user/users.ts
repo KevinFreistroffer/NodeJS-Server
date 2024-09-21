@@ -1,12 +1,7 @@
 "use strict";
 
 import * as express from "express";
-
-import * as bcrypt from "bcryptjs";
-import { UserProjection } from "../../../defs/models/user.model";
-import { body, validationResult } from "express-validator";
-import { has } from "lodash";
-import { ISanitizedUser, IUser } from "../../../defs/interfaces";
+import { handleCaughtErrorResponse } from "../../../utils";
 import {
   IResponse,
   responses as genericResponses,
@@ -23,7 +18,7 @@ router.get(
 
       return res.json(genericResponses.success(doc));
     } catch (error) {
-      return res.status(500).json(genericResponses.caught_error(error));
+      return handleCaughtErrorResponse(error, req, res);
     }
   }
 );

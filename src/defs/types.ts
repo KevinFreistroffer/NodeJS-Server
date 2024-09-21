@@ -14,7 +14,7 @@ export interface ISuccessResponse extends IResponse {
   data: string;
 }
 
-let successResponse: {
+const successResponse: {
   success: boolean;
   userExists: boolean;
   loggedIn: boolean;
@@ -30,7 +30,7 @@ let successResponse: {
   data: "",
 };
 
-let responseBody: {
+const responseBody: {
   success: boolean;
   userExists: boolean;
   loggedIn: boolean;

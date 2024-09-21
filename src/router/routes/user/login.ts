@@ -7,6 +7,7 @@ import { body, validationResult } from "express-validator";
 import { has } from "lodash";
 import { responses, statusCodes } from "../../../defs/responses/user";
 import { findOne } from "../../../operations/user_operations";
+import { handleCaughtErrorResponse } from "../../../utils";
 import {
   IResponse,
   responses as genericResponses,
@@ -23,12 +24,6 @@ dotenv.config();
 
 const router = express.Router();
 
-interface IRequestBody {
-  usernameOrEmail: string;
-  password: string;
-  staySignedIn?: boolean;
-}
-
 const validatedFields = body(["usernameOrEmail", "password"])
   .notEmpty()
   .bail()
@@ -38,11 +33,9 @@ const validatedFields = body(["usernameOrEmail", "password"])
 
 router.post(
   "/",
+  limiter,
   validatedFields,
-  async (
-    req: express.Request<any, any, IRequestBody>,
-    res: express.Response<IResponse>
-  ) => {
+  async (req: express.Request, res: express.Response<IResponse>) => {
     try {
       const validStaySignedIn = has(req.body, "staySignedIn")
         ? typeof req.body.staySignedIn === "boolean"
@@ -133,9 +126,7 @@ router.post(
         },
       });
     } catch (error) {
-      return res
-        .status(statusCodes.caught_error)
-        .json(genericResponses.caught_error(error));
+      return handleCaughtErrorResponse(error, req, res);
     }
   }
 );

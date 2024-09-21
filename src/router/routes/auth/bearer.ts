@@ -9,9 +9,8 @@ import {
   responses,
   statusCodes,
 } from "../../../defs/responses/generic";
-import { EMessageType } from "../../../defs/enums";
 import { ERROR_GENERATING_JWT } from "../../../defs/constants";
-
+import { handleCaughtErrorResponse } from "../../../utils";
 dotenv.config();
 
 const router = Router();
@@ -37,16 +36,12 @@ router.get("/", (req: Request, res: Response<IResponse>) => {
     );
 
     if (!jwtToken) {
-      return res
-        .status(statusCodes.something_went_wrong)
-        .json(responses.something_went_wrong(ERROR_GENERATING_JWT));
+      throw new Error(ERROR_GENERATING_JWT);
     }
 
     return res.json(responses.success(jwtToken));
   } catch (error) {
-    return res
-      .status(statusCodes.caught_error)
-      .json(responses.caught_error(error));
+    return handleCaughtErrorResponse(error, req, res);
   }
 });
 

@@ -1,30 +1,16 @@
 "use strict";
 
 import * as express from "express";
-import { IJournal, IJournalDoc, IUser } from "../../../../defs/interfaces";
 import { body, validationResult } from "express-validator";
 import { has } from "lodash";
-import { usersCollection } from "../../../../db";
 import { ObjectId } from "mongodb";
-import { verifyToken } from "../../../../middleware";
 import { findOneById, updateOne } from "../../../../operations/user_operations";
-import {
-  responses as userResponses,
-  IResponses,
-} from "../../../../defs/responses/user";
-import { logUncaughtExceptionAndReturn500Response } from "../../../../utils";
+import { responses as userResponses } from "../../../../defs/responses/user";
+import { handleCaughtErrorResponse } from "../../../../utils";
 import {
   responses as genericResponses,
   IResponse,
 } from "../../../../defs/responses/generic";
-
-interface IRequestBody {
-  userId: string;
-  journalId: string;
-  title: string | undefined;
-  entry: string | undefined;
-  category: string | undefined;
-}
 
 const router = express.Router();
 const validatedIds = body(["userId", "journalId"]) // TODO convert to zod?
@@ -45,7 +31,7 @@ router.post(
   validatedIds,
   validatedFields,
   async (
-    req: express.Request<any, any, IRequestBody>,
+    req: express.Request,
 
     res: express.Response<IResponse>
   ) => {
@@ -108,7 +94,7 @@ router.post(
 
       return res.send(genericResponses.success(userDoc));
     } catch (error) {
-      return res.status(500).json(genericResponses.caught_error(error));
+      return handleCaughtErrorResponse(error, req, res);
     }
   }
 );

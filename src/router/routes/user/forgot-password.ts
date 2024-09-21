@@ -3,25 +3,21 @@
 import * as express from "express";
 import * as nodemailer from "nodemailer";
 import { body, validationResult } from "express-validator";
-import { responses } from "../../../defs/responses/user";
 import {
   responses as genericResponses,
   IResponse,
 } from "../../../defs/responses/generic_responses";
 import { responses as userResponses } from "../../../defs/responses/user";
 import { updateOne } from "../../../operations/user_operations";
-import { logUncaughtExceptionAndReturn500Response } from "../../../utils";
 import { EStage } from "../../../defs/enums";
+import crypto from "node:crypto";
+import { handleCaughtErrorResponse } from "../../../utils";
 const router = express.Router();
-let crypto = require("node:crypto");
 
 router.post(
   "/",
   body("email").isEmail().bail().normalizeEmail(),
-  async (
-    req: express.Request<any, any, { email: string }>,
-    res: express.Response<IResponse>
-  ) => {
+  async (req: express.Request, res: express.Response<IResponse>) => {
     try {
       const validatedErrors = validationResult(req).array();
 
@@ -101,7 +97,7 @@ router.post(
 
       return res.json(genericResponses.success());
     } catch (error) {
-      return res.status(500).json(genericResponses.caught_error(error));
+      return handleCaughtErrorResponse(error, req, res);
     }
   }
 );

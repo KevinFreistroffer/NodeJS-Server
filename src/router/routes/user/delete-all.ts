@@ -1,18 +1,12 @@
 "use strict";
 
 import * as express from "express";
-import * as bcrypt from "bcryptjs";
-import { body, validationResult } from "express-validator";
-import { has } from "lodash";
-import { IUser } from "../../../defs/interfaces";
 import {
   responses,
   IResponse,
 } from "../../../defs/responses/generic_responses";
-import { usersCollection } from "../../../db";
-import { verifyToken } from "../../../middleware";
+import { handleCaughtErrorResponse } from "../../../utils";
 import { deleteMany } from "../../../operations/user_operations";
-import { logUncaughtExceptionAndReturn500Response } from "../../../utils";
 const router = express.Router();
 
 router.delete(
@@ -30,7 +24,7 @@ router.delete(
       // TODO: return []? Or fetch the db again, which is obviously the better idea.
       return res.json(responses.success());
     } catch (error) {
-      return res.status(500).json(responses.caught_error(error));
+      return handleCaughtErrorResponse(error, req, res);
     }
   }
 );

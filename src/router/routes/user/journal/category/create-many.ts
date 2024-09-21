@@ -1,11 +1,4 @@
-import {
-  ICategory,
-  IJournalDoc,
-  ISanitizedUser,
-  IUser,
-  // IUserDoc,
-} from "../../../../../defs/interfaces";
-// import { User } from "../../../defs/models/user.model";
+import { IJournalDoc } from "../../../../../defs/interfaces";
 import * as express from "express";
 import { body, validationResult } from "express-validator";
 import { responses as userResponses } from "../../../../../defs/responses/user";
@@ -13,13 +6,12 @@ import {
   responses as genericResponses,
   IResponse,
 } from "../../../../../defs/responses/generic";
-
 import { ObjectId } from "mongodb";
 import {
   findOneById,
   updateOne,
 } from "../../../../../operations/user_operations";
-
+import { handleCaughtErrorResponse } from "../../../../../utils";
 const router = express.Router();
 
 const validatedJournalIds = body("journalIds")
@@ -39,14 +31,7 @@ router.post(
   "/",
   validatedStrings,
   validatedJournalIds,
-  async (
-    req: express.Request<
-      never,
-      never,
-      { userId: string; journalIds: string[]; category: string }
-    >,
-    res: express.Response<IResponse>
-  ) => {
+  async (req: express.Request, res: express.Response<IResponse>) => {
     try {
       const validatedFields = validationResult(req);
       if (!validatedFields.isEmpty()) {
@@ -105,7 +90,7 @@ router.post(
 
       return res.json(genericResponses.success(savedDoc));
     } catch (error) {
-      return res.status(500).json(genericResponses.caught_error(error));
+      return handleCaughtErrorResponse(error, req, res);
     }
   }
 );

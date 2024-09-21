@@ -8,12 +8,8 @@ import {
   responses as genericResponses,
   IResponse,
 } from "../../../defs/responses/generic_responses";
-import { usersCollection } from "../../../db";
-import { ISanitizedUser, IUser } from "../../../defs/interfaces";
 import {
   convertDocToSafeUser,
-  logUncaughtException,
-  hashPassword,
   handleCaughtErrorResponse,
 } from "../../../utils";
 import {
@@ -27,12 +23,6 @@ const limiter = rateLimit({
   max: 5, // Limit each IP to 5 create account requests per windowMs
   message: "Too many accounts created from this IP, please try again later",
 });
-
-interface IRequestBody {
-  username: string;
-  email: string;
-  password: string;
-}
 
 const router = express.Router();
 
@@ -50,10 +40,7 @@ router.post(
     .bail()
     .escape(),
   body("email").notEmpty().bail().isEmail().bail().escape(),
-  async (
-    req: express.Request<any, any, IRequestBody>,
-    res: express.Response<IResponse>
-  ) => {
+  async (req: express.Request, res: express.Response<IResponse>) => {
     try {
       const validatedFields = validationResult(req);
       if (!validatedFields.isEmpty()) {

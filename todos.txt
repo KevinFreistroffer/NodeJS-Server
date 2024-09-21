@@ -1,3 +1,5 @@
+eslint showing errors in the Request<any, any, Interface>. Deleted them. Are these types required?
+
 codes starting from 1st /auth folder 1****
 streams 2****
 etc.

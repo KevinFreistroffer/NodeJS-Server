@@ -2,9 +2,7 @@
 
 import express from "express";
 import moment from "moment";
-// import { User } from "../../../defs/models/user.model";
-
-import { IJournal, ISanitizedUser } from "../../../../defs/interfaces";
+import { IJournal } from "../../../../defs/interfaces";
 import { body, validationResult } from "express-validator";
 import { responses as userResponses } from "../../../../defs/responses/user";
 import {
@@ -13,14 +11,10 @@ import {
 } from "../../../../defs/responses/generic_responses";
 import { Types } from "mongoose";
 import { ObjectId } from "mongodb";
-import { verifyToken } from "../../../../middleware";
-import { UserProjection } from "../../../../defs/models/user.model";
-import {
-  findOne,
-  findOneById,
-  updateOne,
-} from "../../../../operations/user_operations";
-import { logUncaughtExceptionAndReturn500Response } from "../../../../utils";
+
+import { findOneById, updateOne } from "../../../../operations/user_operations";
+import { handleCaughtErrorResponse } from "../../../../utils";
+
 const router = express.Router();
 const days = ["Sun", "Mon", "Tue", "Wed", "Thur", "Fri", "Sat"];
 const validatedUserId = body("userId") // TODO convert to zod?
@@ -52,8 +46,8 @@ router.post(
        *------------------------------------------------*/
       const { userId, title, entry, category } = req.body;
 
-      let day = moment().day();
-      let date = `${days[day]}, ${moment().format("MM-DD-YYYY")}`;
+      const day = moment().day();
+      const date = `${days[day]}, ${moment().format("MM-DD-YYYY")}`;
       const journal: IJournal = {
         title,
         entry,
@@ -94,7 +88,7 @@ router.post(
 
       return res.json(genericResponses.success(foundDoc));
     } catch (error) {
-      res.json(genericResponses.caught_error(error));
+      return handleCaughtErrorResponse(error, req, res);
     }
   }
 );

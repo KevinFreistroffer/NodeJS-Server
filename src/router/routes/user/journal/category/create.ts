@@ -1,23 +1,19 @@
 "use strict";
 
 import * as express from "express";
-
 import { body, validationResult } from "express-validator";
-
 import { Types } from "mongoose";
-import { usersCollection } from "../../../../../db";
 import { ObjectId } from "mongodb";
-import { verifyToken } from "../../../../../middleware";
 import { updateOne } from "../../../../../operations/user_operations";
 import { responses as userResponses } from "../../../../../defs/responses/user";
 import {
   responses as genericResponses,
   IResponse,
 } from "../../../../../defs/responses/generic_responses";
-import { logUncaughtExceptionAndReturn500Response } from "../../../../../utils";
-
+import { handleCaughtErrorResponse } from "../../../../../utils";
 const validatedUserId = body("userId") // TODO convert to zod?
   .notEmpty()
+
   .bail()
   .custom((id) => Types.ObjectId.isValid(id))
   .bail()
@@ -72,7 +68,7 @@ router.post(
 
       return res.json(genericResponses.success());
     } catch (error) {
-      res.status(500).json(genericResponses.caught_error(error));
+      return handleCaughtErrorResponse(error, req, res);
     }
   }
 );

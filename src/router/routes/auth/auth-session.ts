@@ -6,6 +6,7 @@ import {
   responses,
   statusCodes,
 } from "../../../defs/responses/generic";
+import { handleCaughtErrorResponse } from "../../../utils";
 
 const router = express.Router();
 
@@ -18,9 +19,7 @@ router.get(
         .status(statusCodes.access_denied)
         .json(responses.access_denied());
     } catch (error) {
-      return res
-        .status(statusCodes.caught_error)
-        .json(responses.caught_error(error));
+      return handleCaughtErrorResponse(error, req, res);
     }
   }
 );

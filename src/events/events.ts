@@ -38,7 +38,7 @@ try {
     }
   });
 
-  let interval = setInterval(() => {
+  const interval = setInterval(() => {
     i++;
   }, 300);
 
