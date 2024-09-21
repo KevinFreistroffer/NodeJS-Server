@@ -66,7 +66,6 @@ export default class Server {
       // Middleware
       // ----------------------------------------------------
       this.server.use(logger("dev"));
-
       this.server.use(cookieParser());
       this.server.use(helmet());
       this.server.disable("x-powered-by");
