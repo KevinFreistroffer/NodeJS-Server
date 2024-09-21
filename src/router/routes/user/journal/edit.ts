@@ -1,6 +1,5 @@
 "use strict";
 
-
 import * as express from "express";
 import { IJournal, IJournalDoc, IUser } from "../../../../defs/interfaces";
 import { body, validationResult } from "express-validator";
@@ -13,7 +12,7 @@ import {
   responses as userResponses,
   IResponses,
 } from "../../../../defs/responses/user";
-import { logUncaughtException } from "../../../../utils";
+import { logUncaughtExceptionAndReturn500Response } from "../../../../utils";
 import {
   responses as genericResponses,
   IResponse,
@@ -34,20 +33,26 @@ const validatedIds = body(["userId", "journalId"]) // TODO convert to zod?
   .isString()
   .bail()
   .escape();
+const validatedFields = body(["title", "entry", "category"])
+  .optional()
+  .isString()
+  .escape();
 
 // TODO validate title entry category
 
 router.post(
   "/",
   validatedIds,
+  validatedFields,
   async (
     req: express.Request<any, any, IRequestBody>,
+
     res: express.Response<IResponse>
   ) => {
     try {
-      const validatedFields = validationResult(req);
+      const errors = validationResult(req);
       if (
-        !validatedFields.isEmpty() ||
+        !errors.isEmpty() ||
         (!has(req.body, "title") &&
           !has(req.body, "entry") &&
           !has(req.body, "category"))
@@ -102,25 +107,6 @@ router.post(
       }
 
       return res.send(genericResponses.success(userDoc));
-
-      // doc.journals.forEach((journal) => {
-      //   if ((journal as IJournalDoc)._id?.toString() === journalId) {
-      //     if (title) {
-      //       query["journals.$.title"] = title;
-      //       journal.title = title;
-      //     }
-
-      //     if (entry) {
-      //       query["journals.$.entry"] = entry;
-      //       journal.entry = entry;
-      //     }
-
-      //     if (category) {
-      //       query["journals.$.category"] = category;
-      //       journal.category = category;
-      //     }
-      //   }
-      // });
     } catch (error) {
       return res.status(500).json(genericResponses.caught_error(error));
     }

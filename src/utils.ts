@@ -61,7 +61,7 @@ export const getFilePath = (
   return path.join(relativePath, fileName);
 };
 
-export const getCaughtErrorDetails = (
+export const getErrorDetails = (
   error: any // TODO type?
 ): {
   message: string;
@@ -80,9 +80,12 @@ export const getCaughtErrorDetails = (
 // This is to ensure a response is sent to the end user.
 // Not sure yet how to better do this, because it requires adding this to each request
 // which is too much repeating, and it could get forgotten to get added to new routes.
-export const logUncaughtException = async (req: Request, res: Response) => {
+export const logUncaughtExceptionAndReturn500Response = async (
+  req: Request,
+  res: Response
+) => {
   process.on("uncaughtException", async (error) => {
-    const details = getCaughtErrorDetails(error);
+    const details = getErrorDetails(error);
     const filePath = getFilePath(path.join(__dirname, "logs"), "error.log");
 
     stat(filePath, (err, stats) => {
@@ -113,19 +116,65 @@ export const logUncaughtException = async (req: Request, res: Response) => {
       console.log("Error inserting error document.");
     }
 
-    const errorDoc = await findOneById(insertDoc.insertedId);
-
-    if (!errorDoc) {
-      console.log("Error finding inserted error document.");
-    }
-
     res.status(statusCodes.caught_error).json(responses.something_went_wrong());
 
     process.exit(0);
   });
 };
 
+export const logUncaughtException = async (error: any, url: string) => {
+  process.on("uncaughtException", async (error) => {
+    const details = getErrorDetails(error);
+
+    const filePath = getFilePath(path.join(__dirname, "logs"), "error.log");
+
+    stat(filePath, (err, stats) => {
+      if (err) {
+        throw err;
+      }
+    });
+
+    const date = new Date();
+    const data = `
+    Url: ${url}\n
+    Date: ${date}\n
+    Date in ms: ${date.getTime()}\n
+
+    Message:${details.message}\n
+    ____________________________
+    `;
+
+    await writeFile(filePath, data, { flag: "a" });
+
+    const insertDoc = await insertOne({
+      ...details,
+      url,
+      date,
+      dateMs: date.getTime(),
+    });
+
+    if (!insertDoc.insertedId) {
+      console.log("Error inserting error document.");
+    }
+
+    process.exit(0);
+  });
+};
+
+export const handleCaughtErrorResponse = (
+  error: any,
+  req: Request,
+  res: Response
+) => {
+  logUncaughtException(error, req.url);
+
+  return res
+    .status(statusCodes.caught_error)
+    .json(responses.something_went_wrong());
+};
+
 // export const verifyJWT = async (token: string) => {
+
 //   if (!isJwtPayload(token)) {
 //     throw new Error(
 //       "Invalid JWT payload. The decoded value is not of type JwtPayload."

@@ -14,7 +14,7 @@ import {
   responses as genericResponses,
   IResponse,
 } from "../../../../../defs/responses/generic_responses";
-import { logUncaughtException } from "../../../../../utils";
+import { logUncaughtExceptionAndReturn500Response } from "../../../../../utils";
 
 const validatedUserId = body("userId") // TODO convert to zod?
   .notEmpty()
@@ -57,7 +57,6 @@ router.post(
           },
         }
       );
-
 
       if (!doc.matchedCount) {
         return res.json(

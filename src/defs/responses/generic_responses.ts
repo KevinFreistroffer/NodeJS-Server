@@ -23,15 +23,6 @@ export interface IResponse {
     | undefined;
 }
 
-export interface IResponseBodyData {
-  description: string;
-  code: number;
-}
-
-export interface IResponseBody {
-  message: EMessageType;
-}
-
 export interface IResponseBodies {
   resource_not_found: (description?: string) => IResponse;
   invalid_request: (description?: string) => IResponse;

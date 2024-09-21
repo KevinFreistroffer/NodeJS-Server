@@ -1,9 +1,7 @@
 "use strict";
 
 import * as express from "express";
-import * as bcrypt from "bcryptjs";
-import { InsertOneResult, WriteError } from "mongodb";
-import { UserProjection } from "../../../defs/models/user.model";
+import { User } from "../../../defs/models/user.model";
 import { body, validationResult } from "express-validator";
 import { responses, statusCodes } from "../../../defs/responses/user";
 import {
@@ -16,13 +14,19 @@ import {
   convertDocToSafeUser,
   logUncaughtException,
   hashPassword,
+  handleCaughtErrorResponse,
 } from "../../../utils";
 import {
   findOneByUsernameOrEmail,
   findOneById,
   insertOne,
 } from "../../../operations/user_operations";
-const router = express.Router();
+import { rateLimit } from "express-rate-limit";
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 5, // Limit each IP to 5 create account requests per windowMs
+  message: "Too many accounts created from this IP, please try again later",
+});
 
 interface IRequestBody {
   username: string;
@@ -30,8 +34,11 @@ interface IRequestBody {
   password: string;
 }
 
+const router = express.Router();
+
 router.post(
   "/",
+  limiter,
   body([
     "username",
     // "userId",
@@ -62,29 +69,7 @@ router.post(
         return res.json(responses.username_or_email_already_registered());
       }
 
-      const insert = {
-        username,
-        usernameNormalized: username.toLowerCase(),
-        email,
-        emailNormalized: email.toLowerCase(),
-        password: await hashPassword(password),
-        resetPasswordToken: "",
-        // jwtToken: "",
-        journals: [],
-        journalCategories: [],
-      };
-
-      const insertDoc = await insertOne({
-        username,
-        usernameNormalized: username.toLowerCase(),
-        email,
-        emailNormalized: email.toLowerCase(),
-        password: await hashPassword(password),
-        resetPasswordToken: "",
-        // jwtToken: "",
-        journals: [],
-        journalCategories: [],
-      });
+      const insertDoc = await insertOne(new User(username, email, password));
 
       if (!insertDoc || !insertDoc.insertedId) {
         return res.json(responses.error_inserting_user());
@@ -105,9 +90,7 @@ router.post(
       //   return res.json(responses.username_or_email_already_registered());
       // }
 
-      return res
-        .status(statusCodes.caught_error)
-        .json(genericResponses.caught_error(error));
+      return handleCaughtErrorResponse(error, req, res);
     }
   }
 );

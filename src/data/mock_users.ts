@@ -71,7 +71,7 @@ export const users = [
       {
         title: "First JournalWITHLOTS OF CHARACTERS TO SEE IF THE PIPE WORKS",
         entry: `Fear sucks and it makes life suck. It sounds like birds and a plane and typing.
-					I assume they won\'t be here tonight, hopefully but will see. Will see soon as it\'s. Anyways, more importantly
+					I assume they won't be here tonight, hopefully but will see. Will see soon as it's. Anyways, more importantly
 					is how s soon as people are nearby some ancient dna kicks in where it, reality becomes something unfortunate
 					and becomes lame as fuck. No one around = total freedom and peace and fine. People come around and everything
 					becomes this social stupid game where freedom becomes limited. Fucking, hate, people. Fucking hate, myself, when
@@ -99,7 +99,7 @@ export const users = [
       {
         title: "First JournalWITHLOTS OF CHARACTERS TO SEE IF THE PIPE WORKS",
         entry: `Fear sucks and it makes life suck. It sounds like birds and a plane and typing.
-					I assume they won\'t be here tonight, hopefully but will see. Will see soon as it\'s. Anyways, more importantly
+					I assume they won't be here tonight, hopefully but will see. Will see soon as it's. Anyways, more importantly
 					is how s soon as people are nearby some ancient dna kicks in where it, reality becomes something unfortunate
 					and becomes lame as fuck. No one around = total freedom and peace and fine. People come around and everything
 					becomes this social stupid game where freedom becomes limited. Fucking, hate, people. Fucking hate, myself, when
@@ -127,7 +127,7 @@ export const users = [
       {
         title: "First JournalWITHLOTS OF CHARACTERS TO SEE IF THE PIPE WORKS",
         entry: `Fear sucks and it makes life suck. It sounds like birds and a plane and typing.
-					I assume they won\'t be here tonight, hopefully but will see. Will see soon as it\'s. Anyways, more importantly
+					I assume they won't be here tonight, hopefully but will see. Will see soon as it's. Anyways, more importantly
 					is how s soon as people are nearby some ancient dna kicks in where it, reality becomes something unfortunate
 					and becomes lame as fuck. No one around = total freedom and peace and fine. People come around and everything
 					becomes this social stupid game where freedom becomes limited. Fucking, hate, people. Fucking hate, myself, when

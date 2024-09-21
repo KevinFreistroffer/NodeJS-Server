@@ -14,7 +14,7 @@ import {
   responses as genericResponses,
   IResponse,
 } from "../../../../../defs/responses/generic_responses";
-import { logUncaughtException } from "../../../../../utils";
+import { logUncaughtExceptionAndReturn500Response } from "../../../../../utils";
 
 const router = express.Router();
 
@@ -89,7 +89,6 @@ router.put(
           $set: query,
         }
       );
-
 
       if (!updatedDoc.matchedCount) {
         return res.json(userResponses.user_not_found());

@@ -12,6 +12,12 @@ import {
   responses as genericResponses,
 } from "../../../defs/responses/generic_responses";
 import dotenv from "dotenv";
+import { rateLimit } from "express-rate-limit";
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 30 minutes
+  max: 5, // Limit each IP to 5 create account requests per windowMs
+  message: "Too many requests from this IP, please try again later",
+});
 
 dotenv.config();
 

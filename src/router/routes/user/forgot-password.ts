@@ -10,7 +10,7 @@ import {
 } from "../../../defs/responses/generic_responses";
 import { responses as userResponses } from "../../../defs/responses/user";
 import { updateOne } from "../../../operations/user_operations";
-import { logUncaughtException } from "../../../utils";
+import { logUncaughtExceptionAndReturn500Response } from "../../../utils";
 import { EStage } from "../../../defs/enums";
 const router = express.Router();
 let crypto = require("node:crypto");
@@ -39,7 +39,6 @@ router.post(
       );
 
       if (!doc.acknowledged) {
-
         return res.status(200).json(userResponses.user_not_found());
       }
 

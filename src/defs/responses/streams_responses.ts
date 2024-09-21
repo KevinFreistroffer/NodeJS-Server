@@ -2,14 +2,14 @@ import { RESOURCE_NOT_FOUND, SUCCESS } from "../constants";
 import { EMessageType } from "../enums";
 import { ISanitizedUser } from "../interfaces";
 
-export interface IResponseBody {
+export interface IResponse {
   message: EMessageType;
   data: any;
 }
 
 export interface IResponseBodies {
-  resource_not_found: (description?: string) => IResponseBody;
-  success: (user?: ISanitizedUser | ISanitizedUser[]) => IResponseBody;
+  resource_not_found: (description?: string) => IResponse;
+  success: (user?: ISanitizedUser | ISanitizedUser[]) => IResponse;
 }
 
 export const statusCodes = {

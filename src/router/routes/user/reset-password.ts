@@ -10,8 +10,14 @@ import {
 import { responses as userResponses } from "../../../defs/responses/user";
 import { usersCollection } from "../../../db";
 import { findOneById, updateOne } from "../../../operations/user_operations";
-import { logUncaughtException } from "../../../utils";
+import { logUncaughtExceptionAndReturn500Response } from "../../../utils";
 import dotenv from "dotenv";
+import { rateLimit } from "express-rate-limit";
+const limiter = rateLimit({
+  windowMs: 30 * 60 * 1000, // 30 minutes
+  max: 5, // Limit each IP to 5 create account requests per windowMs
+  message: "Too many requests from this IP, please try again later",
+});
 
 dotenv.config();
 
@@ -32,6 +38,7 @@ const validatedPassword = body("password")
 
 router.post(
   "/",
+  limiter,
   validatedToken,
   validatedPassword,
   async (

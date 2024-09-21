@@ -12,7 +12,7 @@ import http from "http";
 import { verifyAccessKey, verifyToken } from "./middleware";
 import * as fs from "fs";
 import path from "path";
-import { getCaughtErrorDetails, getFilePath } from "./utils";
+import { getErrorDetails, getFilePath } from "./utils";
 import { responses, statusCodes } from "./defs/responses/generic";
 import { stat, writeFile } from "fs/promises";
 import { findOneById, insertOne } from "./operations/file_operations";
@@ -82,7 +82,7 @@ export default class Server {
 
           const protectedRoutes =
             process.env.PROTECTED_ROUTES?.split(",") || [];
-            
+
           if (
             adminOnlyRoutes.find((route) => route === req.baseUrl.toLowerCase())
           ) {
@@ -119,7 +119,7 @@ export default class Server {
           res: express.Response,
           next: NextFunction
         ) => {
-          const details = getCaughtErrorDetails(error);
+          const details = getErrorDetails(error);
           const filePath = getFilePath(
             path.join(__dirname, "logs"),
             "error.log"
@@ -128,7 +128,7 @@ export default class Server {
           const status = await stat(filePath);
 
           if (!status.isFile()) {
-            // Create the file
+            //
           }
 
           const date = new Date();
@@ -175,13 +175,13 @@ export default class Server {
       process.on("uncaughtException", (error) => {
         console.log("Server Uncaught Exception: ", error);
 
-        getCaughtErrorDetails(error);
+        getErrorDetails(error);
       });
 
       process.on("unhandledRejection", (error) => {
         console.log("Server Uncaught Exception: ", error);
 
-        getCaughtErrorDetails(error);
+        getErrorDetails(error);
       });
 
       // Server Port

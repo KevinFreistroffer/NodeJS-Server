@@ -11,7 +11,7 @@ import {
   responses as genericResponses,
   IResponse,
 } from "../../../../defs/responses/generic_responses";
-import { logUncaughtException } from "../../../../utils";
+import { logUncaughtExceptionAndReturn500Response } from "../../../../utils";
 
 const validatedUserId = body("userId") // TODO convert to zod?
   .notEmpty()
@@ -34,7 +34,7 @@ interface IRequestBody {
 
 const router = express.Router();
 
-router.put(
+router.delete(
   "/",
   validatedUserId,
   validatedJournalIds,

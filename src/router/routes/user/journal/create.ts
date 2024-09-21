@@ -20,7 +20,7 @@ import {
   findOneById,
   updateOne,
 } from "../../../../operations/user_operations";
-import { logUncaughtException } from "../../../../utils";
+import { logUncaughtExceptionAndReturn500Response } from "../../../../utils";
 const router = express.Router();
 const days = ["Sun", "Mon", "Tue", "Wed", "Thur", "Fri", "Sat"];
 const validatedUserId = body("userId") // TODO convert to zod?

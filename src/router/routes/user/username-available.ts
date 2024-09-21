@@ -7,16 +7,23 @@ import { responses as userResponses } from "../../../defs/responses/user";
 import { usersCollection } from "../../../db";
 import { verifyToken } from "../../../middleware";
 import { findOneByUsername } from "../../../operations/user_operations";
-import { logUncaughtException } from "../../../utils";
+import { logUncaughtExceptionAndReturn500Response } from "../../../utils";
 import { EMessageType } from "../../../defs/enums";
 import {
   IResponse,
   responses as genericResponses,
 } from "../../../defs/responses/generic";
+import { rateLimit } from "express-rate-limit";
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 5, // Limit each IP to 5 create account requests per windowMs
+  message: "Too many requests from this IP, please try again later",
+});
 const router = express.Router();
 
 router.post(
   "/",
+  limiter,
   body("username").notEmpty().bail().isString().bail().escape(),
   async (req: express.Request, res: express.Response<IResponse>) => {
     try {

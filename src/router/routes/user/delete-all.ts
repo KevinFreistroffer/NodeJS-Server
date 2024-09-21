@@ -1,6 +1,5 @@
 "use strict";
 
-
 import * as express from "express";
 import * as bcrypt from "bcryptjs";
 import { body, validationResult } from "express-validator";
@@ -13,7 +12,7 @@ import {
 import { usersCollection } from "../../../db";
 import { verifyToken } from "../../../middleware";
 import { deleteMany } from "../../../operations/user_operations";
-import { logUncaughtException } from "../../../utils";
+import { logUncaughtExceptionAndReturn500Response } from "../../../utils";
 const router = express.Router();
 
 router.delete(
