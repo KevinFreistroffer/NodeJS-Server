@@ -70,13 +70,6 @@ router.post(
 
       return res.json(responses.success(convertDocToSafeUser(userDoc)));
     } catch (error) {
-      // MongoDB error types
-      // WriteError = DuplicateKey
-      // WriteConcernError =
-      // if (error instanceof WriteError) {
-      //   return res.json(responses.username_or_email_already_registered());
-      // }
-
       return handleCaughtErrorResponse(error, req, res);
     }
   }

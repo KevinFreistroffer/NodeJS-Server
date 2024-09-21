@@ -1,11 +1,3 @@
-import { Document, ObjectId } from "mongodb";
-
-export interface IResponse {
-  success: boolean;
-  message: string;
-  data: ISanitizedUser | undefined;
-}
-
 export interface IJournal extends Document {
   title: string;
   entry: string;
@@ -13,19 +5,11 @@ export interface IJournal extends Document {
   date: string;
   selected: boolean;
 }
-
-export interface IJournalDoc extends IJournal {
-  _id: ObjectId;
-}
-
 export interface ICategory extends Document {
   category: string;
   selected: boolean;
 }
 
-// export interface ICategoryDoc extends ICategory {
-//   _id: ObjectId;
-// }
 export interface IUser {
   username: string;
   usernameNormalized: string;
@@ -67,14 +51,3 @@ export interface IErrorLog {
   code?: string;
   stack?: string;
 }
-
-// export interface IUserDoc extends IUser, Document {
-//   journals: IJournalDoc[];
-//   journalCategories: ICategoryDoc[];
-// }
-
-// export interface ISessionDoc {
-//   _id: string;
-//   expires_at: Date;
-//   user_id: string;
-// }
