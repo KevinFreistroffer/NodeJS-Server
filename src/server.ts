@@ -20,18 +20,14 @@ import { Timestamp } from "mongodb";
 import { AsyncLocalStorage } from "node:async_hooks";
 import { LambdaClient, InvokeCommand } from "@aws-sdk/client-lambda";
 import dotenv from "dotenv";
+import { checkConflictingRouteMiddleware } from "./routes";
+
+checkConflictingRouteMiddleware();
 
 dotenv.config();
 
 const swaggerUi = require("swagger-ui-express");
 const swaggerSpec = require("../swagger-spec.json");
-
-const excludeFromAccessKeyVerification = [
-  "/api-docs",
-  "/user/login",
-  "/user/create",
-];
-const excludeFromAuthorizationVerification = ["/user/login", "/user/create"];
 
 export default class Server {
   port: number;

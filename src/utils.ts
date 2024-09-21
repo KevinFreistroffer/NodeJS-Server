@@ -6,7 +6,7 @@ import path from "node:path";
 import process from "node:process";
 import { Request, Response } from "express";
 import { responses, statusCodes } from "./defs/responses/generic";
-import { findOneById, insertOne } from "./operations/file_operations";
+import { insertOne } from "./operations/file_operations";
 import { stat } from "node:fs";
 import { writeFile } from "node:fs/promises";
 
@@ -76,51 +76,6 @@ export const getErrorDetails = (
   message: error.message,
   stack: error.stack,
 });
-
-// This is to ensure a response is sent to the end user.
-// Not sure yet how to better do this, because it requires adding this to each request
-// which is too much repeating, and it could get forgotten to get added to new routes.
-export const logUncaughtExceptionAndReturn500Response = async (
-  req: Request,
-  res: Response
-) => {
-  process.on("uncaughtException", async (error) => {
-    const details = getErrorDetails(error);
-    const filePath = getFilePath(path.join(__dirname, "logs"), "error.log");
-
-    stat(filePath, (err, stats) => {
-      if (err) {
-        throw err;
-      }
-    });
-
-    const date = new Date();
-    const data = `
-    Url: ${req.url}\n
-    Date: ${date}\n
-    Date in ms: ${date.getTime()}\n
-    Message:${details.message}\n
-    ____________________________
-    `;
-
-    await writeFile(filePath, data, { flag: "a" });
-
-    const insertDoc = await insertOne({
-      ...details,
-      url: res.req.url,
-      date,
-      dateMs: date.getTime(),
-    });
-
-    if (!insertDoc.insertedId) {
-      console.log("Error inserting error document.");
-    }
-
-    res.status(statusCodes.caught_error).json(responses.something_went_wrong());
-
-    process.exit(0);
-  });
-};
 
 export const logUncaughtException = async (error: any, url: string) => {
   process.on("uncaughtException", async (error) => {

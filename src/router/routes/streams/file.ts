@@ -6,10 +6,7 @@ import {
   responses,
   statusCodes,
 } from "../../../defs/responses/generic";
-import {
-  getFilePath,
-  logUncaughtExceptionAndReturn500Response,
-} from "../../../utils";
+import { getFilePath } from "../../../utils";
 import { stat } from "node:fs/promises";
 
 const router = express.Router();
