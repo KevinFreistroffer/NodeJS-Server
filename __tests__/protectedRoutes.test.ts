@@ -272,13 +272,13 @@ describe("Protected Routes - /journal/delete", () => {
   it("should allow access with a valid token", async () => {
     (updateOne as jest.Mock).mockResolvedValue({
       acknowledged: true,
-      modifiedCount: 0,
+      modifiedCount: 1,
       upsertedId: null,
       upsertedCount: 0,
       matchedCount: 1,
     });
     const response = await request(app)
-      .put("/user/journal/delete")
+      .delete("/user/journal/delete")
       .send({
         userId: new ObjectId(),
         journalIds: [new ObjectId()],

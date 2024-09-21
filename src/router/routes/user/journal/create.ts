@@ -67,7 +67,7 @@ router.post(
         }
       );
 
-      if (!doc.acknowledged || !doc.upsertedId) {
+      if (!doc?.acknowledged || !doc.upsertedId) {
         return res.json(userResponses.could_not_update());
       }
 
@@ -79,6 +79,7 @@ router.post(
 
       return res.json(genericResponses.success(foundDoc));
     } catch (error) {
+      console.log("error: ", error);
       return handleCaughtErrorResponse(error, req, res);
     }
   }

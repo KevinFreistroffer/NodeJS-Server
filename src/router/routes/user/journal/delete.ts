@@ -61,6 +61,7 @@ router.delete(
 
       return res.json(genericResponses.success());
     } catch (error) {
+      console.log("error: ", error);
       return handleCaughtErrorResponse(error, req, res);
     }
   }

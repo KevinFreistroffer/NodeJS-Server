@@ -76,6 +76,7 @@ export default class Server {
       this.server.use(
         "*",
         (req: Request, res: Response, next: NextFunction) => {
+          console.log("middleware req.url: ", req.url);
           this.setAsyncLocalStorageMsg("Setting async local storage message.");
 
           next();
