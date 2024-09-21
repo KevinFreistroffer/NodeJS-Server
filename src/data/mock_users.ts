@@ -3,8 +3,8 @@
 export const users = [
   {
     username: "admin",
-    password: "admin",
-    email: "kevin.freistroffer@gmail.com",
+    password: "password",
+    email: "admin@gmail.com",
     verified: true,
     journals: [
       {
@@ -12,151 +12,86 @@ export const users = [
         entry: `At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti
 				atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in
 				culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et
-				expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod
-				maxime placeat facere possimus, omnis voluptas assumenda est, omnis dolor repellendus. Temporibus autem quibusdam et
-				aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae.
-				Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis
-				doloribus asperiores repellat.
-
-				Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod
-				maxime placeat facere possimus, omnis voluptas assumenda est, omnis dolor repellendus. Temporibus autem quibusdam et
-				aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae.
-				Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis
-				doloribus asperiores repellat.
-
-
-				Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod
-				maxime placeat facere possimus, omnis voluptas assumenda est, omnis dolor repellendus. Temporibus autem quibusdam et
-				aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae.
-				Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis
-				doloribus asperiores repellat.
-
-
-
-				Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod
-				maxime placeat facere possimus, omnis voluptas assumenda est, omnis dolor repellendus. Temporibus autem quibusdam et
-				aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae.
-				Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis
-				doloribus asperiores repellat.
-
-
-
-				Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod
-				maxime placeat facere possimus, omnis voluptas assumenda est, omnis dolor repellendus. Temporibus autem quibusdam et
-				aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae.
-				Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis
-				doloribus asperiores repellat.
-
-
-
-
-				Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod
-				maxime placeat facere possimus, omnis voluptas assumenda est, omnis dolor repellendus. Temporibus autem quibusdam et
-				aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae.
-				Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis
-				doloribus asperiores repellat.
-
-
-
-
-				Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod
-				maxime placeat facere possimus, omnis voluptas assumenda est, omnis dolor repellendus. Temporibus autem quibusdam et
-				aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae.
-				Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis
-				doloribus asperiores repellat.`,
+				expedita distinctio.`,
         date: "1/02/2017",
         id: 1,
         category: "My Journals",
       },
       {
-        title: "First JournalWITHLOTS OF CHARACTERS TO SEE IF THE PIPE WORKS",
-        entry: `Fear sucks and it makes life suck. It sounds like birds and a plane and typing.
-					I assume they won't be here tonight, hopefully but will see. Will see soon as it's. Anyways, more importantly
-					is how s soon as people are nearby some ancient dna kicks in where it, reality becomes something unfortunate
-					and becomes lame as fuck. No one around = total freedom and peace and fine. People come around and everything
-					becomes this social stupid game where freedom becomes limited. Fucking, hate, people. Fucking hate, myself, when
-					people are around.`,
-        date: "1/02/2017",
-        id: 1,
-        category: "My Journals",
-      },
-      {
-        title: "Skateboarding Ideas",
-        entry: `Sidewinder plus jumps or massive jump session, or ride side by side to those massive jumps and hit the long
-				flat box or the flat/down/flat box, then both routes lead to the box/rails then to the chairlift.`,
-        date: "1/02/2017",
+        title: "Reflections on a Busy Week",
+        entry: "This week has been incredibly hectic...",
+        date: "3/15/2023",
         id: 2,
-        category: "Skating",
+        category: "Life Stuff",
       },
       {
-        title: "Feels",
-        entry:
-          "Certain things and certain moments feel better or worse than other moments.",
-        date: "1/02/2017",
+        title: "New Recipe: Spicy Lentil Soup",
+        entry: "Ingredients: 1 cup red lentils, 2 carrots...",
+        date: "5/22/2023",
         id: 3,
-        category: "A Cata",
+        category: "Cooking Recipes",
       },
       {
-        title: "First JournalWITHLOTS OF CHARACTERS TO SEE IF THE PIPE WORKS",
-        entry: `Fear sucks and it makes life suck. It sounds like birds and a plane and typing.
-					I assume they won't be here tonight, hopefully but will see. Will see soon as it's. Anyways, more importantly
-					is how s soon as people are nearby some ancient dna kicks in where it, reality becomes something unfortunate
-					and becomes lame as fuck. No one around = total freedom and peace and fine. People come around and everything
-					becomes this social stupid game where freedom becomes limited. Fucking, hate, people. Fucking hate, myself, when
-					people are around.`,
-        date: "1/02/2017",
-        id: 1,
+        title: "Morning Meditation Insights",
+        entry: "Today's meditation session was particularly enlightening...",
+        date: "7/10/2023",
+        id: 4,
+        category: "Mindfulness",
+      },
+      {
+        title: "Project Brainstorming",
+        entry: "Ideas for the upcoming team project...",
+        date: "9/5/2023",
+        id: 5,
+        category: "Work Notes",
+      },
+      {
+        title: "Book Review: 'The Alchemist'",
+        entry: "Paulo Coelho's 'The Alchemist' is a profound journey...",
+        date: "10/18/2023",
+        id: 6,
+        category: "Book Reviews",
+      },
+      {
+        title: "Fitness Progress Update",
+        entry: "Today I reached a new personal best in my 5K run...",
+        date: "11/30/2023",
+        id: 7,
+        category: "Health & Fitness",
+      },
+      {
+        title: "Travel Plans: Japan 2024",
+        entry: "Itinerary ideas for our upcoming trip to Japan...",
+        date: "1/5/2024",
+        id: 8,
+        category: "Travel",
+      },
+      {
+        title: "Reflections on Personal Growth",
+        entry:
+          "Looking back on the past year, I've noticed significant changes...",
+        date: "2/14/2024",
+        id: 9,
         category: "My Journals",
       },
       {
-        title: "Skateboarding Ideas",
-        entry: `Sidewinder plus jumps or massive jump session, or ride side by side to those massive jumps and hit the long
-				flat box or the flat/down/flat box, then both routes lead to the box/rails then to the chairlift.`,
-        date: "1/02/2017",
-        id: 2,
-        category: "Skating",
-      },
-      {
-        title: "Feels",
-        entry:
-          "Certain things and certain moments feel better or worse than other moments.",
-        date: "1/02/2017",
-        id: 3,
-        category: "A Cata",
-      },
-      {
-        title: "First JournalWITHLOTS OF CHARACTERS TO SEE IF THE PIPE WORKS",
-        entry: `Fear sucks and it makes life suck. It sounds like birds and a plane and typing.
-					I assume they won't be here tonight, hopefully but will see. Will see soon as it's. Anyways, more importantly
-					is how s soon as people are nearby some ancient dna kicks in where it, reality becomes something unfortunate
-					and becomes lame as fuck. No one around = total freedom and peace and fine. People come around and everything
-					becomes this social stupid game where freedom becomes limited. Fucking, hate, people. Fucking hate, myself, when
-					people are around.`,
-        date: "1/02/2017",
-        id: 1,
-        category: "My Journals",
-      },
-      {
-        title: "Skateboarding Ideas",
-        entry: `Sidewinder plus jumps or massive jump session, or ride side by side to those massive jumps and hit the long
-				flat box or the flat/down/flat box, then both routes lead to the box/rails then to the chairlift.`,
-        date: "1/02/2017",
-        id: 2,
-        category: "Skating",
-      },
-      {
-        title: "Feels",
-        entry:
-          "Certain things and certain moments feel better or worse than other moments.",
-        date: "1/02/2017",
-        id: 3,
-        category: "A Cata",
+        title: "New Coding Challenge",
+        entry: "Today I started a new coding challenge on algorithms...",
+        date: "3/22/2024",
+        id: 10,
+        category: "Programming",
       },
     ],
     journalCategories: [
       { category: "My Journals", selected: false },
       { category: "Life Stuff", selected: false },
       { category: "Cooking Recipes", selected: false },
+      { category: "Mindfulness", selected: false },
+      { category: "Work Notes", selected: false },
+      { category: "Book Reviews", selected: false },
+      { category: "Health & Fitness", selected: false },
+      { category: "Travel", selected: false },
+      { category: "Programming", selected: false },
     ],
   },
   {
