@@ -26,6 +26,13 @@ dotenv.config();
 const swaggerUi = require("swagger-ui-express");
 const swaggerSpec = require("../swagger-spec.json");
 
+const excludeFromAccessKeyVerification = [
+  "/api-docs",
+  "/user/login",
+  "/user/create",
+];
+const excludeFromAuthorizationVerification = ["/user/login", "/user/create"];
+
 export default class Server {
   port: number;
   server!: Express;
@@ -79,6 +86,11 @@ export default class Server {
         "*",
         (req: Request, res: Response, next: NextFunction) => {
           const adminOnlyRoutes = process.env.ADMIN_ROUTES?.split(",") || [];
+
+          /**
+           * By default all routes will verify an access key and a JWT authorization header.
+           * To exclude a route, a dev would add the route base url to a config. I don't want this route to verify an access key.
+           */
 
           const protectedRoutes =
             process.env.PROTECTED_ROUTES?.split(",") || [];

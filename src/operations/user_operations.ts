@@ -1,19 +1,16 @@
 import {
-  Collection,
   DeleteResult,
   Filter,
-  FindOptions,
-  InsertOneOptions,
   InsertOneResult,
-  MongoClient,
   ObjectId,
   OptionalId,
   UpdateResult,
   WithId,
-  WriteConcernError,
-  WriteError,
+  MongoServerError,
+  MongoNetworkError,
 } from "mongodb";
 import { getClient, usersCollection } from "../db";
+
 import { ISanitizedUser, IUser } from "../defs/interfaces";
 import { UserProjection } from "../defs/models/user.model";
 
@@ -146,8 +143,23 @@ export async function insertOne(
     await client.connect();
     return await usersCollection(client).insertOne(document);
   } catch (error) {
-    // TODO: what type of errors? Handle specific errors?
-    throw error;
+    // TODO: what type of errors? Handle specific errors?\
+    if (error instanceof MongoServerError) {
+      if (error.code === 11000) {
+        throw new Error(
+          "Duplicate key error: A user with this unique field already exists."
+        );
+      }
+      throw new Error(`Database error: ${error.message}`);
+    } else if (error instanceof MongoNetworkError) {
+      throw new Error("Network error: Unable to connect to the database.");
+    } else {
+      throw new Error(
+        `Unexpected error: ${
+          error instanceof Error ? error.message : String(error)
+        }`
+      );
+    }
   } finally {
     client.close();
   }
