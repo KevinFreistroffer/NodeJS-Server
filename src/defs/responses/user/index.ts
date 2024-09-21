@@ -1,16 +1,10 @@
 import {
-  ACCESS_DENIED,
   EMAIL_AVAILABLE,
   EMAIL_NOT_AVAILABLE,
   ERROR_INSERTING_USER,
   COULD_NOT_UPDATE,
   INVALID_PASSWORD,
-  INVALID_REQUEST,
   INVALID_USERNAME_OR_EMAIL_AND_PASSWORD,
-  MISSING_BODY_FIELDS,
-  MISSING_PARAMETERS,
-  RESOURCE_NOT_FOUND,
-  ROUTE_NOT_FOUND,
   SUCCESS,
   USERNAME_AVAILABLE,
   USERNAME_NOT_AVAILABLE,
@@ -19,41 +13,12 @@ import {
   USER_NOT_FOUND,
 } from "../../constants";
 import { EMessageType } from "../../enums";
-import { ISanitizedUser, IJournal } from "../../interfaces";
+import { ISanitizedUser } from "../../interfaces";
 import {
   IResponse,
-  IGenericResponses,
   responses as genericResponses,
   statusCodes as genericStatusCodes,
 } from "../generic";
-
-// export interface IResponseWithUser extends IResponse {
-//   message: EMessageType;
-//   description: string;
-//   code: number;
-//   data: ISanitizedUser | ISanitizedUser[] | undefined;
-// }
-
-// export interface IResponseWithJournals {
-//   message: EMessageType;
-//   description: string;
-//   code: number;
-//   data: IJournal | IJournal[] | undefined;
-// }
-
-// export interface IUsernameAvailableResponse extends IResponse {
-//   message: EMessageType;
-//   description: string;
-//   code: number;
-//   usernameAvailable: boolean | undefined;
-// }
-
-// export interface IEmailAvailableResponse extends IResponse {
-//   message: EMessageType;
-//   description: string;
-//   code: number;
-//   emailAvailable: boolean | undefined;
-// }
 
 export interface IResponses {
   user_not_found: (description?: string) => IResponse;
