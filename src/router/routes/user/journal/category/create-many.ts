@@ -66,7 +66,7 @@ router.post(
        *  Save the updated user.journals
        *------------------------------------------------*/
       const updatedDoc = await updateOne(
-        { _id: new ObjectId(userId) },
+        { _id: ObjectId.createFromHexString(userId) },
         {
           $set: {
             journals: doc.journals,
@@ -78,7 +78,7 @@ router.post(
         return res.json(userResponses.could_not_update());
       }
 
-      const savedDoc = await findOneById(new ObjectId(userId));
+      const savedDoc = await findOneById(ObjectId.createFromHexString(userId));
 
       if (!savedDoc) {
         return res.json(

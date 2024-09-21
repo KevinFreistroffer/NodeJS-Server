@@ -4,6 +4,7 @@ import * as express from "express";
 import { body, validationResult } from "express-validator";
 import { Types } from "mongoose";
 import { ObjectId } from "mongodb";
+import { Category } from "../../../../../defs/models/category.model";
 import { updateOne } from "../../../../../operations/user_operations";
 import { responses as userResponses } from "../../../../../defs/responses/user";
 import {
@@ -39,17 +40,14 @@ router.post(
       }
 
       const { userId, category } = req.body;
+      const newCategory = new Category(category, false);
       const doc = await updateOne(
         {
-          _id: new ObjectId(userId),
+          _id: ObjectId.createFromHexString(userId),
         },
         {
           $addToSet: {
-            journalCategories: {
-              _id: new ObjectId(),
-              category,
-              selected: false,
-            },
+            journalCategories: newCategory,
           },
         }
       );

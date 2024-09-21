@@ -27,14 +27,14 @@ export const verifyToken = (
     return res.sendStatus(401);
   }
 
-  const token = parts[1]; // Extract token from header
+  const token = parts[1];
   jwt.verify(token, process.env.JWT_SECRET as string, (err, authData) => {
     if (!authData || err) {
       return res.sendStatus(401);
     }
 
     res.locals.auth = authData;
-    next(); // Proceed to next middleware or route handler
+    next();
   });
 };
 

@@ -2,7 +2,7 @@
 
 import express from "express";
 import moment from "moment";
-import { IJournal } from "../../../../defs/interfaces";
+import { Journal } from "../../../../defs/models/journal.model";
 import { body, validationResult } from "express-validator";
 import { responses as userResponses } from "../../../../defs/responses/user";
 import {
@@ -48,14 +48,7 @@ router.post(
 
       const day = moment().day();
       const date = `${days[day]}, ${moment().format("MM-DD-YYYY")}`;
-      const journal: IJournal = {
-        title,
-        entry,
-        category,
-        date, // convert to createdDate
-        // add updatedDate
-        selected: false, // ???
-      };
+      const journal = new Journal(title, entry, category, date, false);
 
       /*--------------------------------------------------
        *  Update user's journals
@@ -65,9 +58,7 @@ router.post(
         { _id: ObjectId.createFromHexString(userId) },
         {
           $addToSet: {
-            journals: {
-              ...journal,
-            },
+            journals: journal,
             journalCategories: {
               category,
               selected: false,

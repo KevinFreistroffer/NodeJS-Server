@@ -78,8 +78,8 @@ router.put(
 
       const updatedDoc = await updateOne(
         {
-          _id: new ObjectId(userId),
-          "journalCategories._id": new ObjectId(categoryId),
+          _id: ObjectId.createFromHexString(userId),
+          "journalCategories._id": ObjectId.createFromHexString(categoryId),
         },
         {
           $set: query,

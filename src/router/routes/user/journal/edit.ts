@@ -67,9 +67,10 @@ router.post(
 
       const doc = await updateOne(
         {
-          _id: new ObjectId(userId),
-          "journals._id": new ObjectId(journalId),
+          _id: ObjectId.createFromHexString(userId),
+          "journals._id": ObjectId.createFromHexString(journalId),
         },
+
         {
           $set: query,
         }
@@ -84,7 +85,7 @@ router.post(
         return res.json(userResponses.could_not_update());
       }
 
-      const userDoc = await findOneById(new ObjectId(userId));
+      const userDoc = await findOneById(ObjectId.createFromHexString(userId));
 
       if (!userDoc) {
         res.json(
