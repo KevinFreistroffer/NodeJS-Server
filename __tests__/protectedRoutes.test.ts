@@ -14,7 +14,7 @@ import {
 } from "../src/operations/user_operations";
 import { responses } from "../src/defs/responses/user";
 import { mockJournal } from "../__mocks__/mock_journals";
-import { mockUser, mockUsersWithJournals } from "../__mocks__/mock_users";
+import { getMockUsers } from "../__mocks__/mock_users";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -92,7 +92,14 @@ beforeEach(() => {
  * /user/users
  */
 describe("Protected Routes - /user/users", () => {
-  (findAllUsers as jest.Mock).mockResolvedValue(mockUsersWithJournals);
+  (findAllUsers as jest.Mock).mockResolvedValue(
+    getMockUsers({
+      numUsersToGet: 2,
+      numJournalsToGet: 1,
+      numCategoriesToGet: 1,
+      addMongoObjectIds: true,
+    })
+  );
   it("should deny access and return 401 if no token is provided", async () => {
     const response = await request(app).get("/user/users");
     expect(response.status).toBe(401);
@@ -111,7 +118,14 @@ describe("Protected Routes - /user/users", () => {
  */
 describe("Protected Routes - /user/username-available", () => {
   it("should deny access and return 401 if no token is provided", async () => {
-    (findOneByUsername as jest.Mock).mockResolvedValue(mockUser);
+    (findOneByUsername as jest.Mock).mockResolvedValue(
+      getMockUsers({
+        numUsersToGet: 1,
+        numJournalsToGet: 0,
+        numCategoriesToGet: 0,
+        addMongoObjectIds: true,
+      })
+    );
     const response = await request(app)
       .post("/user/username-available")
       .send({ username: "newuser" })
@@ -119,7 +133,14 @@ describe("Protected Routes - /user/username-available", () => {
     expect(response.status).toBe(401);
   });
   it("should allow access with a valid token", async () => {
-    (findOneByUsername as jest.Mock).mockResolvedValue(mockUser);
+    (findOneByUsername as jest.Mock).mockResolvedValue(
+      getMockUsers({
+        numUsersToGet: 1,
+        numJournalsToGet: 0,
+        numCategoriesToGet: 0,
+        addMongoObjectIds: true,
+      })
+    );
 
     const response = await request(app)
       .post("/user/username-available")
@@ -135,7 +156,14 @@ describe("Protected Routes - /user/username-available", () => {
  */
 describe("Protected Routes - /user/email-available", () => {
   it("should deny access and return 401 if no token is provided", async () => {
-    (findOneByEmail as jest.Mock).mockResolvedValue(mockUser);
+    (findOneByEmail as jest.Mock).mockResolvedValue(
+      getMockUsers({
+        numUsersToGet: 1,
+        numJournalsToGet: 0,
+        numCategoriesToGet: 0,
+        addMongoObjectIds: true,
+      })
+    );
     const response = await request(app)
       .post("/user/email-available")
       .send({ email: "newuser" })
@@ -143,7 +171,14 @@ describe("Protected Routes - /user/email-available", () => {
     expect(response.status).toBe(401);
   });
   it("should allow access with a valid token", async () => {
-    (findOneByEmail as jest.Mock).mockResolvedValue(mockUser);
+    (findOneByEmail as jest.Mock).mockResolvedValue(
+      getMockUsers({
+        numUsersToGet: 1,
+        numJournalsToGet: 0,
+        numCategoriesToGet: 0,
+        addMongoObjectIds: true,
+      })
+    );
 
     const response = await request(app)
       .post("/user/email-available")
@@ -200,12 +235,15 @@ describe("Protected Routes - /journal/edit", () => {
   });
 
   it("should allow access with a valid token", async () => {
-    const mockUserWithJournal = mockUsersWithJournals[0];
     (findOneByUsernameOrEmail as jest.Mock).mockResolvedValue(undefined);
-    (findOneById as jest.Mock).mockResolvedValue({
-      ...mockUserWithJournal,
-      _id: "66e9c7cf8c3d258adecba9a4",
-    });
+    (findOneById as jest.Mock).mockResolvedValue(
+      getMockUsers({
+        numUsersToGet: 1,
+        numJournalsToGet: 1,
+        numCategoriesToGet: 0,
+        addMongoObjectIds: true,
+      })
+    );
     (insertOne as jest.Mock).mockResolvedValue({
       acknowledged: true,
       insertedId: new ObjectId("66e9c7cf8c3d258adecba9a4"),
@@ -218,11 +256,18 @@ describe("Protected Routes - /journal/edit", () => {
       matchedCount: 1,
     });
 
+    const mockUser = getMockUsers({
+      numUsersToGet: 1,
+      numJournalsToGet: 1,
+      numCategoriesToGet: 0,
+      addMongoObjectIds: true,
+    })[0];
+
     const response = await request(app)
       .post("/user/journal/edit")
       .send({
-        userId: mockUserWithJournal._id,
-        journalId: mockUserWithJournal.journals[0]._id,
+        userId: mockUser._id,
+        journalId: mockUser.journals[0]._id,
         title: "New Title",
         entry: "New Entry",
         category: "New Category",

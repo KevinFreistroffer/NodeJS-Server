@@ -37,6 +37,7 @@ router.post(
   ) => {
     try {
       const errors = validationResult(req);
+      console.log(errors);
       if (
         !errors.isEmpty() ||
         (!has(req.body, "title") &&

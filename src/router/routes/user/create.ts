@@ -18,17 +18,34 @@ import {
   insertOne,
 } from "../../../operations/user_operations";
 import { rateLimit } from "express-rate-limit";
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 5, // Limit each IP to 5 create account requests per windowMs
-  message: "Too many accounts created from this IP, please try again later",
-});
+
+export const rateLimiterMiddleware = () => {
+  const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 5, // Limit each IP to 5 create account requests per windowMs
+    message: "Too many accounts created from this IP, please try again later",
+  });
+
+  return limiter;
+};
 
 const router = express.Router();
 
+// List of functionalities that can be unit tested:
+// 1. Rate limiting functionality
+// 2. Input validation (username, email, password)
+// 3. Checking if username or email already exists
+// 4. User creation process
+// 5. Error handling for various scenarios
+// 6. Response format and content for different outcomes
+// 7. Conversion of user document to safe user object
+// 8. Integration with user operations (findOneByUsernameOrEmail, insertOne, findOneById)
+// 9. Proper use of status codes
+// 10. Escaping of input fields
+
 router.post(
   "/",
-  limiter,
+  rateLimiterMiddleware(),
   body([
     "username",
     // "userId",

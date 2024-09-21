@@ -104,28 +104,50 @@ export const excludeFromAccessKeyVerification = routes
   .filter((route) => !route.requiresAccessKey)
   .map((route) => route.path);
 
+console.log(
+  "excludeFromAccessKeyVerification",
+  excludeFromAccessKeyVerification
+);
+
 export const excludeFromAuthorizationVerification = routes
   .filter((route) => !route.requiresAuthorization)
   .map((route) => route.path);
+
+console.log(
+  "excludeFromAuthorizationVerification",
+  excludeFromAuthorizationVerification
+);
 
 export const routesRequiringAccessKey = routes
   .filter((route) => route.requiresAccessKey)
   .map((route) => route.path);
 
+console.log("routesRequiringAccessKey", routesRequiringAccessKey);
+
 export const routesRequiringAuthorization = routes
   .filter((route) => route.requiresAuthorization)
   .map((route) => route.path);
 
+console.log("routesRequiringAuthorization", routesRequiringAuthorization);
+
 export const checkConflictingRouteMiddleware = () => {
   // Check for conflicting configurations
-  const conflictingRoutes = routes.filter(
-    (route) => route.requiresAccessKey === route.requiresAuthorization
+  const conflictingAccessKeyRoutes = routesRequiringAccessKey.filter((route) =>
+    excludeFromAuthorizationVerification.includes(route)
   );
 
-  if (conflictingRoutes.length > 0) {
-    const conflictingPaths = conflictingRoutes
-      .map((route) => route.path)
-      .join(", ");
+  const conflictingAuthorizationRoutes = routesRequiringAuthorization.filter(
+    (route) => excludeFromAuthorizationVerification.includes(route)
+  );
+
+  const conflictingPaths = [
+    ...conflictingAccessKeyRoutes,
+    ...conflictingAuthorizationRoutes,
+  ].join(", ");
+
+  console.log("conflictingPaths", conflictingPaths);
+
+  if (conflictingPaths.length > 0) {
     throw new Error(
       `Conflicting route configurations found for: ${conflictingPaths}. ` +
         `These routes have inconsistent access key and authorization requirements.`
