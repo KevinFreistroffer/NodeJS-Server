@@ -129,7 +129,7 @@ export const handleCaughtErrorResponse = (
 };
 
 export const sendAccountActivationEmail = async (
-  to: string,
+  toEmail: string,
   userId: string
 ) => {
   if (!process.env.EMAIL_FROM || !process.env.EMAIL_APP_PASSWORD) {
@@ -143,18 +143,32 @@ export const sendAccountActivationEmail = async (
   const token = jwt.sign({ userId }, process.env.JWT_SECRET, {
     expiresIn: "1d",
   });
-  const verificationLink = `http://localhost:3000/verify-account/${token}`;
+
+  let verificationLink: string;
+
+  if (process.env.environment === "development") {
+    verificationLink = `http://localhost:3000/verify-account/${token}`;
+  } else {
+    verificationLink = `https://journal-app-production.up.railway.app/verify-account/${token}`;
+  }
   const transport = `smtps://${encodeURIComponent(
     process.env.EMAIL_FROM
   )}:${encodeURIComponent(process.env.EMAIL_APP_PASSWORD)}@smtp.gmail.com`;
   console.log("transport: ", transport);
-  const transporter = nodemailer.createTransport(transport);
+  const transporter = nodemailer.createTransport(
+    `smtps://${encodeURIComponent(process.env.EMAIL_FROM)}:${encodeURIComponent(
+      process.env.EMAIL_APP_PASSWORD
+    )}@smtp.gmail.com`
+  );
 
   // setup e-mail data with unicode symbols
   const mailOptions = {
     from: `"Journal App 👥" <${process.env.EMAIL_FROM}>`,
     // to: to, // Use the provided email address
-    to: "kevin.freistroffer@gmail.com", // Use the provided email address
+    to:
+      process.env.environment === "development"
+        ? "kevin.freistroffer@gmail.com"
+        : toEmail, // Use the provided email address
     subject: "Account Activation",
     text:
       "Hi,\n\n" +

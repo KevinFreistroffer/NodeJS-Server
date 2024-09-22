@@ -1,6 +1,4 @@
 import { Router } from "express";
-import { User } from "../../../models/User"; // Adjust the import path as needed
-import { verifyToken } from "../../../utils/jwt"; // Adjust the import path as needed
 
 const router = Router();
 
