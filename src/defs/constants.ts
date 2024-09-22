@@ -4,6 +4,7 @@ export const forbiddenResponseFields = ["password"];
 // Responses text
 export const MISSING_BODY_FIELDS = "Missing body fields.";
 export const MISSING_PARAMETERS = "Missing parameters.";
+export const UNAUTHORIZED = "Unauthorized.";
 export const INVALID_REQUEST = "Invalid request.";
 export const INVALID_PASSWORD = "Invalid password.";
 export const INVALID_USERNAME_OR_EMAIL_AND_PASSWORD =

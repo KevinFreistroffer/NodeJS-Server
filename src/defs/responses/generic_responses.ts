@@ -6,6 +6,7 @@ import {
   RESOURCE_NOT_FOUND,
   ROUTE_NOT_FOUND,
   SUCCESS,
+  UNAUTHORIZED,
 } from "../constants";
 import { EMessageType } from "../enums";
 import { ISanitizedUser, IJournal } from "../interfaces";
@@ -28,6 +29,7 @@ export interface IResponseBodies {
   invalid_request: (description?: string) => IResponse;
   missing_parameters: (description?: string) => IResponse;
   missing_body_fields: (description?: string) => IResponse;
+  unauthorized: (description?: string) => IResponse;
   access_denied: (description?: string) => IResponse;
   route_not_found: (description?: string) => IResponse;
   caught_error: (error: unknown, description?: string) => IResponse;
@@ -50,6 +52,7 @@ export const statusCodes = {
   invalid_request: 400,
   missing_parameters: 400,
   missing_body_fields: 422,
+  unauthorized: 401,
   access_denied: 403,
   route_not_found: 404,
   caught_error: 500,
@@ -81,6 +84,12 @@ export const responses: IResponseBodies = {
     message: EMessageType.error,
     description: description || MISSING_BODY_FIELDS,
     code: 1007,
+    data: undefined,
+  }),
+  unauthorized: (description) => ({
+    message: EMessageType.error,
+    description: description || UNAUTHORIZED,
+    code: 1008,
     data: undefined,
   }),
   access_denied: (description) => ({
