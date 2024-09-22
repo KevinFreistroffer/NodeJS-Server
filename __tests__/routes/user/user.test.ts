@@ -1,11 +1,23 @@
 import express from "express";
 import request from "supertest";
 import { findOneByUsernameOrEmail } from "../../../src/operations/user_operations";
-import { responses } from "../../../src/defs/responses/generic";
-import { rateLimiterMiddleware } from "../../../src/router/routes/user/create";
+import { responses as genericResponses } from "../../../src/defs/responses/generic_responses";
+import { rateLimiterMiddleware } from "../../../src/middleware";
 import dotenv from "dotenv";
 import { rateLimit } from "express-rate-limit";
 dotenv.config();
+
+jest.mock("express-rate-limit");
+
+const mockRateLimit = rateLimit as jest.MockedFunction<typeof rateLimit>;
+mockRateLimit.mockImplementation(() => {
+  const middleware = (req: any, res: any, next: any) =>
+    genericResponses.too_many_requests();
+  return Object.assign(middleware, {
+    resetKey: () => {},
+    getKey: () => undefined,
+  });
+});
 
 jest.mock("../../../src/operations/user_operations", () => ({
   findOneById: jest.fn(),
@@ -52,21 +64,10 @@ afterEach(() => {
 
 describe("/user/create", () => {
   it("rate limiting functionality", async () => {
-    jest.mock("../../../src/router/routes/user/create", () => ({
-      rateLimiterMiddleware: jest.fn((req, res, next) => {
-        const limiter = rateLimit({
-          windowMs: 1, // 15 minutes
-          max: 1, // Limit each IP to 5 create account requests per windowMs
-          message:
-            "Too many accounts created from this IP, please try again later",
-        });
-
-        return limiter;
-      }),
-    }));
     // Test rate limiting functionality
     const makeRequests = async (count: number) => {
-      const requests = [];
+      const requests: any[] = [];
+      console.log(requests);
       for (let i = 0; i < count; i++) {
         requests.push(
           request(app).post("/user/create").send({
@@ -88,9 +89,7 @@ describe("/user/create", () => {
 
     // The 6th request should be rate limited
     expect(responses[5].status).toBe(429);
-    expect(responses[5].text).toContain(
-      "Too many accounts created from this IP, please try again later"
-    );
+    expect(responses[5].body).toEqual(genericResponses.too_many_requests());
 
     // Wait for the rate limit window to reset
     await new Promise((resolve) => setTimeout(resolve, 15 * 60 * 1000));
@@ -114,6 +113,6 @@ describe("/user/create", () => {
     // (findOneByUsernameOrEmail as jest.Mock).mockResolvedValue(undefined);
     const response = await request(app).post("/user/create").send({});
     expect(response.status).toBe(422);
-    expect(response.body).toEqual(responses.missing_body_fields());
+    expect(response.body).toEqual(genericResponses.missing_body_fields());
   });
 });

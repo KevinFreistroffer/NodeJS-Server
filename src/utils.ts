@@ -9,7 +9,8 @@ import { responses, statusCodes } from "./defs/responses/generic";
 import { insertOne } from "./operations/file_operations";
 import { stat } from "node:fs";
 import { writeFile } from "node:fs/promises";
-
+import nodemailer from "nodemailer";
+import jwt from "jsonwebtoken";
 export const convertDocToSafeUser = (UNSAFE_DOC: any): ISanitizedUser => {
   const SAFE_DOC: ISanitizedUser & { _id: ObjectId } = {
     _id: UNSAFE_DOC._id,
@@ -125,6 +126,55 @@ export const handleCaughtErrorResponse = (
   return res
     .status(statusCodes.caught_error)
     .json(responses.something_went_wrong());
+};
+
+export const sendAccountActivationEmail = async (
+  to: string,
+  userId: string
+) => {
+  if (!process.env.EMAIL_FROM || !process.env.EMAIL_APP_PASSWORD) {
+    throw new Error("Email credentials are not set in the environment.");
+  }
+
+  if (!process.env.JWT_SECRET) {
+    throw new Error("JWT secret is not set in the environment.");
+  }
+
+  const token = jwt.sign({ userId }, process.env.JWT_SECRET, {
+    expiresIn: "1d",
+  });
+  const verificationLink = `http://localhost:3000/verify-account/${token}`;
+  const transport = `smtps://${encodeURIComponent(
+    process.env.EMAIL_FROM
+  )}:${encodeURIComponent(process.env.EMAIL_APP_PASSWORD)}@smtp.gmail.com`;
+  console.log("transport: ", transport);
+  const transporter = nodemailer.createTransport(transport);
+
+  // setup e-mail data with unicode symbols
+  const mailOptions = {
+    from: `"Journal App 👥" <${process.env.EMAIL_FROM}>`,
+    // to: to, // Use the provided email address
+    to: "kevin.freistroffer@gmail.com", // Use the provided email address
+    subject: "Account Activation",
+    text:
+      "Hi,\n\n" +
+      "Please confirm your account by clicking the following link: " +
+      verificationLink +
+      "\n\nThis link will expire in 24 hours.",
+    html: `<p>Hi,</p>
+      <p>Please confirm your account by clicking the following link:</p>
+      <a href="${verificationLink}">Activate Your Account</a>
+      <p>This link will expire in 24 hours.</p>`,
+  };
+
+  // send mail with defined transport object
+  transporter.sendMail(mailOptions, (err, info) => {
+    console.log("err: ", err);
+    console.log("info: ", info);
+    if (err) {
+      throw err;
+    }
+  });
 };
 
 // export const verifyJWT = async (token: string) => {

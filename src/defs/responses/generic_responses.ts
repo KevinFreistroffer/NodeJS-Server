@@ -32,6 +32,7 @@ export interface IResponseBodies {
   route_not_found: (description?: string) => IResponse;
   caught_error: (error: unknown, description?: string) => IResponse;
   something_went_wrong: () => IResponse;
+  too_many_requests: () => IResponse;
   success: (
     data?:
       | ISanitizedUser
@@ -53,6 +54,7 @@ export const statusCodes = {
   route_not_found: 404,
   caught_error: 500,
   something_went_wrong: 500,
+  too_many_requests: 429,
   success: 200,
 };
 
@@ -106,6 +108,13 @@ export const responses: IResponseBodies = {
     message: EMessageType.error,
     description: "Something went wrong!",
     code: 1014,
+    data: undefined,
+  }),
+  too_many_requests: () => ({
+    message: EMessageType.error,
+    description:
+      "Too many requests sent from this IP address. Please try again later.",
+    code: 429,
     data: undefined,
   }),
   success: (

@@ -11,14 +11,9 @@ import { responses as userResponses } from "../../../defs/responses/user";
 import { updateOne } from "../../../operations/user_operations";
 import { handleCaughtErrorResponse } from "../../../utils";
 import dotenv from "dotenv";
-import { rateLimit } from "express-rate-limit";
 import passwordHash from "password-hash";
 dotenv.config();
-const limiter = rateLimit({
-  windowMs: 30 * 60 * 1000, // 30 minutes
-  max: 5, // Limit each IP to 5 create account requests per windowMs
-  message: "Too many requests from this IP, please try again later",
-});
+
 const router = express.Router();
 const validatedToken = body("token")
   .notEmpty()
@@ -35,7 +30,6 @@ const validatedPassword = body("password")
 
 router.post(
   "/",
-  limiter,
   validatedToken,
   validatedPassword,
   async (req: express.Request, res: express.Response<IResponse>) => {
@@ -72,7 +66,7 @@ router.post(
       // foundUser.resetPasswordToken = undefined;
       // foundUser.resetPasswordExpires = undefined;
 
-      if (!process.env.EMAIL_FROM || !process.env.EMAIL_PASSWORD) {
+      if (!process.env.EMAIL_FROM || !process.env.EMAIL_APP_PASSWORD) {
         return res
           .status(500)
           .json(
@@ -86,7 +80,7 @@ router.post(
       const transporter = nodemailer.createTransport(
         `smtps://${encodeURIComponent(
           process.env.EMAIL_FROM
-        )}:${encodeURIComponent(process.env.EMAIL_PASSWORD)}@smtp.gmail.com`
+        )}:${encodeURIComponent(process.env.EMAIL_APP_PASSWORD)}@smtp.gmail.com`
       );
 
       // setup e-mail data with unicode symbols

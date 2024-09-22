@@ -13,7 +13,6 @@ router.get(
   "/",
   async (req: express.Request, res: express.Response<IResponse>) => {
     try {
-      console.log("/user/users", req.headers);
       const doc = await findAllUsers();
 
       return res.json(genericResponses.success(doc));

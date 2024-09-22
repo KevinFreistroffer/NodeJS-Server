@@ -20,6 +20,7 @@ import { Timestamp } from "mongodb";
 import { AsyncLocalStorage } from "node:async_hooks";
 import { LambdaClient, InvokeCommand } from "@aws-sdk/client-lambda";
 import dotenv from "dotenv";
+import { rateLimiterMiddleware } from "./middleware";
 import { checkConflictingRouteMiddleware } from "./routes";
 
 checkConflictingRouteMiddleware();
@@ -69,10 +70,10 @@ export default class Server {
       this.server.use(passport.initialize());
       this.server.use(express.json());
       this.server.use(express.urlencoded({ extended: true }));
+      this.server.use(rateLimiterMiddleware());
       this.server.use(
         "*",
         (req: Request, res: Response, next: NextFunction) => {
-          console.log("middleware req.url: ", req.url);
           this.setAsyncLocalStorageMsg("Setting async local storage message.");
 
           next();

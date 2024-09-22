@@ -17,18 +17,7 @@ import {
   findOneById,
   insertOne,
 } from "../../../operations/user_operations";
-import { rateLimit } from "express-rate-limit";
-
-export const rateLimiterMiddleware = () => {
-  const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 5, // Limit each IP to 5 create account requests per windowMs
-    message: "Too many accounts created from this IP, please try again later",
-  });
-
-  return limiter;
-};
-
+import { sendAccountActivationEmail } from "../../../utils";
 const router = express.Router();
 
 // List of functionalities that can be unit tested:
@@ -45,7 +34,6 @@ const router = express.Router();
 
 router.post(
   "/",
-  rateLimiterMiddleware(),
   body([
     "username",
     // "userId",
@@ -84,6 +72,8 @@ router.post(
       if (!userDoc) {
         return res.json(responses.user_not_found());
       }
+
+      await sendAccountActivationEmail(email, userDoc._id.toString());
 
       return res.json(responses.success(convertDocToSafeUser(userDoc)));
     } catch (error) {

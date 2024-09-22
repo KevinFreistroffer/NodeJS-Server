@@ -104,31 +104,18 @@ export const excludeFromAccessKeyVerification = routes
   .filter((route) => !route.requiresAccessKey)
   .map((route) => route.path);
 
-console.log(
-  "excludeFromAccessKeyVerification",
-  excludeFromAccessKeyVerification
-);
-
 export const excludeFromAuthorizationVerification = routes
   .filter((route) => !route.requiresAuthorization)
   .map((route) => route.path);
-
-console.log(
-  "excludeFromAuthorizationVerification",
-  excludeFromAuthorizationVerification
-);
 
 export const routesRequiringAccessKey = routes
   .filter((route) => route.requiresAccessKey)
   .map((route) => route.path);
 
-console.log("routesRequiringAccessKey", routesRequiringAccessKey);
 
 export const routesRequiringAuthorization = routes
   .filter((route) => route.requiresAuthorization)
   .map((route) => route.path);
-
-console.log("routesRequiringAuthorization", routesRequiringAuthorization);
 
 export const checkConflictingRouteMiddleware = () => {
   // Check for conflicting configurations
@@ -144,8 +131,6 @@ export const checkConflictingRouteMiddleware = () => {
     ...conflictingAccessKeyRoutes,
     ...conflictingAuthorizationRoutes,
   ].join(", ");
-
-  console.log("conflictingPaths", conflictingPaths);
 
   if (conflictingPaths.length > 0) {
     throw new Error(
