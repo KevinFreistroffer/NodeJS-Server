@@ -18,3 +18,5 @@ use the handleUncaughtErroResponse()
 make sure the protected routes unit tests with middleware and env vars is safe
 
 email-available, username-available - think about if a limit should be set. These would be used either not at all, since creating a user would do this.
+
+updateOne() make the 2nd argument just the value, then use the $set in the updateOne 

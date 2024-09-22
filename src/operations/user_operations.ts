@@ -97,8 +97,10 @@ export const findAllUsers = async () => await findAll({}, true);
  * Find one by ID
  * @param id
  */
-export const findOneById = async (id: ObjectId) =>
-  await findOne({ query: { _id: id }, sanitize: true });
+export const findOneById = async (id: ObjectId) => {
+  console.log("id", id);
+  return await findOne({ query: { _id: id }, sanitize: true });
+};
 
 /**
  * Find one by email
@@ -172,7 +174,7 @@ export async function insertOne(
  */
 export async function updateOne(
   query: Filter<IUser>,
-  update: Record<string, any> // possible to set what key's are valid? username,
+  update: Record<string, any>
 ): Promise<UpdateResult<IUser>> {
   const client = await getClient();
   try {

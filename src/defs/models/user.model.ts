@@ -17,7 +17,7 @@ export class User {
   journalCategories: any[];
   resetAttempts: { timestamp: string }[];
   lastResetAttempt: string;
-
+  isVerified: boolean = false;
   constructor(username: string, email: string, password: string) {
     this.username = username;
     this.usernameNormalized = username.toLowerCase();
@@ -38,4 +38,5 @@ export const UserProjection = {
   email: 1,
   journals: 1,
   journalCategories: 1,
+  isVerified: 1,
 };

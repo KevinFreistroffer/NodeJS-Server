@@ -7,10 +7,12 @@ import process from "node:process";
 import { Request, Response } from "express";
 import { responses, statusCodes } from "./defs/responses/generic";
 import { insertOne } from "./operations/file_operations";
+import { findOne } from "./operations/user_operations";
 import { stat } from "node:fs";
 import { writeFile } from "node:fs/promises";
 import nodemailer from "nodemailer";
 import jwt from "jsonwebtoken";
+
 export const convertDocToSafeUser = (UNSAFE_DOC: any): ISanitizedUser => {
   const SAFE_DOC: ISanitizedUser & { _id: ObjectId } = {
     _id: UNSAFE_DOC._id,
@@ -140,6 +142,9 @@ export const sendAccountActivationEmail = async (
     throw new Error("JWT secret is not set in the environment.");
   }
 
+  console.log("userId", userId);
+  console.log("process.env.JWT_SECRET", process.env.JWT_SECRET);
+
   const token = jwt.sign({ userId }, process.env.JWT_SECRET, {
     expiresIn: "1d",
   });
@@ -191,96 +196,17 @@ export const sendAccountActivationEmail = async (
   });
 };
 
-// export const verifyJWT = async (token: string) => {
+export const verifyJWT = (token: string, callback?: Function) => {
+  if (!process.env.JWT_SECRET) {
+    throw new Error("JWT secret is not set in the environment.");
+  }
 
-//   if (!isJwtPayload(token)) {
-//     throw new Error(
-//       "Invalid JWT payload. The decoded value is not of type JwtPayload."
-//     );
-//   }
+  return jwt.verify(token, process.env.JWT_SECRET);
+};
 
-//   const callback = async (
-//     error: VerifyErrors | null,
-//     decoded: string | JwtPayload | undefined
-//   ) => {
-//     // Error decoding the JWT token
-//     if (error) {
-//       throw error;
-//     }
-
-//     if (!isJwtPayload(decoded)) {
-//       throw new Error(
-//         "Invalid JWT payload. The decoded value is not of type JwtPayload."
-//       );
-//     } else {
-//       const users = await usersCollection();
-//       // Find user by username or email
-//       const doc = await users.findOne(
-//         { _id: decoded.data },
-//         { projection: UserProjection }
-//       );
-
-//       console.log("[Authenticate] found user by username or email: ", doc);
-//       /*--------------------------------------------------
-//        * User NOT found
-//        *------------------------------------------------*/
-//       if (!doc) {
-//         throw new Error("User not found.");
-//       }
-
-//       /*--------------------------------------------------
-//        * User found
-//        *------------------------------------------------*/
-//       console.log("Found a user by username/email.");
-//       bcrypt.compare(
-//         decoded.data.password,
-//         doc.password,
-//         (compareError, validPassword) => {
-//           /*--------------------------------------------------
-//            * Error comparing passwords
-//            *------------------------------------------------*/
-//           if (compareError) {
-//             console.log(
-//               "[Login] Error BCrypt comparing passwords: ",
-//               compareError
-//             );
-//             throw new Error("Error BCrypt comparing passwords " + compareError);
-//           }
-
-//           /*--------------------------------------------------
-//            * Invalid password
-//            *------------------------------------------------*/
-//           if (!validPassword) {
-//             throw new Error("Invalid password.");
-//           }
-
-//           /*--------------------------------------------------
-//            * Valid password
-//            *------------------------------------------------*/
-//           console.log("SUCCESSFULL login");
-//           return true;
-//         }
-//       );
-//     }
-//   };
-
-//   const bird = verify(token, config.jwtSecret, callback);
-//   console.log(bird);
-
-//   function* generator(i: any) {
-//     yield bird;
-//     yield i + 10;
-//   }
-
-//   const gen = generator(10);
-//   console.log(gen.next().value);
-//   // Expected output: 10
-
-//   console.log(gen.next().value);
-// };
-
-// export const isJwtPayload = (arg: any): arg is JwtPayload => {
-//   return arg && arg.data;
-// };
+// THIS DOESNT WORK
+export const isJwtPayload = (arg: any): arg is jwt.JwtPayload => {
+  return arg && arg.data;
+};
 
 // TODO: Is this a Document or WithId<IUser>?

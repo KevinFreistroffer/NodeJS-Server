@@ -77,6 +77,7 @@ router.post(
 
       return res.json(responses.success(convertDocToSafeUser(userDoc)));
     } catch (error) {
+      console.log("error", error);
       return handleCaughtErrorResponse(error, req, res);
     }
   }
