@@ -12,6 +12,7 @@ import {
   convertDocToSafeUser,
   handleCaughtErrorResponse,
 } from "../../../utils";
+import * as bcrypt from "bcryptjs";
 import {
   findOneByUsernameOrEmail,
   findOneById,
@@ -61,7 +62,19 @@ router.post(
         return res.json(responses.username_or_email_already_registered());
       }
 
-      const insertDoc = await insertOne(new User(username, email, password));
+      const salt = await bcrypt.genSalt(10);
+      if (!salt) {
+        throw new Error("Error generating salt");
+      }
+
+      const encryptedPassword = await bcrypt.hash(password, salt);
+      if (!encryptedPassword) {
+        throw new Error("Error encrypting password");
+      }
+
+      const insertDoc = await insertOne(
+        new User(username, email, encryptedPassword)
+      );
 
       if (!insertDoc || !insertDoc.insertedId) {
         return res.json(responses.error_inserting_user());

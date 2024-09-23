@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { verifyJWT } from "../../../utils";
 import { findOneById, updateOne } from "../../../operations/user_operations";
-import { JwtPayload } from "jsonwebtoken";
+import * as jwt from "jsonwebtoken";
 import { ObjectId } from "mongodb";
 import {
   responses,

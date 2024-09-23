@@ -7,13 +7,17 @@ import { body, validationResult } from "express-validator";
 import { has } from "lodash";
 import { responses, statusCodes } from "../../../defs/responses/user";
 import { findOne } from "../../../operations/user_operations";
-import { handleCaughtErrorResponse } from "../../../utils";
+import {
+  handleCaughtErrorResponse,
+  sendAccountActivationEmail,
+} from "../../../utils";
 import {
   IResponse,
   responses as genericResponses,
 } from "../../../defs/responses/generic_responses";
 import dotenv from "dotenv";
-
+import { ISanitizedUser } from "../../../defs/interfaces";
+import { sanitizeUser } from "../../../utils";
 dotenv.config();
 
 const router = express.Router();
@@ -37,6 +41,7 @@ router.post(
         : true;
 
       const validatedResults = validationResult(req);
+      console.log("validatedResults", validatedResults);
 
       if (validatedResults.array().length || !validStaySignedIn) {
         return res
@@ -44,13 +49,20 @@ router.post(
           .json(genericResponses.missing_body_fields());
       }
 
+      // $2a$10$QSgxeCPndMOXaU0jD/vsTegda4C6o4uE4ThW5F7yUO0WZOx.C1lju
+
       const { usernameOrEmail, password, staySignedIn } = req.body;
+      console.log("usernameOrEmail", usernameOrEmail);
+      console.log("password", password);
+      console.log("staySignedIn", staySignedIn);
       const UNSAFE_DOC = await findOne({
         query: {
           $or: [{ username: usernameOrEmail }, { email: usernameOrEmail }],
         },
         sanitize: false,
       });
+
+      console.log("UNSAFE_DOC", UNSAFE_DOC);
 
       if (!UNSAFE_DOC) {
         return res
@@ -61,10 +73,13 @@ router.post(
       /*--------------------------------------------------
        * Compare passwords.
        *------------------------------------------------*/
+
       const passwordsMatch = await bcrypt.compare(
         password,
         UNSAFE_DOC.password
       );
+
+      console.log("passwordsMatch", passwordsMatch);
 
       if (!passwordsMatch) {
         return res
@@ -72,17 +87,14 @@ router.post(
           .json(responses.invalid_password());
       }
 
-      const foundUser = await findOne({
-        query: {
-          $or: [{ username: usernameOrEmail }, { email: usernameOrEmail }],
-        },
-        sanitize: true,
-      });
+      // Sanitize the UNSAFE_DOC to return an ISanitizedUser interface
+      const sanitizedUser = sanitizeUser(UNSAFE_DOC);
 
-      if (!foundUser) {
-        return res
-          .status(statusCodes.user_not_found)
-          .json(responses.user_not_found());
+      if (!sanitizedUser.isVerified) {
+        await sendAccountActivationEmail(
+          sanitizedUser.email,
+          sanitizedUser._id.toString()
+        );
       }
 
       /*-----------------------------------------------------
@@ -110,15 +122,16 @@ router.post(
       }
 
       // TODO: make a single function that handles returning responses, and uses the convertDocToSafeUser
-      return res.json({
-        ...responses.success(),
-        data: {
-          ...responses.success().data,
-          user: foundUser, // TODO fix this response
-          token,
-        },
-      });
+      return res.json(
+        responses.success(
+          sanitizedUser,
+          sanitizedUser.isVerified
+            ? ""
+            : "Login successful, but the account is not verified. A verification email was sent."
+        )
+      );
     } catch (error) {
+      console.log("error", error);
       return handleCaughtErrorResponse(error, req, res);
     }
   }

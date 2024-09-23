@@ -23,6 +23,7 @@ export const convertDocToSafeUser = (UNSAFE_DOC: any): ISanitizedUser => {
     journals: UNSAFE_DOC.journals,
     journalCategories: UNSAFE_DOC.journalCategories,
     resetPasswordToken: UNSAFE_DOC.resetPasswordToken,
+    isVerified: UNSAFE_DOC.isVerified,
     // jwtToken: UNSAFE_DOC.jwtToken,
   };
 
@@ -210,3 +211,15 @@ export const isJwtPayload = (arg: any): arg is jwt.JwtPayload => {
 };
 
 // TODO: Is this a Document or WithId<IUser>?
+
+export const sanitizeUser = (user: any): ISanitizedUser & { _id: ObjectId } => {
+  return {
+    _id: user._id,
+    username: user.username,
+    email: user.email,
+    journals: user.journals,
+    journalCategories: user.journalCategories,
+    resetPasswordToken: user.resetPasswordToken,
+    isVerified: user.isVerified,
+  };
+};

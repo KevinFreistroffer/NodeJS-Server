@@ -33,7 +33,10 @@ export interface IResponses {
   email_available: (emailAvailable: boolean, description?: string) => IResponse;
   error_inserting_user: (description?: string) => IResponse;
   could_not_update: (description?: string) => IResponse;
-  success: (user?: ISanitizedUser | ISanitizedUser[]) => IResponse;
+  success: (
+    user?: ISanitizedUser | ISanitizedUser[],
+    description?: string
+  ) => IResponse;
 }
 
 export const responses: IResponses = {

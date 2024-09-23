@@ -24,3 +24,5 @@ updateOne() make the 2nd argument just the value, then use the $set in the updat
 make sure if no document is found in the DB to think about returning the same responses, 404.
 
 responses.success(undefined, "Account is already verified") should be an easier way to not send undefined.
+
+login, line ~86, why am i fetching the user again?
