@@ -1,3 +1,5 @@
+import { Document, ObjectId, WithId } from "mongodb";
+
 export interface IJournal extends Document {
   title: string;
   entry: string;
@@ -5,7 +7,8 @@ export interface IJournal extends Document {
   date: string;
   selected: boolean;
 }
-export interface ICategory extends Document {
+export interface ICategory {
+  _id: ObjectId;
   category: string;
   selected: boolean;
 }
@@ -25,15 +28,27 @@ export interface IUser {
   journalCategories: ICategory[];
 }
 
+export interface IUserDoc extends WithId<IUser> {}
+
 export interface ISanitizedUser
   extends Omit<
-    IUser,
+    IUserDoc,
     "password" | "usernameNormalized" | "emailNormalized"
 
     // | "resetPasswordToken"
     // | "resetPasswordExpires"
     // | "jwtToken"
   > {}
+
+// export interface ISanitizedUserDoc
+//   extends Omit<
+//     IUserDoc,
+//     "password" | "usernameNormalized" | "emailNormalized"
+
+//     // | "resetPasswordToken"
+//     // | "resetPasswordExpires"
+//     // | "jwtToken"
+//   > {}
 
 export interface ISession {
   _id: string;

@@ -12,14 +12,15 @@ import { stat } from "node:fs";
 import { writeFile } from "node:fs/promises";
 import nodemailer from "nodemailer";
 import jwt from "jsonwebtoken";
+import { WithId } from "mongodb";
 
-export const convertDocToSafeUser = (UNSAFE_DOC: any): ISanitizedUser => {
-  const SAFE_DOC: ISanitizedUser & { _id: ObjectId } = {
+export const convertDocToSafeUser = (
+  UNSAFE_DOC: WithId<ISanitizedUser>
+): ISanitizedUser => {
+  const SAFE_DOC: ISanitizedUser = {
     _id: UNSAFE_DOC._id,
     username: UNSAFE_DOC.username,
-    // usernameNormalized: UNSAFE_DOC.usernameNormalized,
     email: UNSAFE_DOC.email,
-    // emailNormalized: UNSAFE_DOC.emailNormalized,
     journals: UNSAFE_DOC.journals,
     journalCategories: UNSAFE_DOC.journalCategories,
     resetPasswordToken: UNSAFE_DOC.resetPasswordToken,
@@ -212,7 +213,7 @@ export const isJwtPayload = (arg: any): arg is jwt.JwtPayload => {
 
 // TODO: Is this a Document or WithId<IUser>?
 
-export const sanitizeUser = (user: any): ISanitizedUser & { _id: ObjectId } => {
+export const sanitizeUser = (user: any): ISanitizedUser => {
   return {
     _id: user._id,
     username: user.username,

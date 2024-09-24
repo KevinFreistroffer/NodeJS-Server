@@ -17,6 +17,7 @@ import {
 } from "../../../defs/responses/generic_responses";
 import dotenv from "dotenv";
 import { ISanitizedUser } from "../../../defs/interfaces";
+import { ObjectId } from "mongodb";
 import { sanitizeUser } from "../../../utils";
 dotenv.config();
 
@@ -93,7 +94,7 @@ router.post(
       if (!sanitizedUser.isVerified) {
         await sendAccountActivationEmail(
           sanitizedUser.email,
-          sanitizedUser._id.toString()
+          (sanitizedUser._id as ObjectId).toString()
         );
       }
 

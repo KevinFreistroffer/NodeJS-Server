@@ -52,7 +52,7 @@ router.post(
       /*--------------------------------------------------
        *  Set the journal category on each journal
        *------------------------------------------------*/
-      doc.journals.forEach((journal) => {
+      doc.journals.forEach((journal: IJournal) => {
         if (
           journalIds.includes(
             ((journal as IJournal)._id as ObjectId).toString()
