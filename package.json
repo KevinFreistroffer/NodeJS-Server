@@ -34,6 +34,7 @@
     "passport-google-oauth20": "^2.0.0",
     "password-hash": "^1.2.2",
     "path": "^0.12.7",
+    "pm2": "^5.4.2",
     "rewire": "^7.0.0",
     "server-route-cli": "^0.0.13",
     "sinon": "^18.0.0",

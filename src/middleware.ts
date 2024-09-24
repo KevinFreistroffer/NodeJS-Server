@@ -15,6 +15,7 @@ export const rateLimiterMiddleware = () => {
     max: 5, // Limit each IP to 5 create account requests per windowMs
     handler: (req: Request, res: Response, next: NextFunction) =>
       res.status(429).json(genericResponses.too_many_requests()),
+    skip: (req: Request) => req.ip === "127.0.0.1", // TODO: Remove this before deploying
   });
 
   console.log(limiter, typeof limiter);

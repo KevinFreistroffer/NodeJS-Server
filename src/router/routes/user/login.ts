@@ -119,17 +119,28 @@ router.post(
         if (!token) {
           throw new Error("Error generating JWT token.");
         }
+
+        res.setHeader("Access-Control-Allow-Origin", "*"); // Allow all origins (or specify your frontend's origin)
+        res.setHeader("Access-Control-Expose-Headers", "Set-Cookie");
+        // Set the session_token cookie
+        res.header(
+          "Set-Cookie",
+          `session_token=${token}; HttpOnly; ${
+            process.env.NODE_ENV === "production" ? "Secure; " : ""
+          }Max-Age=${14 * 24 * 60 * 60}; SameSite=Strict${
+            process.env.NODE_ENV === "production" ? "; Secure" : ""
+          }`
+        );
       }
 
       // TODO: make a single function that handles returning responses, and uses the convertDocToSafeUser
-      return res.json(
-        responses.success(
-          sanitizedUser,
-          sanitizedUser.isVerified
-            ? ""
-            : "Login successful, but the account is not verified. A verification email was sent."
-        )
-      );
+      const description = sanitizedUser.isVerified
+        ? ""
+        : "Login successful, but the account is not verified. A verification email was sent.";
+
+      return res.json({
+        ...responses.success(sanitizedUser, description),
+      });
     } catch (error) {
       console.log("error", error);
       return handleCaughtErrorResponse(error, req, res);

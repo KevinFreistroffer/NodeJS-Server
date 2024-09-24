@@ -1,4 +1,4 @@
-import { IJournalDoc } from "../../../../../defs/interfaces";
+import { IJournal } from "../../../../../defs/interfaces";
 import * as express from "express";
 import { body, validationResult } from "express-validator";
 import { responses as userResponses } from "../../../../../defs/responses/user";
@@ -55,7 +55,7 @@ router.post(
       doc.journals.forEach((journal) => {
         if (
           journalIds.includes(
-            ((journal as IJournalDoc)._id as ObjectId).toString()
+            ((journal as IJournal)._id as ObjectId).toString()
           )
         ) {
           journal.category = category;
