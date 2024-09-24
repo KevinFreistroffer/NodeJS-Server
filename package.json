@@ -48,7 +48,7 @@
   "scripts": {
     "test": "jest",
     "start:dev": "tsx --watch ./src/server.ts",
-    "start": "pm2 start ./dist/bundle.js",
+    "start": "pm2 start ./dist/bundle.js --env production",
     "build": "webpack"
   },
   "author": "",
