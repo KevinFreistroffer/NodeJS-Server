@@ -99,41 +99,36 @@ router.post(
       }
 
       /*-----------------------------------------------------
-       * Generate a JWT
+       * Generate a Session token
        *---------------------------------------------------*/
-      let token;
-      if (staySignedIn) {
-        // const timeStamp = moment().add(14, "days");
-
-        if (!process.env.JWT_SECRET || !process.env.JWT_TOKEN_EXPIRES_IN) {
-          throw new Error("JWT credentials are not set in the environment.");
-        }
-
-        token = sign(
-          { data: UNSAFE_DOC._id.toString() },
-          process.env.JWT_SECRET,
-          {
-            expiresIn: process.env.JWT_TOKEN_EXPIRES_IN,
-          }
-        );
-
-        if (!token) {
-          throw new Error("Error generating JWT token.");
-        }
-
-        res.setHeader("Access-Control-Allow-Origin", "*"); // Allow all origins (or specify your frontend's origin)
-        res.setHeader("Access-Control-Expose-Headers", "Set-Cookie");
-        // Set the session_token cookie
-        res.header(
-          "Set-Cookie",
-          `session_token=${token}; HttpOnly; ${
-            process.env.NODE_ENV === "production" ? "Secure; " : ""
-          }Max-Age=${14 * 24 * 60 * 60}; SameSite=Strict${
-            process.env.NODE_ENV === "production" ? "; Secure" : ""
-          }`
-        );
+      if (!process.env.JWT_SECRET || !process.env.JWT_TOKEN_EXPIRES_IN) {
+        throw new Error("JWT credentials are not set in the environment.");
       }
 
+      const token = sign(
+        { data: UNSAFE_DOC._id.toString() },
+        process.env.JWT_SECRET,
+        {
+          expiresIn: process.env.JWT_TOKEN_EXPIRES_IN,
+        }
+      );
+
+      if (!token) {
+        throw new Error("Error generating JWT token.");
+      }
+      if (staySignedIn) {
+        // TODO: Implement session token
+      }
+
+      res.set({
+        "Access-Control-Allow-Origin": "*", // Allow all origins (or specify your frontend's origin)
+        "Access-Control-Expose-Headers": "Set-Cookie",
+        "Set-Cookie": `session_token=${token}; HttpOnly; ${
+          process.env.NODE_ENV === "production" ? "Secure; " : ""
+        }Max-Age=${14 * 24 * 60 * 60}; SameSite=Strict${
+          process.env.NODE_ENV === "production" ? "; Secure" : ""
+        }`,
+      });
       // TODO: make a single function that handles returning responses, and uses the convertDocToSafeUser
       const description = sanitizedUser.isVerified
         ? ""

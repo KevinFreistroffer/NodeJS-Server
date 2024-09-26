@@ -15,10 +15,11 @@ export const rateLimiterMiddleware = () => {
     max: 5, // Limit each IP to 5 create account requests per windowMs
     handler: (req: Request, res: Response, next: NextFunction) =>
       res.status(429).json(genericResponses.too_many_requests()),
-    skip: (req: Request) => req.ip === "127.0.0.1", // TODO: Remove this before deploying
+    skip: (req: Request) =>
+      req.ip === "127.0.0.1" || process.env.NODE_ENV === "development", // TODO: Remove this before deploying
   });
 
-  console.log(limiter, typeof limiter);
+  console.log("LIMITER", limiter, typeof limiter);
   const v = limiter.getKey;
   console.log(v, typeof v);
 
@@ -53,6 +54,33 @@ export const verifyToken = (
     res.locals.auth = authData;
     next();
   });
+};
+
+export const verifySessionToken = (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  const sessionToken = req.cookies.session_token;
+  console.log("SESSION TOKEN", sessionToken);
+  if (!sessionToken || typeof sessionToken === "undefined") {
+    return res.sendStatus(401);
+  }
+
+  jwt.verify(
+    sessionToken,
+    process.env.JWT_SECRET as string,
+    (err: any, authData: any) => {
+      console.log("AUTH DATA", authData);
+      console.log("ERR", err);
+      if (!authData || err) {
+        return res.sendStatus(401);
+      }
+
+      res.locals.auth = authData;
+      next();
+    }
+  );
 };
 
 export const verifyAccessKey = (

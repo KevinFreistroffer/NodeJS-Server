@@ -1,3 +1,65 @@
+"use strict";
+
+import * as express from "express";
+import {
+  IResponse,
+  responses,
+  statusCodes,
+} from "../../../defs/responses/generic";
+import { handleCaughtErrorResponse } from "../../../utils";
+import { has } from "lodash";
+import jwt from "jsonwebtoken";
+import { findOneById } from "../../../operations/user_operations";
+import { ObjectId } from "mongodb";
+const router = express.Router();
+
+router.get(
+  "/",
+  async (req: express.Request, res: express.Response<IResponse>) => {
+    try {
+      if (!process.env.JWT_SECRET) {
+        throw new Error("JWT_SECRET is not set");
+      }
+
+      console.log(req.headers);
+      const authHeader = req.headers["authorization"];
+      if (!authHeader) {
+        return res.send(responses.success());
+      }
+
+      console.log("authHeader", authHeader);
+
+      const [bearer, token] = authHeader.split(" ");
+      console.log("bearer", bearer);
+      console.log("token", token);
+      if (bearer.toLowerCase() !== "bearer" || !token) {
+        return res.send(responses.success());
+      }
+
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      console.log("decoded", decoded);
+
+      if (!decoded || !has(decoded, "data")) {
+        return res.send(responses.success());
+      }
+
+      const user = await findOneById(new ObjectId(decoded.data as string));
+      console.log("user", user);
+
+      if (!user || !user._id) {
+        return res.send(responses.access_denied());
+      }
+
+      // TODO: implement
+      return res.json(responses.success());
+    } catch (error) {
+      return handleCaughtErrorResponse(error, req, res);
+    }
+  }
+);
+
+module.exports = router;
+
 // "use strict";
 
 // import { users as mockUsers } from "../../../data/mock_users";

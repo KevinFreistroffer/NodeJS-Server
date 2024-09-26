@@ -34,6 +34,7 @@ router.post(
   validatedUserId,
   validatedJournal,
   async (req: express.Request, res: express.Response<IResponse>) => {
+    console.log(req.cookies);
     try {
       const validatedFields = validationResult(req);
       if (!validatedFields.isEmpty()) {
@@ -45,17 +46,18 @@ router.post(
        * MongoDB User collection
        *------------------------------------------------*/
       const { userId, title, entry, category } = req.body;
-
+      console.log("userId", userId);
       const day = moment().day();
       const date = `${days[day]}, ${moment().format("MM-DD-YYYY")}`;
       const journal = new Journal(title, entry, category, date, false);
+      console.log("JOURNAL", journal);
 
       /*--------------------------------------------------
        *  Update user's journals
        *------------------------------------------------*/
       // const doc = await users.findOneAndUpdate({ _id: new ObjectId(userId) });
       const doc = await updateOne(
-        { _id: ObjectId.createFromHexString(userId) },
+        { _id: new ObjectId(userId) },
         {
           $addToSet: {
             journals: journal,
@@ -67,11 +69,13 @@ router.post(
         }
       );
 
-      if (!doc?.acknowledged || !doc.upsertedId) {
+      console.log("DOC", doc);
+
+      if (!doc?.acknowledged || !doc.modifiedCount) {
         return res.json(userResponses.could_not_update());
       }
 
-      const foundDoc = await findOneById(new ObjectId(doc.upsertedId));
+      const foundDoc = await findOneById(new ObjectId(userId));
 
       if (!foundDoc) {
         return res.json(userResponses.user_not_found());

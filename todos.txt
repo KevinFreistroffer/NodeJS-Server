@@ -1,3 +1,5 @@
+update express 5
+
 eslint showing errors in the Request<any, any, Interface>. Deleted them. Are these types required?
 
 codes starting from 1st /auth folder 1****
@@ -26,3 +28,6 @@ make sure if no document is found in the DB to think about returning the same re
 responses.success(undefined, "Account is already verified") should be an easier way to not send undefined.
 
 login, line ~86, why am i fetching the user again?
+
+
+inserting journals from front-end wasn't upserting, and was instead modifying. look into this. because of thisthere's no _id. look into this.

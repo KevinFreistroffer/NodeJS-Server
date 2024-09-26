@@ -9,7 +9,7 @@ import passport from "passport";
 import cors from "cors";
 import debug from "debug";
 import http from "http";
-import { verifyAccessKey, verifyToken } from "./middleware";
+import { verifyAccessKey, verifySessionToken } from "./middleware";
 import * as fs from "fs";
 import path from "path";
 import { getErrorDetails, getFilePath } from "./utils";
@@ -62,11 +62,13 @@ export default class Server {
 
       // Middleware
       // ----------------------------------------------------
+      this.server.use(cors());
       this.server.use(logger("dev"));
       this.server.use(cookieParser());
       this.server.use(helmet());
       this.server.disable("x-powered-by");
-      this.server.use(cors());
+      const whitelist = ["http://localhost:3000", "127.0.0.1"];
+
       this.server.use(passport.initialize());
       this.server.use(express.json());
       this.server.use(express.urlencoded({ extended: true }));
@@ -83,12 +85,6 @@ export default class Server {
         "*",
         (req: Request, res: Response, next: NextFunction) => {
           const adminOnlyRoutes = process.env.ADMIN_ROUTES?.split(",") || [];
-
-          /**
-           * By default all routes will verify an access key and a JWT authorization header.
-           * To exclude a route, a dev would add the route base url to a config. I don't want this route to verify an access key.
-           */
-
           const protectedRoutes =
             process.env.PROTECTED_ROUTES?.split(",") || [];
 
@@ -101,7 +97,7 @@ export default class Server {
           if (
             protectedRoutes.find((route) => route === req.baseUrl.toLowerCase())
           ) {
-            return verifyToken(req, res, next);
+            return verifySessionToken(req, res, next);
           }
 
           next();
