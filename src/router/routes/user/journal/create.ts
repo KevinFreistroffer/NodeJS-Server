@@ -59,7 +59,7 @@ router.post(
       const doc = await updateOne(
         { _id: new ObjectId(userId) },
         {
-          $addToSet: {
+          $push: {
             journals: journal,
             journalCategories: {
               category,

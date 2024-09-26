@@ -26,14 +26,15 @@ export interface IGenericResponses {
   caught_error: (error: unknown) => IResponse;
   something_went_wrong: (description?: string) => IResponse;
   success: (
-    data?:
+    data:
       | ISanitizedUser
       | ISanitizedUser[]
       | IJournal
       | IJournal[]
       | boolean
       | string
-      | undefined
+      | undefined,
+    description?: string
   ) => IResponse;
 }
 
