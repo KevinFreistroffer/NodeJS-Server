@@ -9,6 +9,7 @@ import {
 import { handleCaughtErrorResponse } from "../../../utils";
 import { findOneById } from "../../../operations/user_operations";
 import { ObjectId } from "mongodb";
+import { sendAccountActivationEmail } from "../../../utils";
 const router = express.Router();
 
 router.get(
@@ -36,6 +37,8 @@ router.get(
           .status(statusCodes.access_denied)
           .json(responses.access_denied());
       }
+
+      await sendAccountActivationEmail(user.email, user._id.toString());
 
       return res
         .status(statusCodes.success)
