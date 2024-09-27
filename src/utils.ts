@@ -153,7 +153,7 @@ export const sendAccountActivationEmail = async (
 
   let verificationLink: string;
 
-  if (process.env.environment === "development") {
+  if (process.env.NODE_ENV === "development") {
     verificationLink = `http://localhost:3000/verify-account/${token}`;
   } else {
     verificationLink = `https://journal-app-production.up.railway.app/verify-account/${token}`;
@@ -173,7 +173,7 @@ export const sendAccountActivationEmail = async (
     from: `"Journal App 👥" <${process.env.EMAIL_FROM}>`,
     // to: to, // Use the provided email address
     to:
-      process.env.environment === "development"
+      process.env.NODE_ENV === "development"
         ? "kevin.freistroffer@gmail.com"
         : toEmail, // Use the provided email address
     subject: "Account Activation",

@@ -3,6 +3,10 @@
 import express, { Router } from "express";
 
 module.exports = (app: express.Express) => {
+  app.use(
+    "/auth/send-verification-email",
+    require("./routes/auth/send-verification-email")
+  );
   app.use("/auth/bearer", require("./routes/auth/bearer"));
   app.use("/auth/verify-account", require("./routes/auth/verify-account"));
   app.use("/auth/authenticate", require("./routes/auth/authenticate"));
