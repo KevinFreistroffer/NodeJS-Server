@@ -30,189 +30,146 @@ dotenv.config();
 const swaggerUi = require("swagger-ui-express");
 const swaggerSpec = require("../swagger-spec.json");
 
-export default class Server {
-  port: number;
-  server!: Express;
-  listener!: http.Server<
-    typeof http.IncomingMessage,
-    typeof http.ServerResponse
-  >;
-  asyncLocalStorage: AsyncLocalStorage<string>;
-  errorLogId: number = 0;
+const port = parseInt(process.env.SERVER_PORT || "3001");
+const asyncLocalStorage = new AsyncLocalStorage<string>();
+let errorLogId = 0;
 
-  constructor(port?: number) {
-    if (port) {
-      this.port = port;
-    } else {
-      this.port = parseInt(process.env.SERVER_PORT || "3001");
-    }
+const setAsyncLocalStorageMsg = (msg: string) => {
+  asyncLocalStorage.run(errorLogId.toString(), () => {
+    errorLogId++;
+  });
+};
 
-    this.asyncLocalStorage = new AsyncLocalStorage();
+const server = express();
+
+// Middleware
+// ----------------------------------------------------
+server.use(cors());
+server.use(logger("dev"));
+server.use(cookieParser());
+server.use(helmet());
+server.disable("x-powered-by");
+const whitelist = ["http://localhost:3000", "127.0.0.1"];
+
+server.use(passport.initialize());
+server.use(express.json());
+server.use(express.urlencoded({ extended: true }));
+server.use(rateLimiterMiddleware());
+server.use("*", (req: Request, res: Response, next: NextFunction) => {
+  setAsyncLocalStorageMsg("Setting async local storage message.");
+  next();
+});
+server.use("*", (req: Request, res: Response, next: NextFunction) => {
+  const adminOnlyRoutes = process.env.ADMIN_ROUTES?.split(",") || [];
+  const protectedRoutes = process.env.PROTECTED_ROUTES?.split(",") || [];
+
+  if (adminOnlyRoutes.find((route) => route === req.baseUrl.toLowerCase())) {
+    return verifyAccessKey(req, res, next);
   }
 
-  setAsyncLocalStorageMsg(msg: string) {
-    this.asyncLocalStorage.run(this.errorLogId.toString(), () => {
-      this.errorLogId++;
+  if (protectedRoutes.find((route) => route === req.baseUrl.toLowerCase())) {
+    return verifySessionToken(req, res, next);
+  }
+
+  next();
+});
+
+// Router
+// ----------------------------------------------------
+require("./router")(server);
+server.use("/api-docs", swaggerUi.serve);
+server.get("/api-docs", swaggerUi.setup(swaggerSpec));
+
+// 404 & Error handling
+// ----------------------------------------------------
+// catch 404 and forward to error handler
+server.use(function (req, res, next) {
+  res.status(404).send(responses.route_not_found());
+});
+
+server.use(
+  async (
+    error: Error,
+    req: express.Request,
+    res: express.Response,
+    next: NextFunction
+  ) => {
+    const details = getErrorDetails(error);
+    const filePath = getFilePath(path.join(__dirname, "logs"), "error.log");
+
+    const status = await stat(filePath);
+
+    if (!status.isFile()) {
+      //
+    }
+
+    const date = new Date();
+    const data = `
+    Url: ${req.url}\n
+    Date: ${date}\n
+    Date in ms: ${date.getTime()}\n
+    Message:${details.message}\n
+    ____________________________
+    `;
+
+    await writeFile(filePath, data, { flag: "a" });
+
+    const insertDoc = await insertOne({
+      ...details,
+      date,
+      dateMs: date.getTime(),
+      url: req.url,
     });
-  }
 
-  async start() {
-    try {
-      this.server = express();
-
-      // Middleware
-      // ----------------------------------------------------
-      this.server.use(cors());
-      this.server.use(logger("dev"));
-      this.server.use(cookieParser());
-      this.server.use(helmet());
-      this.server.disable("x-powered-by");
-      const whitelist = ["http://localhost:3000", "127.0.0.1"];
-
-      this.server.use(passport.initialize());
-      this.server.use(express.json());
-      this.server.use(express.urlencoded({ extended: true }));
-      this.server.use(rateLimiterMiddleware());
-      this.server.use(
-        "*",
-        (req: Request, res: Response, next: NextFunction) => {
-          this.setAsyncLocalStorageMsg("Setting async local storage message.");
-
-          next();
-        }
-      );
-      this.server.use(
-        "*",
-        (req: Request, res: Response, next: NextFunction) => {
-          const adminOnlyRoutes = process.env.ADMIN_ROUTES?.split(",") || [];
-          const protectedRoutes =
-            process.env.PROTECTED_ROUTES?.split(",") || [];
-
-          if (
-            adminOnlyRoutes.find((route) => route === req.baseUrl.toLowerCase())
-          ) {
-            return verifyAccessKey(req, res, next);
-          }
-
-          if (
-            protectedRoutes.find((route) => route === req.baseUrl.toLowerCase())
-          ) {
-            return verifySessionToken(req, res, next);
-          }
-
-          next();
-        }
-      );
-
-      // Router
-      // ----------------------------------------------------
-      require("./router")(this.server);
-      this.server.use("/api-docs", swaggerUi.serve);
-      this.server.get("/api-docs", swaggerUi.setup(swaggerSpec));
-
-      // 404 & Error handling
-      // ----------------------------------------------------
-      // catch 404 and forward to error handler
-      this.server.use(function (req, res, next) {
-        res.status(404).send(responses.route_not_found());
-      });
-
-      this.server.use(
-        async (
-          error: Error,
-          req: express.Request,
-          res: express.Response,
-          next: NextFunction
-        ) => {
-          const details = getErrorDetails(error);
-          const filePath = getFilePath(
-            path.join(__dirname, "logs"),
-            "error.log"
-          );
-
-          const status = await stat(filePath);
-
-          if (!status.isFile()) {
-            //
-          }
-
-          const date = new Date();
-          const data = `
-          Url: ${req.url}\n
-          Date: ${date}\n
-          Date in ms: ${date.getTime()}\n
-          Message:${details.message}\n
-          ____________________________
-          `;
-
-          await writeFile(filePath, data, { flag: "a" });
-
-          const insertDoc = await insertOne({
-            ...details,
-            date,
-            dateMs: date.getTime(),
-            url: req.url,
-          });
-
-          if (!insertDoc.insertedId) {
-            throw new Error("Error inserting error document.");
-          }
-
-          const errorDoc = await findOneById(insertDoc.insertedId);
-
-          if (!errorDoc) {
-            throw new Error("Error finding inserted error document.");
-          }
-
-          return res
-            .status(statusCodes.caught_error)
-            .json(responses.something_went_wrong());
-        }
-      );
-
-      // If node process ends, close mongoose connection
-      // ----------------------------------------------------
-      process.on("SIGINT", async () => {
-        console.log("SIGINT received. Closing server...");
-        process.exit(0);
-      });
-
-      process.on("uncaughtException", (error) => {
-        console.log("Server Uncaught Exception: ", error);
-
-        getErrorDetails(error);
-      });
-
-      process.on("unhandledRejection", (error) => {
-        console.log("Server Uncaught Exception: ", error);
-
-        getErrorDetails(error);
-      });
-
-      // Server Port
-      // ----------------------------------------------------
-      this.listener = this.server.listen(this.port, () => {
-        console.log("Listening on port " + this.port + ".");
-      });
-
-      return this.server;
-    } catch (error: any) {
-      this.listener.close();
-      throw error;
+    if (!insertDoc.insertedId) {
+      throw new Error("Error inserting error document.");
     }
-  }
 
-  async getListener() {
-    return this.listener;
-  }
+    const errorDoc = await findOneById(insertDoc.insertedId);
 
-  async close() {
-    this.listener.close();
-  }
-}
+    if (!errorDoc) {
+      throw new Error("Error finding inserted error document.");
+    }
 
-export const run = () => {
-  new Server(parseInt(process.env.SERVER_PORT || "80")).start();
+    return res
+      .status(statusCodes.caught_error)
+      .json(responses.something_went_wrong());
+  }
+);
+
+// If node process ends, close mongoose connection
+// ----------------------------------------------------
+process.on("SIGINT", async () => {
+  console.log("SIGINT received. Closing server...");
+  process.exit(0);
+});
+
+process.on("uncaughtException", (error) => {
+  console.log("Server Uncaught Exception: ", error);
+  getErrorDetails(error);
+});
+
+process.on("unhandledRejection", (error) => {
+  console.log("Server Uncaught Exception: ", error);
+  getErrorDetails(error);
+});
+
+// Server Port
+// ----------------------------------------------------
+const listener = server.listen(port, () => {
+  console.log("Listening on port " + port + ".");
+});
+
+const getListener = async () => {
+  return listener;
+};
+
+const close = async () => {
+  listener.close();
+};
+
+const run = () => {
+  // The server is already set up and listening, so we don't need to do anything here
 };
 
 run();
