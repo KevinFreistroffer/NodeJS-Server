@@ -13,7 +13,7 @@ import { writeFile } from "node:fs/promises";
 import nodemailer from "nodemailer";
 import jwt from "jsonwebtoken";
 import { WithId } from "mongodb";
-
+import crypto from "node:crypto";
 export const convertDocToSafeUser = (
   UNSAFE_DOC: WithId<ISanitizedUser>
 ): ISanitizedUser => {
@@ -223,4 +223,25 @@ export const sanitizeUser = (user: any): ISanitizedUser => {
     resetPasswordToken: user.resetPasswordToken,
     isVerified: user.isVerified,
   };
+};
+
+export const formatSessionCookie = (token: string) => {
+  return {
+    "Access-Control-Allow-Origin": "*", // Allow all origins (or specify your frontend's origin)
+    "Access-Control-Expose-Headers": "Set-Cookie",
+    "Set-Cookie": `session_token=${token}; HttpOnly; ${
+      process.env.NODE_ENV === "production" ? "Secure; " : ""
+    }Max-Age=${14 * 24 * 60 * 60};  SameSite=None${
+      process.env.NODE_ENV === "production" ? "; Secure" : ""
+    }`,
+  };
+};
+
+export const generateResetToken = (expiresInHours: number = 3) => {
+  const token = crypto.randomBytes(20).toString("hex");
+  const expirationDate = new Date();
+  expirationDate.setTime(
+    expirationDate.getTime() + expiresInHours * 60 * 60 * 1000
+  ); // 3 hours
+  return { token, expirationDate };
 };

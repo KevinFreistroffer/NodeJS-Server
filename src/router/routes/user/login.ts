@@ -18,7 +18,7 @@ import {
 import dotenv from "dotenv";
 import { ISanitizedUser } from "../../../defs/interfaces";
 import { ObjectId } from "mongodb";
-import { sanitizeUser } from "../../../utils";
+import { sanitizeUser, formatSessionCookie } from "../../../utils";
 dotenv.config();
 
 const router = express.Router();
@@ -35,7 +35,6 @@ router.post(
   validatedFields,
   async (req: express.Request, res: express.Response<IResponse>) => {
     try {
-      console.log("Request cookies:", req.cookies);
       const validStaySignedIn = has(req.body, "staySignedIn")
         ? typeof req.body.staySignedIn === "boolean"
           ? true
@@ -49,8 +48,6 @@ router.post(
           .status(statusCodes.missing_body_fields)
           .json(genericResponses.missing_body_fields());
       }
-
-      // $2a$10$QSgxeCPndMOXaU0jD/vsTegda4C6o4uE4ThW5F7yUO0WZOx.C1lju
 
       const { usernameOrEmail, password, staySignedIn } = req.body;
       const UNSAFE_DOC = await findOne({
@@ -74,8 +71,6 @@ router.post(
         password,
         UNSAFE_DOC.password
       );
-
-      console.log("passwordsMatch", passwordsMatch);
 
       if (!passwordsMatch) {
         return res
@@ -115,15 +110,7 @@ router.post(
         // TODO: Implement session token
       }
 
-      res.set({
-        "Access-Control-Allow-Origin": "*", // Allow all origins (or specify your frontend's origin)
-        "Access-Control-Expose-Headers": "Set-Cookie",
-        "Set-Cookie": `session_token=${token}; HttpOnly; ${
-          process.env.NODE_ENV === "production" ? "Secure; " : ""
-        }Max-Age=${14 * 24 * 60 * 60};  SameSite=None${
-          process.env.NODE_ENV === "production" ? "; Secure" : ""
-        }`,
-      });
+      res.set(formatSessionCookie(token));
       // TODO: make a single function that handles returning responses, and uses the convertDocToSafeUser
       const description = sanitizedUser.isVerified
         ? ""

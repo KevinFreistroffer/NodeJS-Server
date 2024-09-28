@@ -12,8 +12,12 @@ import { statusCodes } from "../../../defs/responses/status_codes";
 import { updateOne } from "../../../operations/user_operations";
 import { EStage } from "../../../defs/enums";
 import crypto from "node:crypto";
-import { handleCaughtErrorResponse } from "../../../utils";
+import { handleCaughtErrorResponse, generateResetToken } from "../../../utils";
 const router = express.Router();
+
+/**
+ * So i need to reset m password. i am not sure what my password is. send reset password email. an email with a link and a token or something is sent. the t
+ */
 
 router.post(
   "/",
@@ -27,12 +31,11 @@ router.post(
       }
 
       const { email } = req.body;
-      const token = crypto.randomBytes(20).toString("hex");
-      const date = new Date();
-      date.setTime(date.getTime() + 3 * 60 * 60 * 1000); // 3 hours
+
+      const { token, expirationDate } = generateResetToken();
       const doc = await updateOne(
         { email },
-        { resetPasswordToken: token, resetPasswordExpires: date }
+        { resetPasswordToken: token, resetPasswordExpires: expirationDate }
       );
 
       if (!doc.acknowledged) {
@@ -89,6 +92,7 @@ router.post(
           "</h1>" +
           "\n\n", // html body
       };
+
       transporter.sendMail(mailOptions, (emailSendError) => {
         if (emailSendError) {
           // TODO how to implement the {cause: error} in the Error(). Might require a TSConfig setting. Not sure.

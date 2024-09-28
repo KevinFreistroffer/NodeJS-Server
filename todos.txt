@@ -39,3 +39,11 @@ replace with ObjectId.createFromHexString(userId)?
 
 the username and email available responses. should return undefined if an error?
 
+
+// Think if this should occur, or user_not_found then could_not_update
+if (!updateResult.matchedCount || !updateResult.modifiedCount) {
+	return res
+	.status(statusCodes.could_not_update)
+	.json(userResponses.could_not_update());
+}
+

@@ -14,9 +14,6 @@ const router = express.Router();
 router.get(
   "/:id",
   async (req: express.Request, res: express.Response<IResponse>) => {
-    console.log("GET /user/:id");
-    console.log("Request cookies:", req.cookies, Object.entries(req.cookies));
-    console.log("Request headers:", req.headers);
     try {
       if (!req.params.id || !ObjectId.isValid(req.params.id)) {
         return res
@@ -25,11 +22,13 @@ router.get(
       }
 
       const doc = await findOneById(new ObjectId(req.params.id));
+
       if (!doc) {
         return res
           .status(statusCodes.resource_not_found)
           .json(genericResponses.resource_not_found());
       }
+
       return res.json(genericResponses.success(doc));
     } catch (error) {
       return handleCaughtErrorResponse(error, req, res);
