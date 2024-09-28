@@ -1,7 +1,43 @@
+# Dependencies
 /node_modules
+
+# Build outputs
 /built
 /dist
+
+# Test reports
 /blob-report/
+
+# Logs
 /src/logs/*
-/src/logs/error.log.txt
+!/src/logs/.gitkeep
+
+# Environment variables
 .env
+.env.local
+.env.*.local
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# npm debug logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Optional: coverage directory used by tools like istanbul
+/coverage
+
+# Optional: Temporary files
+*.tmp
+*.temp
+
+# Optional: If using TypeScript
+*.tsbuildinfo
