@@ -6,8 +6,9 @@ import { body, validationResult } from "express-validator";
 import {
   responses as genericResponses,
   IResponse,
-} from "../../../defs/responses/generic_responses";
+} from "../../../defs/responses/generic";
 import { responses as userResponses } from "../../../defs/responses/user";
+import { statusCodes } from "../../../defs/responses/status_codes";
 import { updateOne } from "../../../operations/user_operations";
 import { EStage } from "../../../defs/enums";
 import crypto from "node:crypto";
@@ -35,7 +36,9 @@ router.post(
       );
 
       if (!doc.acknowledged) {
-        return res.status(200).json(userResponses.user_not_found());
+        return res
+          .status(statusCodes.user_not_found)
+          .json(userResponses.user_not_found());
       }
 
       /*--------------------------------------------------
@@ -95,7 +98,7 @@ router.post(
         }
       });
 
-      return res.json(genericResponses.success());
+      return res.status(statusCodes.success).json(genericResponses.success());
     } catch (error) {
       return handleCaughtErrorResponse(error, req, res);
     }

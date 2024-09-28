@@ -18,9 +18,20 @@ import {
   IResponse,
   responses as genericResponses,
   statusCodes as genericStatusCodes,
+  IResponseBase,
 } from "../generic";
 
+export interface IUsernameAvailableResponse
+  extends Omit<IResponseBase, "data"> {
+  usernameAvailable: boolean;
+}
+
+export interface IEmailAvailableResponse extends Omit<IResponseBase, "data"> {
+  emailAvailable: boolean;
+}
+
 export interface IResponses {
+  missing_body_fields: (description?: string) => IResponse;
   user_not_found: (description?: string) => IResponse;
   users_not_found: (description?: string) => IResponse;
   invalid_usernameOrEmail_and_password: (description?: string) => IResponse;
@@ -29,8 +40,11 @@ export interface IResponses {
   username_available: (
     usernameAvailable: boolean,
     description?: string
-  ) => IResponse;
-  email_available: (emailAvailable: boolean, description?: string) => IResponse;
+  ) => IUsernameAvailableResponse;
+  email_available: (
+    emailAvailable: boolean,
+    description?: string
+  ) => IEmailAvailableResponse;
   error_inserting_user: (description?: string) => IResponse;
   could_not_update: (description?: string) => IResponse;
   success: (
@@ -38,6 +52,17 @@ export interface IResponses {
     description?: string
   ) => IResponse;
 }
+
+export type IResponsesWithAvailability = IResponses & {
+  username_available: (
+    usernameAvailable: boolean,
+    description?: string
+  ) => IUsernameAvailableResponse;
+  email_available: (
+    emailAvailable: boolean,
+    description?: string
+  ) => IEmailAvailableResponse;
+};
 
 export const responses: IResponses = {
   ...genericResponses,
@@ -71,20 +96,20 @@ export const responses: IResponses = {
     code: 1010,
     data: undefined,
   }),
-  username_available: (usernameAvailable: boolean, description) => ({
+  username_available: (usernameAvailable: boolean, description?: string) => ({
     message: EMessageType.success,
     description:
       description ||
       (usernameAvailable ? USERNAME_AVAILABLE : USERNAME_NOT_AVAILABLE),
     code: 1011,
-    data: usernameAvailable || undefined,
+    usernameAvailable: usernameAvailable,
   }),
   email_available: (emailAvailable: boolean, description?: string) => ({
     message: EMessageType.success,
     description:
       description || (emailAvailable ? EMAIL_AVAILABLE : EMAIL_NOT_AVAILABLE),
     code: 1012,
-    data: emailAvailable || undefined,
+    emailAvailable: emailAvailable,
   }),
   error_inserting_user: (description) => ({
     message: EMessageType.error,

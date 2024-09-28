@@ -12,6 +12,7 @@ import {
   updateOne,
 } from "../../../../../operations/user_operations";
 import { handleCaughtErrorResponse } from "../../../../../utils";
+import { statusCodes } from "../../../../../defs/responses/status_codes";
 const router = express.Router();
 
 const validatedJournalIds = body("journalIds")
@@ -35,7 +36,9 @@ router.post(
     try {
       const validatedFields = validationResult(req);
       if (!validatedFields.isEmpty()) {
-        return res.status(422).json(genericResponses.missing_body_fields());
+        return res
+          .status(statusCodes.missing_body_fields)
+          .json(genericResponses.missing_body_fields());
       }
 
       const { userId, journalIds, category } = req.body;
@@ -46,7 +49,9 @@ router.post(
        *  User not found
        *------------------------------------------------*/
       if (!doc) {
-        return res.json(userResponses.user_not_found());
+        return res
+          .status(statusCodes.user_not_found)
+          .json(userResponses.user_not_found());
       }
 
       /*--------------------------------------------------
@@ -69,29 +74,35 @@ router.post(
         { _id: ObjectId.createFromHexString(userId) },
         {
           $set: {
-            journals: doc.journals.map(journal => ({
+            journals: doc.journals.map((journal) => ({
               ...journal,
-              _id: new ObjectId(journal._id)
+              _id: new ObjectId(journal._id),
             })),
           },
         }
       );
 
       if (!updatedDoc.acknowledged) {
-        return res.json(userResponses.could_not_update());
+        return res
+          .status(statusCodes.could_not_update)
+          .json(userResponses.could_not_update());
       }
 
       const savedDoc = await findOneById(ObjectId.createFromHexString(userId));
 
       if (!savedDoc) {
-        return res.json(
-          userResponses.user_not_found(
-            "Categories successfully updated, however finding the updated user returned no doc. Try again."
-          )
-        );
+        return res
+          .status(statusCodes.user_not_found)
+          .json(
+            userResponses.user_not_found(
+              "Categories successfully updated, however finding the updated user returned no doc. Try again."
+            )
+          );
       }
 
-      return res.json(genericResponses.success(savedDoc));
+      return res
+        .status(statusCodes.success)
+        .json(genericResponses.success(savedDoc));
     } catch (error) {
       return handleCaughtErrorResponse(error, req, res);
     }

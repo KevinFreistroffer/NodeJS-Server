@@ -1,3 +1,5 @@
+the handleUncaughtErroResponse is not linked to the user responses interface. May need to create handlers for each user/auth etc.
+
 update express 5
 
 eslint showing errors in the Request<any, any, Interface>. Deleted them. Are these types required?
@@ -34,3 +36,6 @@ inserting journals from front-end wasn't upserting, and was instead modifying. l
 
 
 replace with ObjectId.createFromHexString(userId)?
+
+the username and email available responses. should return undefined if an error?
+

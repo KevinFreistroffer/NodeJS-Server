@@ -11,6 +11,7 @@ import {
   responses as genericResponses,
   IResponse,
 } from "../../../../defs/responses/generic";
+import { statusCodes } from "../../../../defs/responses/status_codes";
 
 const router = express.Router();
 const validatedIds = body(["userId", "journalId"]) // TODO convert to zod?
@@ -44,7 +45,9 @@ router.post(
           !has(req.body, "entry") &&
           !has(req.body, "category"))
       ) {
-        return res.status(422).json(genericResponses.missing_body_fields());
+        return res
+          .status(statusCodes.missing_body_fields)
+          .json(genericResponses.missing_body_fields());
       }
 
       const { userId, journalId, title, entry, category } = req.body;
@@ -79,22 +82,30 @@ router.post(
       );
 
       if (!doc.matchedCount) {
-        return res.status(404).json(userResponses.user_not_found());
+        return res
+          .status(statusCodes.user_not_found)
+          .json(userResponses.user_not_found());
       }
 
       if (!doc.modifiedCount) {
-        return res.json(userResponses.could_not_update());
+        return res
+          .status(statusCodes.could_not_update)
+          .json(userResponses.could_not_update());
       }
 
       const userDoc = await findOneById(ObjectId.createFromHexString(userId));
 
       if (!userDoc) {
-        res.json(
-          userResponses.user_not_found("Could not find the updated server.")
-        );
+        return res
+          .status(statusCodes.user_not_found)
+          .json(
+            userResponses.user_not_found("Could not find the updated user.")
+          );
       }
 
-      return res.send(genericResponses.success(userDoc));
+      return res
+        .status(statusCodes.success)
+        .json(genericResponses.success(userDoc));
     } catch (error) {
       return handleCaughtErrorResponse(error, req, res);
     }

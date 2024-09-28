@@ -13,7 +13,10 @@ module.exports = (app: express.Express) => {
   // app.use("/auth/public-key", require("./routes/auth/public-key"));
   app.use("/user/create", require("./routes/user/create"));
   app.use("/user/login", require("./routes/user/login"));
-  app.use("/user/forgot-password", require("./routes/user/forgot-password"));
+  app.use(
+    "/user/send-reset-password-email",
+    require("./routes/user/send-reset-password-email")
+  );
   app.use("/user/reset-password", require("./routes/user/reset-password"));
   app.use("/user/email-available", require("./routes/user/email-available"));
   app.use(

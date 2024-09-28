@@ -10,7 +10,7 @@ import {
 import {
   responses as genericResponses,
   IResponse,
-} from "../../../defs/responses/generic_responses";
+} from "../../../defs/responses/generic";
 import {
   convertDocToSafeUser,
   handleCaughtErrorResponse,

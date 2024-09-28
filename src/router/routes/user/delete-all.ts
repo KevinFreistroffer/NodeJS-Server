@@ -1,12 +1,10 @@
 "use strict";
 
 import * as express from "express";
-import {
-  responses,
-  IResponse,
-} from "../../../defs/responses/generic_responses";
+import { responses, IResponse } from "../../../defs/responses/generic";
 import { handleCaughtErrorResponse } from "../../../utils";
 import { deleteMany } from "../../../operations/user_operations";
+import { statusCodes } from "../../../defs/responses/status_codes";
 const router = express.Router();
 
 router.delete(
@@ -22,7 +20,7 @@ router.delete(
       }
 
       // TODO: return []? Or fetch the db again, which is obviously the better idea.
-      return res.json(responses.success());
+      return res.status(statusCodes.success).json(responses.success());
     } catch (error) {
       return handleCaughtErrorResponse(error, req, res);
     }

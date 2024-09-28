@@ -9,11 +9,22 @@ import {
 } from "../../constants";
 import { EMessageType } from "../../enums";
 import { ISanitizedUser, IJournal } from "../../interfaces";
-export interface IResponse {
+
+export interface IResponseBase {
   message: EMessageType;
   description: string;
   code: number;
-  data: any; // error string?
+}
+
+export interface IResponse extends IResponseBase {
+  data:
+    | ISanitizedUser
+    | ISanitizedUser
+    | ISanitizedUser[]
+    | IJournal
+    | IJournal[]
+    | boolean
+    | undefined;
 }
 
 export interface IGenericResponses {
@@ -32,7 +43,6 @@ export interface IGenericResponses {
       | IJournal
       | IJournal[]
       | boolean
-      | string
       | undefined,
     description?: string
   ) => IResponse;
@@ -95,9 +105,8 @@ export const responses: IGenericResponses = {
       | ISanitizedUser[]
       | IJournal
       | IJournal[]
-      | string
       | boolean
-      | undefined = undefined,
+      | undefined,
     description?: string
   ) => ({
     message: EMessageType.success,

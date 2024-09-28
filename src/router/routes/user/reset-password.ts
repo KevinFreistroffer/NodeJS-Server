@@ -8,6 +8,7 @@ import {
   responses as genericResponses,
 } from "../../../defs/responses/generic";
 import { responses as userResponses } from "../../../defs/responses/user";
+import { statusCodes } from "../../../defs/responses/status_codes";
 import { updateOne } from "../../../operations/user_operations";
 import { handleCaughtErrorResponse } from "../../../utils";
 import dotenv from "dotenv";
@@ -37,7 +38,9 @@ router.post(
       const validatedErrors = validationResult(req).array();
 
       if (validatedErrors.length) {
-        return res.status(422).json(genericResponses.missing_body_fields());
+        return res
+          .status(statusCodes.missing_body_fields)
+          .json(genericResponses.missing_body_fields());
       }
 
       // TODO: validate the JWT token. There needs to be an authentication step here prior to editing the password.
@@ -51,12 +54,21 @@ router.post(
         { password: hashedPassword }
       );
 
+      console.log(
+        "/reset-password updatedDoc with resetPasswordToken & expires",
+        doc
+      );
+
       if (!doc.matchedCount) {
-        return res.status(200).json(userResponses.user_not_found());
+        return res
+          .status(statusCodes.user_not_found)
+          .json(userResponses.user_not_found());
       }
 
       if (!doc.modifiedCount) {
-        return res.status(200).json(userResponses.could_not_update());
+        return res
+          .status(statusCodes.could_not_update)
+          .json(userResponses.could_not_update());
       }
 
       // Updating user object
@@ -67,13 +79,7 @@ router.post(
       // foundUser.resetPasswordExpires = undefined;
 
       if (!process.env.EMAIL_FROM || !process.env.EMAIL_APP_PASSWORD) {
-        return res
-          .status(500)
-          .json(
-            genericResponses.caught_error(
-              "Email credentials are not set in the environment."
-            )
-          );
+        throw new Error("Email credentials are not set in the environment.");
       }
 
       // Send Confirmation Email
@@ -94,13 +100,9 @@ router.post(
       };
 
       // send mail with defined transport object
-      transporter.sendMail(mailOptions, (err, info) => {
-        if (err) {
-          throw err;
-        }
-      });
+      await transporter.sendMail(mailOptions);
 
-      return res.json(genericResponses.success());
+      return res.status(statusCodes.success).json(genericResponses.success());
     } catch (error) {
       return handleCaughtErrorResponse(error, req, res);
     }

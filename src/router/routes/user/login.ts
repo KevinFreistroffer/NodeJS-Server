@@ -14,7 +14,7 @@ import {
 import {
   IResponse,
   responses as genericResponses,
-} from "../../../defs/responses/generic_responses";
+} from "../../../defs/responses/generic";
 import dotenv from "dotenv";
 import { ISanitizedUser } from "../../../defs/interfaces";
 import { ObjectId } from "mongodb";

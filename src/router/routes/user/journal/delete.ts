@@ -6,7 +6,8 @@ import { responses as userResponses } from "../../../../defs/responses/user";
 import {
   responses as genericResponses,
   IResponse,
-} from "../../../../defs/responses/generic_responses";
+} from "../../../../defs/responses/generic";
+import { statusCodes } from "../../../../defs/responses/status_codes";
 import { handleCaughtErrorResponse } from "../../../../utils";
 
 const validatedUserId = body("userId") // TODO convert to zod?
@@ -35,7 +36,9 @@ router.delete(
       const validatedResults = validationResult(req);
 
       if (!validatedResults.isEmpty()) {
-        return res.status(422).json(genericResponses.missing_body_fields());
+        return res
+          .status(statusCodes.missing_body_fields)
+          .json(genericResponses.missing_body_fields());
       }
 
       const { userId, journalIds } = req.body;
@@ -56,14 +59,18 @@ router.delete(
       );
 
       if (!updatedDoc.matchedCount) {
-        return res.json(userResponses.user_not_found());
+        return res
+          .status(statusCodes.user_not_found)
+          .json(userResponses.user_not_found());
       }
 
       if (!updatedDoc.modifiedCount) {
-        return res.json(userResponses.user_not_found());
+        return res
+          .status(statusCodes.could_not_update)
+          .json(userResponses.could_not_update());
       }
 
-      return res.json(genericResponses.success());
+      return res.status(statusCodes.success).json(genericResponses.success());
     } catch (error) {
       console.log("error: ", error);
       return handleCaughtErrorResponse(error, req, res);
