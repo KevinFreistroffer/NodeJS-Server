@@ -21,7 +21,7 @@ import {
   findOneById,
   insertOne,
 } from "../../../operations/user_operations";
-import { sendAccountActivationEmail } from "../../../utils";
+import { sendAccountActivationEmail, hashPassword } from "../../../utils";
 const router = express.Router();
 
 // List of functionalities that can be unit tested:
@@ -67,15 +67,7 @@ router.post(
           .json(userResponses.username_or_email_already_registered());
       }
 
-      const salt = await bcrypt.genSalt(10);
-      if (!salt) {
-        throw new Error("Error generating salt");
-      }
-
-      const encryptedPassword = await bcrypt.hash(password, salt);
-      if (!encryptedPassword) {
-        throw new Error("Error encrypting password");
-      }
+      const encryptedPassword = await hashPassword(password);
 
       const insertDoc = await insertOne(
         new User(username, email, encryptedPassword)
