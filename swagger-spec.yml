@@ -49,22 +49,10 @@ paths:
                 message: "An error occurred. Error: something went wrong."
                 data: null
   "/auth/bearer":
-    post:
-      description: "Authenticate with a JWT"
+    get:
+      description: "Generates a JWT token for authentication."
       tags:
-        - User
-      requestBody:
-        description: "A JWT to authenticate with"
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                token:
-                  type: string
-            example:
-              token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIiLCJpYXQiOjE1OTYwNzQwNzcsImV4cCI6MTU5NjA3NzY3N30.5f3b3b3b3b3b3b3b3b3b3b3b3b"
+        - Auth
       responses:
         "200":
           description: "Success"
@@ -75,24 +63,13 @@ paths:
                 properties:
                   success:
                     type: boolean
-                    example: true
-                  userExists:
-                    type: boolean
-                    example: true
-                  loggedIn:
-                    type: boolean
-                    example: true
                   message:
                     type: string
-                    example: "User is logged in."
                   data:
-                    description: "The users MongoDB document _id or undefined if no doc."
                     type: string
-                    nullable: true
-                    example: "5f3b3b3b3b3b3b3b3b3b3b3b"
-
-        "422":
-          description: "Invalid request body"
+                    example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjoiMTIzNDU2Nzg5MCIsImlhdCI6MTYxNjIzOTAyMn0.5f3b3b3b3b3b3b3b3b3b3b3b3b"
+        "401":
+          description: "Invalid access key"
           content:
             application/json:
               schema:
@@ -100,21 +77,11 @@ paths:
                 properties:
                   success:
                     type: boolean
-                    example: false
-                  userExists:
-                    type: boolean
-                    example: false
-                  loggedIn:
-                    type: boolean
-                    example: false
                   message:
                     type: string
-                    example: "Invalid request body."
                   data:
-                    description: "The users MongoDB document _id or undefined if no doc."
                     type: string
-                    nullable: true
-                    example: null
+                    example: "Invalid access key"
         "500":
           description: "Caught error"
           content:
@@ -124,21 +91,11 @@ paths:
                 properties:
                   success:
                     type: boolean
-                    example: false
-                  userExists:
-                    type: boolean
-                    example: false
-                  loggedIn:
-                    type: boolean
-                    example: false
                   message:
                     type: string
-                    example: "An error occurred. Error: something went wrong."
                   data:
-                    description: "The users MongoDB document _id or undefined if no doc."
                     type: string
-                    nullable: true
-                    example: null
+                    example: "An error occurred. Error: something went wrong."
   "/user/username-available":
     post:
       description: "Checks if a username is assigned to a user."
@@ -1035,7 +992,7 @@ paths:
                 success: false
                 message: "An error occurred. Error: something went wrong."
                 data: null
-  "/user/journal/create-many":
+  "/user/journal/category/create-many":
     post:
       description: "Saves a category on the journal(s)."
       tags:
@@ -1092,6 +1049,174 @@ paths:
                     "email": "email@gmail.com",
                     "journals": [],
                     "journalCategories": ["New Category"],
+                  }
+        "422":
+          description: "Invalid request body"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    nullable: true
+              example:
+                success: false
+                message: "Invalid request body."
+                data: null
+        "500":
+          description: "Caught error"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    nullable: true
+              example:
+                success: false
+                message: "An error occurred. Error: something went wrong."
+                data: null
+  "/user/journal/category/delete":
+    delete:
+      description: "Deletes a journal category."
+      tags:
+        - Journal
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: string
+          description: "The user's document id."
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"
+        - in: path
+          name: categoryId
+          required: true
+          schema:
+            type: string
+          description: "The category document id."
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"
+      responses:
+        "200":
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    allOf:
+                      - $ref: "#/components/schemas/User"
+                      - nullable: true
+              example:
+                success: true
+                message: "Category deleted."
+                data:
+                  {
+                    "username": "user1",
+                    "email": "email@gmail.com",
+                    "journals": [],
+                    "journalCategories": [],
+                  }
+        "422":
+          description: "Invalid request parameters"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    nullable: true
+              example:
+                success: false
+                message: "Invalid request parameters."
+                data: null
+        "500":
+          description: "Caught error"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    nullable: true
+              example:
+                success: false
+                message: "An error occurred. Error: something went wrong."
+                data: null
+  "/user/journal/category/edit":
+    put:
+      description: "Edits a journal category."
+      tags:
+        - Journal
+      requestBody:
+        description: "The userId, categoryId, and the new category details."
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: string
+                categoryId:
+                  type: string
+                category:
+                  type: string
+                  nullable: true
+                selected:
+                  type: boolean
+                  nullable: true
+            example:
+              userId: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"
+              categoryId: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"
+              category: "Updated Category"
+              selected: true
+      responses:
+        "200":
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    allOf:
+                      - $ref: "#/components/schemas/User"
+                      - nullable: true
+              example:
+                success: true
+                message: "Category updated."
+                data:
+                  {
+                    "username": "user1",
+                    "email": "email@gmail.com",
+                    "journals": [],
+                    "journalCategories": ["Updated Category"],
                   }
         "422":
           description: "Invalid request body"
