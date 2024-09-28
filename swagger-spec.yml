@@ -67,7 +67,7 @@ paths:
                     type: string
                   data:
                     type: string
-                    example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjoiMTIzNDU2Nzg5MCIsImlhdCI6MTYxNjIzOTAyMn0.5f3b3b3b3b3b3b3b3b3b3b3b3b"
+                    example: "token"
         "401":
           description: "Invalid access key"
           content:
