@@ -3,7 +3,10 @@
 import * as express from "express";
 import { User } from "../../../defs/models/user.model";
 import { body, validationResult } from "express-validator";
-import { responses, statusCodes } from "../../../defs/responses/user";
+import {
+  responses as userResponses,
+  statusCodes,
+} from "../../../defs/responses/user";
 import {
   responses as genericResponses,
   IResponse,
@@ -59,7 +62,9 @@ router.post(
       const doc = await findOneByUsernameOrEmail(username, email);
 
       if (doc) {
-        return res.json(responses.username_or_email_already_registered());
+        return res
+          .status(statusCodes.username_or_email_already_registered)
+          .json(userResponses.username_or_email_already_registered());
       }
 
       const salt = await bcrypt.genSalt(10);
@@ -77,18 +82,22 @@ router.post(
       );
 
       if (!insertDoc || !insertDoc.insertedId) {
-        return res.json(responses.error_inserting_user());
+        return res
+          .status(statusCodes.error_inserting_user)
+          .json(userResponses.error_inserting_user());
       }
 
       const userDoc = await findOneById(insertDoc.insertedId);
 
       if (!userDoc) {
-        return res.json(responses.user_not_found());
+        return res
+          .status(statusCodes.user_not_found)
+          .json(userResponses.user_not_found());
       }
 
       await sendAccountActivationEmail(email, userDoc._id.toString());
 
-      return res.json(responses.success(convertDocToSafeUser(userDoc)));
+      return res.json(userResponses.success(convertDocToSafeUser(userDoc)));
     } catch (error) {
       console.log("error", error);
       return handleCaughtErrorResponse(error, req, res);

@@ -26,7 +26,7 @@ export interface IGenericResponses {
   caught_error: (error: unknown) => IResponse;
   something_went_wrong: (description?: string) => IResponse;
   success: (
-    data:
+    data?:
       | ISanitizedUser
       | ISanitizedUser[]
       | IJournal
@@ -90,17 +90,18 @@ export const responses: IGenericResponses = {
     data: undefined,
   }),
   success: (
-    data?:
+    data:
       | ISanitizedUser
       | ISanitizedUser[]
       | IJournal
       | IJournal[]
       | string
       | boolean
-      | undefined
+      | undefined = undefined,
+    description?: string
   ) => ({
     message: EMessageType.success,
-    description: "Success",
+    description: description || "Success",
     code: 200,
     data,
   }),

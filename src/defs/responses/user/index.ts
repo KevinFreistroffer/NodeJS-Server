@@ -109,6 +109,8 @@ export const responses: IResponses = {
   }),
 };
 
+// Status codes exist to be meaningful while the server is under development.
+// TODO: delete these when the server is complete. All status codes should be generic.
 export const statusCodes = {
   ...genericStatusCodes,
   user_not_found: 404,
