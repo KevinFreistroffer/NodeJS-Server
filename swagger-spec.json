@@ -72,7 +72,7 @@
         }
       }
     },
-    "/user/authenticate": {
+    "/auth/bearer": {
       "post": {
         "description": "Authenticate with a JWT",
         "tags": ["User"],
@@ -525,27 +525,28 @@
               "application/json": {
                 "schema": {
                   "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "userExists": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "loggedIn": {
-                      "type": "boolean",
-                      "example": true
-                    },
                     "message": {
                       "type": "string",
-                      "example": "Password reset email sent."
+                      "enum": ["success"],
+                      "example": "success"
                     },
                     "data": {
-                      "description": "The users MongoDB document _id or undefined if no doc.",
-                      "type": "string",
-                      "nullable": true,
-                      "example": "5f3b3b3b3b3b3b3b3b3b3b3b"
+                      "type": "object",
+                      "properties": {
+                        "description": {
+                          "type": "string",
+                          "example": "Successfully logged in."
+                        },
+                        "code": {
+                          "type": "number",
+                          "enum": [2000]
+                        },
+                        "jwtToken": {
+                          "type": "string",
+                          "nullable": true,
+                          "example": "zqpmxwonceib123"
+                        }
+                      }
                     }
                   }
                 }
@@ -558,27 +559,23 @@
               "application/json": {
                 "schema": {
                   "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": false
-                    },
-                    "userExists": {
-                      "type": "boolean",
-                      "example": false
-                    },
-                    "loggedIn": {
-                      "type": "boolean",
-                      "example": false
-                    },
                     "message": {
                       "type": "string",
-                      "example": "Invalid request body."
+                      "enum": ["error"],
+                      "example": "error"
                     },
                     "data": {
-                      "description": "The users MongoDB document _id or undefined if no doc.",
-                      "type": "string",
-                      "nullable": true,
-                      "example": null
+                      "type": "object",
+                      "properties": {
+                        "description": {
+                          "type": "string",
+                          "example": "Invalid request body."
+                        },
+                        "code": {
+                          "type": "number",
+                          "enum": [1012]
+                        }
+                      }
                     }
                   }
                 }
@@ -591,27 +588,23 @@
               "application/json": {
                 "schema": {
                   "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": false
-                    },
-                    "userExists": {
-                      "type": "boolean",
-                      "example": false
-                    },
-                    "loggedIn": {
-                      "type": "boolean",
-                      "example": false
-                    },
                     "message": {
                       "type": "string",
-                      "example": "An error occurred. Error: something went wrong."
+                      "enum": ["error"],
+                      "example": "error"
                     },
                     "data": {
-                      "description": "The users MongoDB document _id or undefined if no doc.",
-                      "type": "string",
-                      "nullable": true,
-                      "example": null
+                      "type": "object",
+                      "properties": {
+                        "description": {
+                          "type": "string",
+                          "example": "An error was caught. Error: something went wrong."
+                        },
+                        "code": {
+                          "type": "number",
+                          "enum": [1018]
+                        }
+                      }
                     }
                   }
                 }
@@ -880,7 +873,53 @@
         }
       }
     },
-    "/journal/create": {
+    "/user/delete-all": {
+      "delete": {
+        "description": "Deletes all users.",
+        "tags": ["User"],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Successfully deleted all users."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Caught error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "An error occurred. Error: something went wrong."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/journal/create": {
       "post": {
         "description": "Saves a journal.",
         "tags": ["Journal"],
@@ -1002,7 +1041,7 @@
         }
       }
     },
-    "/journal/edit": {
+    "/user/journal/edit": {
       "post": {
         "description": "Edits a journals title, entry and/or category.",
         "tags": ["Journal"],
@@ -1138,7 +1177,7 @@
         }
       }
     },
-    "/journal/journals/{userId}": {
+    "/user/journal/journals/{userId}": {
       "get": {
         "summary": "Get a users journals.",
         "tags": ["Journal"],
@@ -1245,7 +1284,7 @@
         }
       }
     },
-    "/journal/delete": {
+    "/user/journal/delete": {
       "put": {
         "description": "Deletes journal(s).",
         "tags": ["Journal"],
@@ -1371,7 +1410,7 @@
         }
       }
     },
-    "/journal/new-category": {
+    "/user/journal/category/create": {
       "post": {
         "description": "Saves a new category.",
         "tags": ["Journal"],
@@ -1494,7 +1533,7 @@
         }
       }
     },
-    "/journal/create-many": {
+    "/user/journal/create-many": {
       "post": {
         "description": "Saves a category on the journal(s).",
         "tags": ["Journal"],
@@ -1512,7 +1551,10 @@
                   },
                   "journalIds": {
                     "description": "The journal document id(s).",
-                    "type": "string"
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
                   },
                   "category": {
                     "description": "The category string.",
@@ -1624,6 +1666,422 @@
           }
         }
       }
+    },
+    "/auth/auth-session": {
+      "get": {
+        "description": "Handles authentication session.",
+        "tags": ["Auth"],
+        "responses": {
+          "200": {
+            "description": "Access denied",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "success": false,
+                  "message": "Access denied."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Caught error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "success": false,
+                  "message": "An error occurred. Error: something went wrong."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/authenticate": {
+      "get": {
+        "description": "Authenticates a user.",
+        "tags": ["Auth"],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "success": true,
+                  "message": "User authenticated."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Access denied",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "success": false,
+                  "message": "Access denied."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Caught error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "success": false,
+                  "message": "An error occurred. Error: something went wrong."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/send-verification-email/{userId}": {
+      "get": {
+        "description": "Sends a verification email.",
+        "tags": ["Auth"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "userId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The user's document ID",
+            "example": "666655343535a02523522ac32423"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Verification email sent",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "success": true,
+                  "message": "Verification email sent."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Access denied",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "success": false,
+                  "message": "Access denied."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "success": false,
+                  "message": "Resource not found."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Caught error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "success": false,
+                  "message": "An error occurred. Error: something went wrong."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/verify-account/{token}": {
+      "get": {
+        "description": "Verifies a user's account.",
+        "tags": ["Auth"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "token",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The verification token",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Account verified",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "success": true,
+                  "message": "Account verified."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "success": false,
+                  "message": "Unauthorized."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "success": false,
+                  "message": "Resource not found."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Caught error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "success": false,
+                  "message": "An error occurred. Error: something went wrong."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/streams/file": {
+      "get": {
+        "description": "Fetches a file.",
+        "tags": ["Streams"],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "success": true,
+                  "message": "File fetched."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "success": false,
+                  "message": "Resource not found."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Caught error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "success": false,
+                  "message": "An error occurred. Error: something went wrong."
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -1688,6 +2146,14 @@
     {
       "name": "User",
       "description": "Create a new user | Authenticate a user | Password Reset Email Sending | Email availability | Usernamesername availability"
+    },
+    {
+      "name": "Auth",
+      "description": "Authentication related routes"
+    },
+    {
+      "name": "Streams",
+      "description": "Stream related routes"
     }
   ]
 }

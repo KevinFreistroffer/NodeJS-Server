@@ -97,6 +97,26 @@ export const routes: RouteConfig[] = [
     requiresAccessKey: false,
     requiresAuthorization: true,
   },
+  {
+    path: "/auth/send-verification-email",
+    requiresAccessKey: false,
+    requiresAuthorization: false,
+  },
+  {
+    path: "/auth/authenticate",
+    requiresAccessKey: false,
+    requiresAuthorization: false,
+  },
+  {
+    path: "/auth/verify-account",
+    requiresAccessKey: false,
+    requiresAuthorization: false,
+  },
+  {
+    path: "/auth/auth-session",
+    requiresAccessKey: false,
+    requiresAuthorization: false,
+  },
 ];
 
 // You can now easily generate the lists you need:

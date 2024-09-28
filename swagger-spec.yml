@@ -1127,6 +1127,276 @@ paths:
                 success: false
                 message: "An error occurred. Error: something went wrong."
                 data: null
+  "/auth/auth-session":
+    get:
+      description: "Handles authentication session."
+      tags:
+        - Auth
+      responses:
+        "200":
+          description: "Access denied"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+              example:
+                success: false
+                message: "Access denied."
+        "500":
+          description: "Caught error"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+              example:
+                success: false
+                message: "An error occurred. Error: something went wrong."
+  "/auth/authenticate":
+    get:
+      description: "Authenticates a user."
+      tags:
+        - Auth
+      responses:
+        "200":
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+              example:
+                success: true
+                message: "User authenticated."
+        "401":
+          description: "Access denied"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+              example:
+                success: false
+                message: "Access denied."
+        "500":
+          description: "Caught error"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+              example:
+                success: false
+                message: "An error occurred. Error: something went wrong."
+  "/auth/send-verification-email/{userId}":
+    get:
+      description: "Sends a verification email."
+      tags:
+        - Auth
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: string
+          description: "The user's document ID"
+          example: "666655343535a02523522ac32423"
+      responses:
+        "200":
+          description: "Verification email sent"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+              example:
+                success: true
+                message: "Verification email sent."
+        "401":
+          description: "Access denied"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+              example:
+                success: false
+                message: "Access denied."
+        "404":
+          description: "Resource not found"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+              example:
+                success: false
+                message: "Resource not found."
+        "500":
+          description: "Caught error"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+              example:
+                success: false
+                message: "An error occurred. Error: something went wrong."
+  "/auth/verify-account/{token}":
+    get:
+      description: "Verifies a user's account."
+      tags:
+        - Auth
+      parameters:
+        - in: path
+          name: token
+          required: true
+          schema:
+            type: string
+          description: "The verification token"
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"
+      responses:
+        "200":
+          description: "Account verified"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+              example:
+                success: true
+                message: "Account verified."
+        "401":
+          description: "Unauthorized"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+              example:
+                success: false
+                message: "Unauthorized."
+        "404":
+          description: "Resource not found"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+              example:
+                success: false
+                message: "Resource not found."
+        "500":
+          description: "Caught error"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+              example:
+                success: false
+                message: "An error occurred. Error: something went wrong."
+  "/streams/file":
+    get:
+      description: "Fetches a file."
+      tags:
+        - Streams
+      responses:
+        "200":
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+              example:
+                success: true
+                message: "File fetched."
+        "404":
+          description: "Resource not found"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+              example:
+                success: false
+                message: "Resource not found."
+        "500":
+          description: "Caught error"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+              example:
+                success: false
+                message: "An error occurred. Error: something went wrong."
 components:
   schemas:
     User:
@@ -1168,3 +1438,7 @@ components:
 tags:
   - name: User
     description: "Create a new user | Authenticate a user | Password Reset Email Sending | Email availability | Usernamesername availability"
+  - name: Auth
+    description: "Authentication related routes"
+  - name: Streams
+    description: "Stream related routes"
