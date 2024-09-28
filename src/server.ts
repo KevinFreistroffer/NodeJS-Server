@@ -176,8 +176,4 @@ const close = async () => {
   listener.close();
 };
 
-const run = () => {
-  // The server is already set up and listening, so we don't need to do anything here
-};
-
-run();
+export { server, getListener, close };
