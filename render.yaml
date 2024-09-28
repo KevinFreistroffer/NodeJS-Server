@@ -83,6 +83,6 @@ services:
       - key: ENVIRONMENT
         sync: false
     region: oregon
-    buildCommand: npm install
+    buildCommand: npm run build && npm install
     startCommand: npm run start
 version: "1"
