@@ -3,6 +3,8 @@ import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import { rateLimit } from "express-rate-limit";
 import { responses as genericResponses } from "./defs/responses/generic_responses";
+import { findOneById } from "./operations/user_operations";
+import { ObjectId } from "mongodb";
 dotenv.config();
 
 interface CustomRequest extends Request {
@@ -70,11 +72,26 @@ export const verifySessionToken = (
   jwt.verify(
     sessionToken,
     process.env.JWT_SECRET as string,
-    (err: any, authData: any) => {
+    async (err: any, authData: any) => {
       console.log("AUTH DATA", authData);
       console.log("ERR", err);
-      if (!authData || err) {
+      if (!authData || !authData.data || err) {
         return res.sendStatus(401);
+      }
+
+      const userId = authData.data;
+      console.log("USER ID", userId);
+
+      try {
+        const user = await findOneById(new ObjectId(userId));
+        if (!user) {
+          return res.sendStatus(401);
+        }
+        console.log("USER", user);
+        res.locals.user = user;
+      } catch (error) {
+        console.error("Error fetching user:", error);
+        return res.sendStatus(500);
       }
 
       res.locals.auth = authData;

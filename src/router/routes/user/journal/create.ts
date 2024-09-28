@@ -60,6 +60,7 @@ router.post(
         { _id: new ObjectId(userId) },
         {
           $push: {
+            _id: new ObjectId(),
             journals: journal,
             journalCategories: {
               category,

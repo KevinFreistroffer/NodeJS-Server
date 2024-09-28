@@ -43,10 +43,11 @@ router.post(
       const newCategory = new Category(category, false);
       const doc = await updateOne(
         {
-          _id: ObjectId.createFromHexString(userId),
+          _id: new ObjectId(userId),
         },
         {
           $addToSet: {
+            _id: new ObjectId(userId),
             journalCategories: newCategory,
           },
         }

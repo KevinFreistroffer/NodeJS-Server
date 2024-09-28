@@ -15,6 +15,8 @@ router.get(
   "/:id",
   async (req: express.Request, res: express.Response<IResponse>) => {
     console.log("GET /user/:id");
+    console.log("Request cookies:", req.cookies, Object.entries(req.cookies));
+    console.log("Request headers:", req.headers);
     try {
       if (!req.params.id || !ObjectId.isValid(req.params.id)) {
         return res

@@ -35,6 +35,7 @@ router.post(
   validatedFields,
   async (req: express.Request, res: express.Response<IResponse>) => {
     try {
+      console.log("Request cookies:", req.cookies);
       const validStaySignedIn = has(req.body, "staySignedIn")
         ? typeof req.body.staySignedIn === "boolean"
           ? true
@@ -42,7 +43,6 @@ router.post(
         : true;
 
       const validatedResults = validationResult(req);
-      console.log("validatedResults", validatedResults);
 
       if (validatedResults.array().length || !validStaySignedIn) {
         return res
@@ -53,17 +53,12 @@ router.post(
       // $2a$10$QSgxeCPndMOXaU0jD/vsTegda4C6o4uE4ThW5F7yUO0WZOx.C1lju
 
       const { usernameOrEmail, password, staySignedIn } = req.body;
-      console.log("usernameOrEmail", usernameOrEmail);
-      console.log("password", password);
-      console.log("staySignedIn", staySignedIn);
       const UNSAFE_DOC = await findOne({
         query: {
           $or: [{ username: usernameOrEmail }, { email: usernameOrEmail }],
         },
         sanitize: false,
       });
-
-      console.log("UNSAFE_DOC", UNSAFE_DOC);
 
       if (!UNSAFE_DOC) {
         return res
@@ -125,7 +120,7 @@ router.post(
         "Access-Control-Expose-Headers": "Set-Cookie",
         "Set-Cookie": `session_token=${token}; HttpOnly; ${
           process.env.NODE_ENV === "production" ? "Secure; " : ""
-        }Max-Age=${14 * 24 * 60 * 60}; SameSite=Strict${
+        }Max-Age=${14 * 24 * 60 * 60};  SameSite=None${
           process.env.NODE_ENV === "production" ? "; Secure" : ""
         }`,
       });

@@ -69,7 +69,10 @@ router.post(
         { _id: ObjectId.createFromHexString(userId) },
         {
           $set: {
-            journals: doc.journals,
+            journals: doc.journals.map(journal => ({
+              ...journal,
+              _id: new ObjectId(journal._id)
+            })),
           },
         }
       );

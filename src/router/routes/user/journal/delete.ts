@@ -30,6 +30,7 @@ router.delete(
   validatedUserId,
   validatedJournalIds,
   async (req: express.Request, res: express.Response<IResponse>) => {
+    console.log("Request cookies:", req.cookies);
     try {
       const validatedResults = validationResult(req);
 
@@ -38,6 +39,9 @@ router.delete(
       }
 
       const { userId, journalIds } = req.body;
+      console.log("Req Body USER ID", userId);
+      const user = res.locals.user;
+      console.log("LOCALS USER", user);
       const updatedDoc = await updateOne(
         { _id: userId },
         {
