@@ -223,7 +223,7 @@ paths:
                   message:
                     type: string
                     example: "An error occurred. Error: something went wrong."
-  "/user/forgot-password":
+  "/user/send-reset-password-email":
     post:
       description: Sends a password reset email.
       tags:

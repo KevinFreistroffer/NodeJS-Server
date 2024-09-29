@@ -27,10 +27,13 @@ router.post(
   body("email").isEmail().bail().normalizeEmail(),
   async (req: express.Request, res: express.Response<IResponse>) => {
     try {
+      console.log("send-reset-password-email", req.body);
       const validatedErrors = validationResult(req).array();
 
       if (validatedErrors.length) {
-        return res.status(422).json(genericResponses.missing_body_fields());
+        return res
+          .status(statusCodes.missing_body_fields)
+          .json(genericResponses.missing_body_fields());
       }
 
       const { email } = req.body;
@@ -38,7 +41,12 @@ router.post(
       const { token, expirationDate } = generateResetPasswordToken();
       const doc = await updateOne(
         { email },
-        { resetPasswordToken: token, resetPasswordExpires: expirationDate }
+        {
+          $set: {
+            resetPasswordToken: token,
+            resetPasswordExpires: expirationDate,
+          },
+        }
       );
 
       if (!doc.acknowledged) {
@@ -66,11 +74,18 @@ router.post(
       /*--------------------------------------------------
        * Send the password reset email
        *------------------------------------------------*/
+      const transport =
+        "smtps://" +
+        process.env.EMAIL_FROM +
+        ":" +
+        process.env.EMAIL_APP_PASSWORD +
+        "@smtp.gmail.com";
+      console.log(transport);
       const transporter = nodemailer.createTransport(
         "smtps://" +
           process.env.EMAIL_FROM +
           ":" +
-          process.env.EMAIL_PASSWORD +
+          process.env.EMAIL_APP_PASSWORD +
           "@smtp.gmail.com"
       );
       const mailOptions = {
@@ -107,6 +122,7 @@ router.post(
 
       return res.status(statusCodes.success).json(genericResponses.success());
     } catch (error) {
+      console.log("Error:", error);
       return handleCaughtErrorResponse(error, req, res);
     }
   }
