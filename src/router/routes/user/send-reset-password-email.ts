@@ -12,7 +12,10 @@ import { statusCodes } from "../../../defs/responses/status_codes";
 import { updateOne } from "../../../operations/user_operations";
 import { EStage } from "../../../defs/enums";
 import crypto from "node:crypto";
-import { handleCaughtErrorResponse, generateResetToken } from "../../../utils";
+import {
+  handleCaughtErrorResponse,
+  generateResetPasswordToken,
+} from "../../../utils";
 const router = express.Router();
 
 /**
@@ -32,7 +35,7 @@ router.post(
 
       const { email } = req.body;
 
-      const { token, expirationDate } = generateResetToken();
+      const { token, expirationDate } = generateResetPasswordToken();
       const doc = await updateOne(
         { email },
         { resetPasswordToken: token, resetPasswordExpires: expirationDate }

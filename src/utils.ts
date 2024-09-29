@@ -237,7 +237,7 @@ export const formatSessionCookie = (token: string) => {
   };
 };
 
-export const generateResetToken = (expiresInHours: number = 3) => {
+export const generateResetPasswordToken = (expiresInHours: number = 3) => {
   const token = crypto.randomBytes(20).toString("hex");
   const expirationDate = new Date();
   expirationDate.setTime(

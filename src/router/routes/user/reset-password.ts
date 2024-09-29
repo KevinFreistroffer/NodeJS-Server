@@ -10,7 +10,10 @@ import {
 import { responses as userResponses } from "../../../defs/responses/user";
 import { statusCodes } from "../../../defs/responses/status_codes";
 import { updateOne } from "../../../operations/user_operations";
-import { handleCaughtErrorResponse, generateResetToken } from "../../../utils";
+import {
+  handleCaughtErrorResponse,
+  generateResetPasswordToken,
+} from "../../../utils";
 import dotenv from "dotenv";
 import passwordHash from "password-hash";
 import { verifyJWT } from "../../../utils";
@@ -93,7 +96,7 @@ router.post(
       const {
         token: resetPasswordToken,
         expirationDate: resetPasswordExpires,
-      } = generateResetToken(3); // 3 hours
+      } = generateResetPasswordToken(3); // 3 hours
 
       // Save the new token and expiration in the database
       const updateResult = await updateOne(
