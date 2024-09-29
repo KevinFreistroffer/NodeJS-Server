@@ -150,7 +150,7 @@ router.post(
               process.env.EMAIL_RESET_PASSWORD_EXPIRATION_HOURS || "3"
             } hours: http://` +
             req.headers.host +
-            "#/reset-password/" +
+            "/reset-password/" +
             token +
             "\n\n", // plaintext body
           html:
@@ -158,7 +158,7 @@ router.post(
               process.env.EMAIL_RESET_PASSWORD_EXPIRATION_HOURS || "3"
             } hours: http://` +
             req.headers.host +
-            "#/reset-password/" +
+            "/reset-password/" +
             token +
             "\n\n", // plaintext body
         };

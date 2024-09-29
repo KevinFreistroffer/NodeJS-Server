@@ -99,13 +99,13 @@ router.post(
         text:
           "Click the link to change your password. This link will be good for 3 hours: http://" +
           req.headers.host +
-          "#/reset-password/" +
+          "/reset-password/" +
           token +
           "\n\n", // plaintext body
         html:
           "Click the link to change your password. This link will be good for 3 hours: <br /> <h1 style=\"font-size: 16px; font-family: 'Tahoma', geneva, sans-serif; color: #333 !important; padding: 10px 0;\">http://" +
           req.headers.host +
-          "#/reset-password/" +
+          "/reset-password/" +
           token +
           "</h1>" +
           "\n\n", // html body
