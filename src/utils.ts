@@ -214,6 +214,7 @@ export const isJwtPayload = (arg: any): arg is jwt.JwtPayload => {
 // TODO: Is this a Document or WithId<IUser>?
 
 export const sanitizeUser = (user: any): ISanitizedUser => {
+  console.log("sanitizingUser", user);
   return {
     _id: user._id,
     username: user.username,
@@ -221,6 +222,8 @@ export const sanitizeUser = (user: any): ISanitizedUser => {
     journals: user.journals,
     journalCategories: user.journalCategories,
     resetPasswordToken: user.resetPasswordToken,
+    resetPasswordTokenExpires: user.resetPasswordTokenExpires,
+    resetPasswordAttempts: user.resetPasswordAttempts,
     isVerified: user.isVerified,
   };
 };

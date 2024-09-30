@@ -13,19 +13,21 @@ export class User {
   emailNormalized: string;
   password: string;
   resetPasswordToken: string;
-  resetPasswordExpires?: Date;
+  resetPasswordTokenExpires: Date | null;
   journals: any[];
   journalCategories: any[];
-  resetAttempts: { timestamp: string }[];
+  resetPasswordAttempts: { timestamp: string }[];
   isVerified: boolean = false;
   constructor({
     username,
     email,
     password,
+    resetPasswordTokenExpires,
   }: {
     username: string;
     email: string;
     password: string;
+    resetPasswordTokenExpires: Date | null;
   }) {
     this.username = username;
     this.usernameNormalized = username.toLowerCase();
@@ -33,10 +35,10 @@ export class User {
     this.emailNormalized = email.toLowerCase();
     this.password = password;
     this.resetPasswordToken = "";
-    this.resetPasswordExpires = undefined;
+    this.resetPasswordTokenExpires = resetPasswordTokenExpires;
     this.journals = [];
     this.journalCategories = [];
-    this.resetAttempts = [];
+    this.resetPasswordAttempts = [];
   }
 }
 
@@ -47,7 +49,7 @@ export const UserProjection = {
   journals: 1,
   journalCategories: 1,
   resetPasswordToken: 1,
-  resetPasswordExpires: 1,
-  resetAttempts: 1,
+  resetPasswordTokenExpires: 1,
+  resetPasswordAttempts: 1,
   isVerified: 1,
 };

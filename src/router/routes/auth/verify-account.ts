@@ -4,10 +4,10 @@ import { findOneById, updateOne } from "../../../operations/user_operations";
 import * as jwt from "jsonwebtoken";
 import { ObjectId } from "mongodb";
 import {
-  responses,
+  responses as genericResponses,
   statusCodes,
-} from "../../../defs/responses/generic_responses";
-import { responses as userResponses } from "../../../defs/responses/user_responses";
+} from "../../../defs/responses/generic";
+import { responses as userResponses } from "../../../defs/responses/user";
 import { handleCaughtErrorResponse } from "../../../utils";
 const router = Router();
 
@@ -18,7 +18,7 @@ router.get("/:token", async (req, res) => {
     if (!token) {
       return res
         .status(statusCodes.missing_parameters)
-        .json(responses.missing_parameters());
+        .json(genericResponses.missing_parameters());
     }
 
     const decoded = verifyJWT(token);
@@ -36,12 +36,12 @@ router.get("/:token", async (req, res) => {
       if (!user) {
         return res
           .status(statusCodes.resource_not_found)
-          .json(responses.resource_not_found());
+          .json(genericResponses.resource_not_found());
       }
 
       if (user.isVerified) {
         return res.json(
-          responses.success(undefined, "Account is already verified")
+          genericResponses.success(undefined, "Account is already verified")
         );
       }
 
@@ -54,10 +54,12 @@ router.get("/:token", async (req, res) => {
         return res.json(userResponses.could_not_update());
       }
 
-      return res.json(responses.success(undefined, "Account verified"));
+      return res.json(genericResponses.success(undefined, "Account verified"));
     }
 
-    return res.status(statusCodes.unauthorized).json(responses.unauthorized());
+    return res
+      .status(statusCodes.unauthorized)
+      .json(genericResponses.unauthorized());
   } catch (error) {
     return handleCaughtErrorResponse(error, req, res);
   }

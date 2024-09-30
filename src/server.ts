@@ -67,15 +67,12 @@ server.use("*", (req: Request, res: Response, next: NextFunction) => {
 server.use("*", (req: Request, res: Response, next: NextFunction) => {
   const adminOnlyRoutes = process.env.ADMIN_ROUTES?.split(",") || [];
   const protectedRoutes = process.env.PROTECTED_ROUTES?.split(",") || [];
-  console.log("adminOnlyRoutes", adminOnlyRoutes);
-  console.log("protectedRoutes", protectedRoutes);
 
   if (adminOnlyRoutes.find((route) => route === req.baseUrl.toLowerCase())) {
     return verifyAccessKey(req, res, next);
   }
 
   if (protectedRoutes.find((route) => route === req.baseUrl.toLowerCase())) {
-    console.log("route, shouldVerifySessionToken", req.baseUrl);
     return verifySessionToken(req, res, next);
   }
 

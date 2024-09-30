@@ -25,7 +25,9 @@ const router = express.Router();
 router.post(
   "/",
   body("email").isEmail().bail().normalizeEmail(),
+  body("redirectURL").isURL({ require_tld: false }).bail(),
   async (req: express.Request, res: express.Response<IResponse>) => {
+    console.log(req.body);
     try {
       console.log("send-reset-password-email", req.body);
       const validatedErrors = validationResult(req).array();
@@ -37,6 +39,7 @@ router.post(
       }
 
       const { email } = req.body;
+      let { redirectURL } = req.body;
 
       const { token, expirationDate } = generateResetPasswordToken();
       const doc = await updateOne(
@@ -44,7 +47,12 @@ router.post(
         {
           $set: {
             resetPasswordToken: token,
-            resetPasswordExpires: expirationDate,
+            resetPasswordTokenExpires: expirationDate,
+            resetPasswordAttempts: [
+              {
+                timestamp: new Date().toISOString(),
+              },
+            ],
           },
         }
       );
@@ -65,7 +73,7 @@ router.post(
       // // const date = new Date();
       // // const hoursToAdd = 3 * 60 * 60 * 1000; // 3 hours
       // date.setTime(date.getTime() + hoursToAdd);
-      // foundUser.resetPasswordExpires = date;
+      // foundUser.resetPasswordTokenExpires = date;
       // // Save the user.
 
       // const savedUser = await foundUser.save().toArray();
@@ -74,6 +82,10 @@ router.post(
       /*--------------------------------------------------
        * Send the password reset email
        *------------------------------------------------*/
+      // Ensure redirectURL ends with a '/'
+      if (!redirectURL.endsWith("/")) {
+        redirectURL += "/";
+      }
       const transport =
         "smtps://" +
         process.env.EMAIL_FROM +
@@ -97,15 +109,13 @@ router.post(
         }`, // list of receivers
         subject: "Reset Password", // Subject line
         text:
-          "Click the link to change your password. This link will be good for 3 hours: http://" +
-          req.headers.host +
-          "/reset-password/" +
+          "Click the link to change your password. This link will be good for 3 hours: " +
+          redirectURL +
           token +
           "\n\n", // plaintext body
         html:
-          "Click the link to change your password. This link will be good for 3 hours: <br /> <h1 style=\"font-size: 16px; font-family: 'Tahoma', geneva, sans-serif; color: #333 !important; padding: 10px 0;\">http://" +
-          req.headers.host +
-          "/reset-password/" +
+          "Click the link to change your password. This link will be good for 3 hours: <br /> <h1 style=\"font-size: 16px; font-family: 'Tahoma', geneva, sans-serif; color: #333 !important; padding: 10px 0;\">" +
+          redirectURL +
           token +
           "</h1>" +
           "\n\n", // html body

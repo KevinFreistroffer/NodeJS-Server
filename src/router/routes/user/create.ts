@@ -61,19 +61,46 @@ router.post(
       const { username, email, password } = req.body;
       const doc = await findOneByUsernameOrEmail(username, email);
 
+      console.log(doc);
+
       if (doc) {
+        console.log("Returning username or email registered");
         return res
           .status(statusCodes.username_or_email_already_registered)
           .json(userResponses.username_or_email_already_registered());
       }
 
+      console.log("after returning");
+
       const encryptedPassword = await hashPassword(password);
 
-      const insertDoc = await insertOne(
-        new User(username, email, encryptedPassword)
-      );
+      /**
+
+
+          resetPasswordToken: string;
+          resetPasswordTokenExpires: Date | null;
+          journals: any[];
+          journalCategories: any[];
+          resetPasswordAttempts: { timestamp: string }[];
+          isVerified: boolean = false;
+       */
+
+      const insertDoc = await insertOne({
+        username,
+        usernameNormalized: username.toLowerCase(),
+        email,
+        emailNormalized: email.toLowerCase(),
+        password: encryptedPassword,
+        resetPasswordToken: "",
+        resetPasswordTokenExpires: null,
+        resetPasswordAttempts: [],
+        journals: [],
+        journalCategories: [],
+        isVerified: false,
+      });
 
       if (!insertDoc || !insertDoc.insertedId) {
+        console.log("inserting DOC. SHOULD BE HERE.");
         return res
           .status(statusCodes.error_inserting_user)
           .json(userResponses.error_inserting_user());
@@ -87,6 +114,7 @@ router.post(
           .json(userResponses.user_not_found());
       }
 
+      console.log("SENDING ACTIVATION EMAIL");
       await sendAccountActivationEmail(email, userDoc._id.toString());
 
       return res.json(userResponses.success(convertDocToSafeUser(userDoc)));

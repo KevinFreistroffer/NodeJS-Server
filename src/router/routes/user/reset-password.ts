@@ -43,6 +43,7 @@ router.post(
   validatedPassword,
   async (req: express.Request, res: express.Response<IResponse>) => {
     try {
+      console.log(req.body);
       const validatedErrors = validationResult(req).array();
       if (validatedErrors.length) {
         return res
@@ -67,15 +68,17 @@ router.post(
         html: "",
       };
 
-      const { token } = req.body;
+      const { email, token } = req.body;
 
       const userDoc = await findOne({
         query: {
-          email: req.body.email,
+          email: email,
           resetPasswordToken: token,
         },
         sanitize: true,
       });
+
+      console.log(userDoc);
 
       if (!userDoc) {
         return res
@@ -95,7 +98,7 @@ router.post(
       const hashedPassword = passwordHash.generate(req.body.password);
       const {
         token: resetPasswordToken,
-        expirationDate: resetPasswordExpires,
+        expirationDate: resetPasswordTokenExpires,
       } = generateResetPasswordToken(3); // 3 hours
 
       // Save the new token and expiration in the database
@@ -104,8 +107,8 @@ router.post(
         {
           password: hashedPassword,
           resetPasswordToken,
-          resetPasswordExpires,
-          resetAttempts: [
+          resetPasswordTokenExpires,
+          resetPasswordAttempts: [
             {
               timestamp: new Date().toISOString(),
             },
@@ -126,12 +129,12 @@ router.post(
       // const hashedPassword = passwordHash.generate(req.body.password);
       // foundUser.password = hashedPassword;
       // foundUser.resetPasswordToken = undefined;
-      // foundUser.resetPasswordExpires = undefined;
+      // foundUser.resetPasswordTokenExpires = undefined;
 
       // Verify that the reset password token has not expired
       if (
-        !userDoc.resetPasswordExpires ||
-        userDoc.resetPasswordExpires < new Date()
+        !userDoc.resetPasswordTokenExpires ||
+        userDoc.resetPasswordTokenExpires < new Date()
       ) {
         description =
           "The reset password link expired. A new reset password link was sent to your email.";

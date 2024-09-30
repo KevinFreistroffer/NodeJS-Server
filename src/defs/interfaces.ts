@@ -20,7 +20,8 @@ export interface IUser {
   emailNormalized: string;
   password: string;
   resetPasswordToken: string;
-  resetPasswordExpires?: Date;
+  resetPasswordTokenExpires: Date | null;
+  resetPasswordAttempts: [];
   isVerified: boolean; // Todo should make this required and setup the email verification
   // jwtToken: string; // TODO: I don't think this is needed. The token would get generated and sent to the client. Client sends the token, server parses it, and compares it to the found users
   // password and
@@ -36,7 +37,7 @@ export interface ISanitizedUser
     "password" | "usernameNormalized" | "emailNormalized"
 
     // | "resetPasswordToken"
-    // | "resetPasswordExpires"
+    // | "resetPasswordTokenExpires"
     // | "jwtToken"
   > {}
 
@@ -46,7 +47,7 @@ export interface ISanitizedUser
 //     "password" | "usernameNormalized" | "emailNormalized"
 
 //     // | "resetPasswordToken"
-//     // | "resetPasswordExpires"
+//     // | "resetPasswordTokenExpires"
 //     // | "jwtToken"
 //   > {}
 
