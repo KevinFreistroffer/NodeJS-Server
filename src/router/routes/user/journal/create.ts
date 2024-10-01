@@ -10,7 +10,6 @@ import {
   IResponse,
 } from "../../../../defs/responses/generic";
 import { statusCodes } from "../../../../defs/responses/status_codes";
-import { Types } from "mongoose";
 import { ObjectId } from "mongodb";
 
 import { findOneById, updateOne } from "../../../../operations/user_operations";
@@ -21,7 +20,7 @@ const days = ["Sun", "Mon", "Tue", "Wed", "Thur", "Fri", "Sat"];
 const validatedUserId = body("userId") // TODO convert to zod?
   .notEmpty()
   .bail()
-  .custom((id) => Types.ObjectId.isValid(id))
+  .custom((id) => ObjectId.isValid(id))
   .escape();
 const validatedJournal = body(["title", "entry", "category"]) // TODO convert to zod?
   .notEmpty()
@@ -32,6 +31,7 @@ const validatedJournal = body(["title", "entry", "category"]) // TODO convert to
 
 router.post(
   "/",
+  body("favorite").notEmpty().bail().isBoolean().bail().escape(),
   validatedUserId,
   validatedJournal,
   async (req: express.Request, res: express.Response<IResponse>) => {
@@ -48,11 +48,11 @@ router.post(
        * Valid request body.
        * MongoDB User collection
        *------------------------------------------------*/
-      const { userId, title, entry, category } = req.body;
+      const { userId, title, entry, category, favorite } = req.body;
       console.log("userId", userId);
       const day = moment().day();
       const date = `${days[day]}, ${moment().format("MM-DD-YYYY")}`;
-      const journal = new Journal(title, entry, category, date, false);
+      const journal = new Journal(title, entry, category, date, false, false);
       console.log("JOURNAL", journal);
 
       /*--------------------------------------------------
@@ -63,9 +63,9 @@ router.post(
         { _id: new ObjectId(userId) },
         {
           $push: {
-            _id: new ObjectId(),
-            journals: journal,
+            journals: { ...journal, _id: new ObjectId() },
             journalCategories: {
+              _id: new ObjectId(),
               category,
               selected: false,
             },
@@ -82,7 +82,7 @@ router.post(
       }
 
       const foundDoc = await findOneById(new ObjectId(userId));
-
+      console.log("FOUND DOC", foundDoc);
       if (!foundDoc) {
         return res
           .status(statusCodes.user_not_found)

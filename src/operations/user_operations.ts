@@ -190,6 +190,29 @@ export async function updateOne(
 }
 
 /**
+ * Update many
+ * @param query
+ * @param update
+ */
+export async function updateMany(
+  query: Filter<IUser>,
+  update: Record<string, any>
+): Promise<UpdateResult<IUser>> {
+  const client = await getClient();
+  try {
+    await client.connect();
+    const doc = await usersCollection(client).updateMany(query, update);
+    return doc;
+  } catch (error) {
+    // TODO: what type of errors? Handle specific errors?
+    console.log("ERROR", error);
+    throw error;
+  } finally {
+    client.close();
+  }
+}
+
+/**
  * Delete all documents
  */
 export async function deleteMany(): Promise<DeleteResult> {

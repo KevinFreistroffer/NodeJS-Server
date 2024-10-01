@@ -29,8 +29,13 @@ module.exports = (app: express.Express) => {
   app.use("/user/delete-all", require("./routes/user/delete-all"));
   app.use("/user/journal/create", require("./routes/user/journal/create"));
   app.use("/user/journal/edit", require("./routes/user/journal/edit"));
+  app.use(
+    "/user/journal/edit-many",
+    require("./routes/user/journal/edit-many")
+  );
   app.use("/user/journal/journals", require("./routes/user/journal/journals"));
   app.use("/user/journal/delete", require("./routes/user/journal/delete"));
+
   app.use(
     "/user/journal/category/create",
     require("./routes/user/journal/category/create")

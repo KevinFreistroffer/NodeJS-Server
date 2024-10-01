@@ -18,14 +18,14 @@ const router = express.Router();
 const validatedUserId = body("userId")
   .notEmpty()
   .bail()
-  .custom((id) => Types.ObjectId.isValid(id))
+  .custom((id) => ObjectId.isValid(id))
   .withMessage("Invalid userId")
   .escape();
 
 const validatedCategoryId = body("categoryId")
   .notEmpty()
   .bail()
-  .custom((id) => Types.ObjectId.isValid(id))
+  .custom((id) => ObjectId.isValid(id))
   .withMessage("Invalid categoryId")
   .escape();
 

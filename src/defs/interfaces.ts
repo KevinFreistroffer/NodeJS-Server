@@ -6,6 +6,7 @@ export interface IJournal extends Document {
   category: string;
   date: string;
   selected: boolean;
+  favorite: boolean;
 }
 export interface ICategory {
   _id: ObjectId;
