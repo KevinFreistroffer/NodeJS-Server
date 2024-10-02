@@ -99,6 +99,7 @@ router.post(
         isVerified: false,
         createdAt: new Date(),
         updatedAt: new Date(),
+        hasAcknolwedgedHelperText: false,
       });
 
       if (!insertDoc || !insertDoc.insertedId) {

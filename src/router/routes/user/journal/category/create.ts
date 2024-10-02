@@ -15,7 +15,6 @@ import { statusCodes } from "../../../../../defs/responses/status_codes";
 import { handleCaughtErrorResponse } from "../../../../../utils";
 const validatedUserId = body("userId") // TODO convert to zod?
   .notEmpty()
-
   .bail()
   .custom((id) => Types.ObjectId.isValid(id))
   .bail()
@@ -35,7 +34,9 @@ router.post(
   validatedJournal,
   async (req: express.Request, res: express.Response<IResponse>) => {
     try {
+      console.log(req.body);
       const validatedFields = validationResult(req);
+      console.log("validatedFields", validatedFields);
       if (!validatedFields.isEmpty()) {
         return res
           .status(statusCodes.missing_body_fields)

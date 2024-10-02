@@ -18,6 +18,9 @@ export class User {
   journalCategories: any[];
   resetPasswordAttempts: { timestamp: string }[];
   isVerified: boolean = false;
+  createdAt: Date;
+  updatedAt: Date;
+  hasAcknolwedgedHelperText: boolean;
   constructor({
     username,
     email,
@@ -39,6 +42,9 @@ export class User {
     this.journals = [];
     this.journalCategories = [];
     this.resetPasswordAttempts = [];
+    this.createdAt = new Date();
+    this.updatedAt = new Date();
+    this.hasAcknolwedgedHelperText = false;
   }
 }
 
@@ -54,4 +60,5 @@ export const UserProjection = {
   isVerified: 1,
   createdAt: 1,
   updatedAt: 1,
+  hasAcknolwedgedHelperText: 1,
 };
