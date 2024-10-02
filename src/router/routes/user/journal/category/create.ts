@@ -1,11 +1,14 @@
 "use strict";
 
 import * as express from "express";
-import { body, validationResult } from "express-validator";
+import { body, validationResult, query } from "express-validator";
 import { Types } from "mongoose";
 import { ObjectId } from "mongodb";
 import { Category } from "../../../../../defs/models/category.model";
-import { updateOne } from "../../../../../operations/user_operations";
+import {
+  updateOne,
+  findOneById,
+} from "../../../../../operations/user_operations";
 import { responses as userResponses } from "../../../../../defs/responses/user";
 import {
   responses as genericResponses,
@@ -26,14 +29,37 @@ const validatedJournal = body("category") // TODO convert to zod?
   .bail()
   .custom((category) => typeof category === "string")
   .escape();
+const validatedReturnUser = query("returnUser")
+  .optional()
+  .isString()
+  .bail()
+  .custom((value) => {
+    if (value && !["true", "false"].includes(value.toLowerCase())) {
+      throw new Error(
+        'returnUser must be "true" or "false" (case insensitive)'
+      );
+    }
+    return true;
+  });
+
 const router = express.Router();
 
 router.post(
   "/",
   validatedUserId,
   validatedJournal,
+  validatedReturnUser,
   async (req: express.Request, res: express.Response<IResponse>) => {
     try {
+      const { returnUser } = req.query;
+      console.log("returnUser", returnUser);
+
+      let query: { returnUser?: boolean } = {};
+
+      if (returnUser) {
+        query.returnUser = returnUser === "true";
+      }
+
       console.log(req.body);
       const validatedFields = validationResult(req);
       console.log("validatedFields", validatedFields);
@@ -51,11 +77,15 @@ router.post(
         },
         {
           $addToSet: {
-            _id: new ObjectId(userId),
-            journalCategories: newCategory,
+            journalCategories: {
+              _id: new ObjectId(),
+              ...newCategory,
+            },
           },
         }
       );
+
+      console.log("doc", doc);
 
       if (!doc.matchedCount) {
         return res
@@ -73,8 +103,23 @@ router.post(
           .json(userResponses.could_not_update("User not updated."));
       }
 
+      if (query.returnUser) {
+        const user = await findOneById(new ObjectId(userId));
+
+        if (!user) {
+          return res
+            .status(statusCodes.user_not_found)
+            .json(userResponses.user_not_found("User not found."));
+        }
+
+        return res
+          .status(statusCodes.success)
+          .json(genericResponses.success(user));
+      }
+
       return res.status(statusCodes.success).json(genericResponses.success());
     } catch (error) {
+      console.log("ERROR", error);
       return handleCaughtErrorResponse(error, req, res);
     }
   }
