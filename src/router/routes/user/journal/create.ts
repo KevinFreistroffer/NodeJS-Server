@@ -35,9 +35,11 @@ router.post(
   validatedUserId,
   validatedJournal,
   async (req: express.Request, res: express.Response<IResponse>) => {
-    console.log(req.cookies);
+    console.log(req.body, typeof req.body.favorite);
+
     try {
       const validatedFields = validationResult(req);
+      console.log("validatedFields", validatedFields);
       if (!validatedFields.isEmpty()) {
         return res
           .status(statusCodes.missing_body_fields)
@@ -52,7 +54,14 @@ router.post(
       console.log("userId", userId);
       const day = moment().day();
       const date = `${days[day]}, ${moment().format("MM-DD-YYYY")}`;
-      const journal = new Journal(title, entry, category, date, false, false);
+      const journal = new Journal(
+        title,
+        entry,
+        category,
+        date,
+        false,
+        favorite
+      );
       console.log("JOURNAL", journal);
 
       /*--------------------------------------------------
@@ -63,11 +72,18 @@ router.post(
         { _id: new ObjectId(userId) },
         {
           $push: {
-            journals: { ...journal, _id: new ObjectId() },
+            journals: {
+              ...journal,
+              _id: new ObjectId(),
+              createdAt: new Date(),
+              updatedAt: new Date(),
+            },
             journalCategories: {
               _id: new ObjectId(),
               category,
               selected: false,
+              createdAt: new Date(),
+              updatedAt: new Date(),
             },
           },
         }

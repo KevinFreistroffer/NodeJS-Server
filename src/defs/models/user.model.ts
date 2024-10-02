@@ -52,4 +52,6 @@ export const UserProjection = {
   resetPasswordTokenExpires: 1,
   resetPasswordAttempts: 1,
   isVerified: 1,
+  createdAt: 1,
+  updatedAt: 1,
 };

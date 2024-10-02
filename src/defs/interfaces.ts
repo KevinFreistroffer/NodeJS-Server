@@ -7,11 +7,15 @@ export interface IJournal extends Document {
   date: string;
   selected: boolean;
   favorite: boolean;
+  createdAt: Date;
+  updatedAt: Date;
 }
 export interface ICategory {
   _id: ObjectId;
   category: string;
   selected: boolean;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface IUser {
@@ -28,6 +32,8 @@ export interface IUser {
   // password and
   journals: IJournal[];
   journalCategories: ICategory[];
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface IUserDoc extends WithId<IUser> {}

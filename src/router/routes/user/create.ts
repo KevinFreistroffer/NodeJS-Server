@@ -97,6 +97,8 @@ router.post(
         journals: [],
         journalCategories: [],
         isVerified: false,
+        createdAt: new Date(),
+        updatedAt: new Date(),
       });
 
       if (!insertDoc || !insertDoc.insertedId) {
