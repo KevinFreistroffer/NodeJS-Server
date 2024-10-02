@@ -31,33 +31,10 @@ export const getClient = () => {
 
 export const usersCollection = (client: MongoClient) => {
   const db = client.db(process.env.DATABASE_NAME);
-  return db.collection<IUser>("users");
-  //www.mongodb.com/resources/products/compatibilities/using-typescript-with-mongodb-tutorial
-  // await db.command({
-  //   collMod: "process.env.GAMES_COLLECTION_NAME",
-  //   validator: {
-  //     $jsonSchema: {
-  //       bsonType: "object",
-  //       required: ["name", "price", "category"],
-  //       additionalProperties: false,
-  //       properties: {
-  //         _id: {},
-  //         name: {
-  //           bsonType: "string",
-  //           description: "'name' is required and is a string",
-  //         },
-  //         price: {
-  //           bsonType: "number",
-  //           description: "'price' is required and is a number",
-  //         },
-  //         category: {
-  //           bsonType: "string",
-  //           description: "'category' is required and is a string",
-  //         },
-  //       },
-  //     },
-  //   },
-  // });
+
+  return db.collection<IUser>("users", {
+    //www.mongodb.com/resources/products/compatibilities/using-typescript-with-mongodb-tutorial
+  });
 };
 
 export const sessionsCollection = (client: MongoClient) =>
