@@ -227,3 +227,28 @@ export async function deleteMany(): Promise<DeleteResult> {
     client.close();
   }
 }
+
+/**
+ * Find one and update
+ * @param query
+ * @param update
+ * @param options
+ */
+export async function findOneAndUpdate(
+  query: Filter<IUser>,
+  update: Record<string, any>,
+  options?: { returnDocument?: "before" | "after" }
+): Promise<IUser | ISanitizedUser | null> {
+  const client = await getClient();
+  try {
+    await client.connect();
+    return await usersCollection(client).findOneAndUpdate(query, update, {
+      returnDocument: options?.returnDocument ?? "after",
+      projection: options?.returnDocument ? undefined : UserProjection,
+    });
+  } catch (error) {
+    throw error;
+  } finally {
+    client.close();
+  }
+}

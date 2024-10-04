@@ -27,3 +27,4 @@ export const SUCCESS = "Success.";
 export const ACCESS_DENIED = "Access denied.";
 export const ROUTE_NOT_FOUND = "Sorry, can't find that!";
 export const SOMETHING_WENT_WRONG = "Something went wrong!";
+export const TOO_MANY_REQUESTS = "Too many requests!";

@@ -2,6 +2,8 @@ the handleUncaughtErroResponse is not linked to the user responses interface. Ma
 
 update express 5
 
+use express-validator isMongoID() instead of custom
+
 eslint showing errors in the Request<any, any, Interface>. Deleted them. Are these types required?
 
 codes starting from 1st /auth folder 1****

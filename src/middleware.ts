@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import { rateLimit } from "express-rate-limit";
-import { responses as genericResponses } from "./defs/responses/generic_responses";
+import { responses as genericResponses } from "./defs/responses/generic";
 import { findOneById } from "./operations/user_operations";
 import { ObjectId } from "mongodb";
 dotenv.config();

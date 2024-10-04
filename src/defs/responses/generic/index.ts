@@ -6,6 +6,7 @@ import {
   RESOURCE_NOT_FOUND,
   ROUTE_NOT_FOUND,
   SOMETHING_WENT_WRONG,
+  TOO_MANY_REQUESTS,
 } from "../../constants";
 import { EMessageType } from "../../enums";
 import { ISanitizedUser, IJournal } from "../../interfaces";
@@ -46,6 +47,7 @@ export interface IGenericResponses {
       | undefined,
     description?: string
   ) => IResponse;
+  too_many_requests: (description?: string) => IResponse;
 }
 
 export const responses: IGenericResponses = {
@@ -114,6 +116,12 @@ export const responses: IGenericResponses = {
     code: 200,
     data,
   }),
+  too_many_requests: (description?: string) => ({
+    message: EMessageType.error,
+    description: description || TOO_MANY_REQUESTS,
+    code: 429,
+    data: undefined,
+  }),
 };
 
 export const statusCodes = {
@@ -126,4 +134,5 @@ export const statusCodes = {
   caught_error: 500,
   something_went_wrong: 500,
   success: 200,
+  too_many_requests: 429,
 };
