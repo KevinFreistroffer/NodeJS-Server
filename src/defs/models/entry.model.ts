@@ -1,4 +1,4 @@
-export class Journal {
+export class Entry {
   title: string;
   entry: string;
   category: string;

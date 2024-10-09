@@ -880,12 +880,12 @@
         }
       }
     },
-    "/journal/create": {
+    "/entry/create": {
       "post": {
-        "description": "Saves a journal.",
-        "tags": ["Journal"],
+        "description": "Saves a entry.",
+        "tags": ["Entry"],
         "requestBody": {
-          "description": "User's document ID and the journal to save.",
+          "description": "User's document ID and the entry to save.",
           "required": true,
           "content": {
             "application/json": {
@@ -908,8 +908,8 @@
               },
               "example": {
                 "userId": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9",
-                "title": "Journal",
-                "entry": "A journal about things.",
+                "title": "Entry",
+                "entry": "A entry about things.",
                 "category": "Today"
               }
             }
@@ -936,12 +936,12 @@
                 },
                 "example": {
                   "success": true,
-                  "message": "Journal saved.",
+                  "message": "Entry saved.",
                   "data": {
                     "username": "user1",
                     "email": "email@gmail.com",
-                    "journals": [],
-                    "journalCategories": []
+                    "entries": [],
+                    "entryCategories": []
                   }
                 }
               }
@@ -1002,10 +1002,10 @@
         }
       }
     },
-    "/journal/edit": {
+    "/entry/edit": {
       "post": {
-        "description": "Edits a journals title, entry and/or category.",
-        "tags": ["Journal"],
+        "description": "Edits a entries title, entry and/or category.",
+        "tags": ["Entry"],
         "requestBody": {
           "description": "The title, entry or category is required.",
           "required": true,
@@ -1017,7 +1017,7 @@
                   "userId": {
                     "type": "string"
                   },
-                  "journalId": {
+                  "entryId": {
                     "type": "string"
                   },
                   "title": {
@@ -1036,7 +1036,7 @@
               },
               "example": {
                 "userId": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9",
-                "journalId": "eyJhbGciOiJIUzI1NiI4234242423423VCJ9",
+                "entryId": "eyJhbGciOiJIUzI1NiI4234242423423VCJ9",
                 "title": "New Title",
                 "entry": "New entry",
                 "category": "New Category"
@@ -1072,12 +1072,12 @@
                 },
                 "example": {
                   "success": true,
-                  "message": "Journal edited.",
+                  "message": "Entry edited.",
                   "data": {
                     "username": "user1",
                     "email": "email@gmail.com",
-                    "journals": [],
-                    "journalCategories": []
+                    "entries": [],
+                    "entryCategories": []
                   }
                 }
               }
@@ -1138,10 +1138,10 @@
         }
       }
     },
-    "/journal/journals/{userId}": {
+    "/entry/entries/{userId}": {
       "get": {
-        "summary": "Get a users journals.",
-        "tags": ["Journal"],
+        "summary": "Get a users entries.",
+        "tags": ["Entry"],
         "parameters": [
           {
             "in": "path",
@@ -1179,12 +1179,12 @@
                 },
                 "example": {
                   "success": true,
-                  "message": "Successfully fetched the journals.",
+                  "message": "Successfully fetched the entries.",
                   "data": {
                     "username": "user1",
                     "email": "email@gmail.com",
-                    "journals": [],
-                    "journalCategories": []
+                    "entries": [],
+                    "entryCategories": []
                   }
                 }
               }
@@ -1245,12 +1245,12 @@
         }
       }
     },
-    "/journal/delete": {
+    "/entry/delete": {
       "put": {
-        "description": "Deletes journal(s).",
-        "tags": ["Journal"],
+        "description": "Deletes entry(s).",
+        "tags": ["Entry"],
         "requestBody": {
-          "description": "A users document ID and a list of journal document id's.",
+          "description": "A users document ID and a list of entry document id's.",
           "required": true,
           "content": {
             "application/json": {
@@ -1261,8 +1261,8 @@
                     "description": "The user's document id.",
                     "type": "string"
                   },
-                  "journalIds": {
-                    "description": "The journal document id(s).",
+                  "entryIds": {
+                    "description": "The entry document id(s).",
                     "type": "array",
                     "items": {
                       "type": "string"
@@ -1272,7 +1272,7 @@
               },
               "example": {
                 "userId": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9",
-                "journalIds": ["423221", "421221"]
+                "entryIds": ["423221", "421221"]
               }
             }
           }
@@ -1305,12 +1305,12 @@
                 },
                 "example": {
                   "success": true,
-                  "message": "Journal(s) deleted.",
+                  "message": "Entry(s) deleted.",
                   "data": {
                     "username": "user1",
                     "email": "email@gmail.com",
-                    "journals": [],
-                    "journalCategories": []
+                    "entries": [],
+                    "entryCategories": []
                   }
                 }
               }
@@ -1371,10 +1371,10 @@
         }
       }
     },
-    "/journal/new-category": {
+    "/entry/new-category": {
       "post": {
         "description": "Saves a new category.",
-        "tags": ["Journal"],
+        "tags": ["Entry"],
         "requestBody": {
           "description": "A users document ID and a category string.",
           "required": true,
@@ -1432,8 +1432,8 @@
                   "data": {
                     "username": "user1",
                     "email": "email@gmail.com",
-                    "journals": [],
-                    "journalCategories": ["New Category"]
+                    "entries": [],
+                    "entryCategories": ["New Category"]
                   }
                 }
               }
@@ -1494,12 +1494,12 @@
         }
       }
     },
-    "/journal/create-many": {
+    "/entry/create-many": {
       "post": {
-        "description": "Saves a category on the journal(s).",
-        "tags": ["Journal"],
+        "description": "Saves a category on the entry(s).",
+        "tags": ["Entry"],
         "requestBody": {
-          "description": "A users document ID, the journal document id's, and a category string.",
+          "description": "A users document ID, the entry document id's, and a category string.",
           "required": true,
           "content": {
             "application/json": {
@@ -1510,8 +1510,8 @@
                     "description": "The user's document id.",
                     "type": "string"
                   },
-                  "journalIds": {
-                    "description": "The journal document id(s).",
+                  "entryIds": {
+                    "description": "The entry document id(s).",
                     "type": "string"
                   },
                   "category": {
@@ -1522,7 +1522,7 @@
               },
               "example": {
                 "userId": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9",
-                "journalIds": [
+                "entryIds": [
                   "eyJhbGciOifgIUzI1NiIsInR5cCI6IkpXVCJ9",
                   "eyJhbhgiOiJIUzI1NiIsInR5cCI6IkpXVCJ9"
                 ],
@@ -1559,12 +1559,12 @@
                 },
                 "example": {
                   "success": true,
-                  "message": "Journals updated.",
+                  "message": "Entries updated.",
                   "data": {
                     "username": "user1",
                     "email": "email@gmail.com",
-                    "journals": [],
-                    "journalCategories": ["New Category"]
+                    "entries": [],
+                    "entryCategories": ["New Category"]
                   }
                 }
               }
@@ -1638,13 +1638,13 @@
             "type": "string",
             "format": "email"
           },
-          "journals": {
+          "entries": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/Journal"
+              "$ref": "#/components/schemas/Entry"
             }
           },
-          "journalCategories": {
+          "entryCategories": {
             "type": "array",
             "items": {
               "type": "object",
@@ -1660,16 +1660,16 @@
           }
         }
       },
-      "Journal": {
+      "Entry": {
         "type": "object",
         "properties": {
           "title": {
             "type": "string",
-            "example": "Journal 1"
+            "example": "Entry 1"
           },
           "entry": {
             "type": "string",
-            "example": "Journal 1"
+            "example": "Entry 1"
           },
           "category": {
             "type": "string"

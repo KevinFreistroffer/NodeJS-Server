@@ -58,42 +58,42 @@ export const routes: RouteConfig[] = [
     requiresAuthorization: true,
   },
   {
-    path: "/user/journal/create",
+    path: "/user/entry/create",
     requiresAccessKey: false,
     requiresAuthorization: true,
   },
   {
-    path: "/user/journal/edit",
+    path: "/user/entry/edit",
     requiresAccessKey: false,
     requiresAuthorization: true,
   },
   {
-    path: "/user/journal/journals",
+    path: "/user/entry/entries",
     requiresAccessKey: false,
     requiresAuthorization: true,
   },
   {
-    path: "/user/journal/delete",
+    path: "/user/entry/delete",
     requiresAccessKey: false,
     requiresAuthorization: true,
   },
   {
-    path: "/user/journal/category/create",
+    path: "/user/entry/category/create",
     requiresAccessKey: false,
     requiresAuthorization: true,
   },
   {
-    path: "/user/journal/category/create-many",
+    path: "/user/entry/category/create-many",
     requiresAccessKey: false,
     requiresAuthorization: true,
   },
   {
-    path: "/user/journal/category/edit",
+    path: "/user/entry/category/edit",
     requiresAccessKey: false,
     requiresAuthorization: true,
   },
   {
-    path: "/user/journal/category/delete",
+    path: "/user/entry/category/delete",
     requiresAccessKey: false,
     requiresAuthorization: true,
   },
@@ -111,7 +111,6 @@ export const excludeFromAuthorizationVerification = routes
 export const routesRequiringAccessKey = routes
   .filter((route) => route.requiresAccessKey)
   .map((route) => route.path);
-
 
 export const routesRequiringAuthorization = routes
   .filter((route) => route.requiresAuthorization)

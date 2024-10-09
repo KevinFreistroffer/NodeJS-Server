@@ -1,6 +1,6 @@
 // "use strict";
 
-// import { ICategory, IJournal, IUser, ISession } from "../interfaces";
+// import { ICategory, IEntry, IUser, ISession } from "../interfaces";
 
 // // autoIncrement.initialize(mongoose.connection);
 

@@ -32,7 +32,7 @@ router.delete(
         { _id: new ObjectId(req.params.userId) },
         {
           $pull: {
-            journalCategories: {
+            entryCategories: {
               _id: new ObjectId(req.params.categoryId),
             },
           },

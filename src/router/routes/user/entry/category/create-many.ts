@@ -1,4 +1,4 @@
-import { IJournal } from "../../../../../defs/interfaces";
+import { IEntry } from "../../../../../defs/interfaces";
 import * as express from "express";
 import { body, validationResult } from "express-validator";
 import { responses as userResponses } from "../../../../../defs/responses/user";
@@ -15,7 +15,7 @@ import { handleCaughtErrorResponse } from "../../../../../utils";
 import { statusCodes } from "../../../../../defs/responses/status_codes";
 const router = express.Router();
 
-const validatedJournalIds = body("journalIds")
+const validatedEntryIds = body("entryIds")
   .isArray({ min: 1 })
   .bail()
   .custom((value) => value.every((id: string) => ObjectId.isValid(id)))
@@ -31,7 +31,7 @@ const validatedStrings = body(["userId", "category"])
 router.post(
   "/",
   validatedStrings,
-  validatedJournalIds,
+  validatedEntryIds,
   async (req: express.Request, res: express.Response<IResponse>) => {
     try {
       const validatedFields = validationResult(req);
@@ -41,7 +41,7 @@ router.post(
           .json(genericResponses.missing_body_fields());
       }
 
-      const { userId, journalIds, category } = req.body;
+      const { userId, entryIds, category } = req.body;
 
       const doc = await findOneById(new ObjectId());
 
@@ -55,28 +55,24 @@ router.post(
       }
 
       /*--------------------------------------------------
-       *  Set the journal category on each journal
+       *  Set the entry category on each entry
        *------------------------------------------------*/
-      doc.journals.forEach((journal: IJournal) => {
-        if (
-          journalIds.includes(
-            ((journal as IJournal)._id as ObjectId).toString()
-          )
-        ) {
-          journal.category = category;
+      doc.entries.forEach((entry: IEntry) => {
+        if (entryIds.includes(((entry as IEntry)._id as ObjectId).toString())) {
+          entry.category = category;
         }
       });
 
       /*--------------------------------------------------
-       *  Save the updated user.journals
+       *  Save the updated user.entries
        *------------------------------------------------*/
       const updatedDoc = await updateOne(
         { _id: ObjectId.createFromHexString(userId) },
         {
           $set: {
-            journals: doc.journals.map((journal) => ({
-              ...journal,
-              _id: new ObjectId(journal._id),
+            entries: doc.entries.map((entry) => ({
+              ...entry,
+              _id: new ObjectId(entry._id),
             })),
           },
         }

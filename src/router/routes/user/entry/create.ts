@@ -2,7 +2,7 @@
 
 import express from "express";
 import moment from "moment";
-import { Journal } from "../../../../defs/models/journal.model";
+import { Entry } from "../../../../defs/models/entry.model";
 import { body, validationResult } from "express-validator";
 import { responses as userResponses } from "../../../../defs/responses/user";
 import {
@@ -22,7 +22,7 @@ const validatedUserId = body("userId") // TODO convert to zod?
   .bail()
   .custom((id) => ObjectId.isValid(id))
   .escape();
-const validatedJournal = body(["title", "entry", "category"]) // TODO convert to zod?
+const validatedEntry = body(["title", "entry", "category"]) // TODO convert to zod?
   .notEmpty()
   .bail()
   .isString()
@@ -33,7 +33,7 @@ router.post(
   "/",
   body("favorite").notEmpty().bail().isBoolean().bail().escape(),
   validatedUserId,
-  validatedJournal,
+  validatedEntry,
   async (req: express.Request, res: express.Response<IResponse>) => {
     console.log(req.body, typeof req.body.favorite);
 
@@ -54,38 +54,52 @@ router.post(
       console.log("userId", userId);
       const day = moment().day();
       const date = `${days[day]}, ${moment().format("MM-DD-YYYY")}`;
-      const journal = new Journal(
-        title,
-        entry,
-        category,
-        date,
-        false,
-        favorite
-      );
-      console.log("JOURNAL", journal);
+      const newEntry = new Entry(title, entry, category, date, false, favorite);
+      console.log("newEntry", newEntry);
 
       /*--------------------------------------------------
-       *  Update user's journals
+       *  Update user's entries
        *------------------------------------------------*/
       // const doc = await users.findOneAndUpdate({ _id: new ObjectId(userId) });
+      const existingUser = await findOneById(new ObjectId(userId));
+
+      if (!existingUser) {
+        return res
+          .status(statusCodes.user_not_found)
+          .json(userResponses.user_not_found());
+      }
+
+      const categoryExists = existingUser?.entryCategories?.some(
+        (cat) => cat.category.toLowerCase() === category.toLowerCase()
+      );
+
       const doc = await updateOne(
         { _id: new ObjectId(userId) },
         {
           $push: {
-            journals: {
-              ...journal,
+            entries: {
+              ...newEntry,
               _id: new ObjectId(),
-              createdAt: new Date(),
-              updatedAt: new Date(),
-            },
-            journalCategories: {
-              _id: new ObjectId(),
-              category,
-              selected: false,
               createdAt: new Date(),
               updatedAt: new Date(),
             },
           },
+          // TODO: determine if in the UI, an input would set the category and save it in this request.
+          // or if the existing create category works and this code isnt needed.
+          ...(categoryExists
+            ? {}
+            : {
+                // Only add category if it doesn't exist
+                $push: {
+                  entryCategories: {
+                    _id: new ObjectId(),
+                    category,
+                    selected: false,
+                    createdAt: new Date(),
+                    updatedAt: new Date(),
+                  },
+                },
+              }),
         }
       );
 

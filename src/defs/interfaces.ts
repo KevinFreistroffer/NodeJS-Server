@@ -1,6 +1,6 @@
 import { Document, ObjectId, WithId } from "mongodb";
 
-export interface IJournal extends Document {
+export interface IEntry extends Document {
   title: string;
   entry: string;
   category: string;
@@ -30,8 +30,8 @@ export interface IUser {
   isVerified: boolean; // Todo should make this required and setup the email verification
   // jwtToken: string; // TODO: I don't think this is needed. The token would get generated and sent to the client. Client sends the token, server parses it, and compares it to the found users
   // password and
-  journals: IJournal[];
-  journalCategories: ICategory[];
+  entries: IEntry[];
+  entryCategories: ICategory[];
   createdAt: Date;
   updatedAt: Date;
   hasAcknolwedgedHelperText: boolean;

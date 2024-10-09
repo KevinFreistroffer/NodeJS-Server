@@ -103,6 +103,8 @@ router.post(
         }
       );
 
+      console.log("token", token);
+
       if (!token) {
         throw new Error("Error generating JWT token.");
       }

@@ -1,6 +1,6 @@
 import { ObjectId } from "mongodb";
 import { User } from "../src/defs/models/user.model";
-import { IUser, IJournal, ICategory } from "../src/defs/interfaces";
+import { IUser, IEntry, ICategory } from "../src/defs/interfaces";
 
 export const mockUnsavedUser = new User(
   "user1",
@@ -8,30 +8,30 @@ export const mockUnsavedUser = new User(
   "password1"
 );
 
-const getJournals = (numJournalsToGet: number, getSavedJournals: boolean) => {
-  const journals = [];
-  for (let i = 0; i < numJournalsToGet; i++) {
-    const journal: {
+const getEntries = (numEntriesToGet: number, getSavedEntries: boolean) => {
+  const entries = [];
+  for (let i = 0; i < numEntriesToGet; i++) {
+    const entry: {
       _id?: ObjectId;
       title: string;
       entry: string;
       date: string;
       category: string;
     } = {
-      title: `Journal ${i} title`,
-      entry: `Journal entry ${i} content.`,
+      title: `Entry ${i} title`,
+      entry: `Entry entry ${i} content.`,
       date: "1/02/2017",
-      category: "My Journals",
+      category: "My Entries",
     };
 
-    if (getSavedJournals) {
-      journal["_id"] = new ObjectId();
+    if (getSavedEntries) {
+      entry["_id"] = new ObjectId();
     }
 
-    journals.push(journal);
+    entries.push(entry);
   }
 
-  return journals;
+  return entries;
 };
 
 const getCategories = (
@@ -61,21 +61,21 @@ const getCategories = (
 };
 
 /**
-  export const mockUsersWithJournals = getMockUsers({
+  export const mockUsersWithEntries = getMockUsers({
     numUsersToGet: 2,
-    numJournalsToGet: 1,
+    numEntriesToGet: 1,
     numCategoriesToGet: 1,
     addMongoObjectIds: true,
   });
  */
 export const getMockUsers = ({
   numUsersToGet,
-  numJournalsToGet,
+  numEntriesToGet,
   numCategoriesToGet,
   addMongoObjectIds,
 }: {
   numUsersToGet: number;
-  numJournalsToGet: number;
+  numEntriesToGet: number;
   numCategoriesToGet: number;
   addMongoObjectIds: boolean; // If true, the returned users will have _id fields
 }) => {
@@ -88,14 +88,14 @@ export const getMockUsers = ({
       resetPasswordToken: string;
       resetPasswordExpires: string;
       verified: boolean;
-      journals: {
+      entries: {
         _id?: ObjectId;
         title: string;
         entry: string;
         date: string;
         category: string;
       }[];
-      journalCategories: {
+      entryCategories: {
         _id?: ObjectId;
         category: string;
         selected: boolean;
@@ -106,11 +106,11 @@ export const getMockUsers = ({
       resetPasswordToken: `token${i}`,
       resetPasswordExpires: new Date().toLocaleString(),
       verified: true,
-      journals:
-        numJournalsToGet > 0
-          ? getJournals(numJournalsToGet, addMongoObjectIds)
+      entries:
+        numEntriesToGet > 0
+          ? getEntries(numEntriesToGet, addMongoObjectIds)
           : [],
-      journalCategories: numCategoriesToGet
+      entryCategories: numCategoriesToGet
         ? getCategories(numCategoriesToGet, addMongoObjectIds)
         : [],
     };

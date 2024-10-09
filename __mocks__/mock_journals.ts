@@ -1,12 +1,12 @@
 import { ObjectId } from "mongodb";
-import { IJournal } from "../src/defs/interfaces";
+import { IEntry } from "../src/defs/interfaces";
 
-export const mockJournal = {
+export const mockEntry = {
   userId: new ObjectId(),
-  journalId: new ObjectId(),
-  title: "Test Journal",
+  entryId: new ObjectId(),
+  title: "Test Entry",
   entry: "Test Entry",
   category: "Test Category",
 };
 
-export const mockJournals = [mockJournal, mockJournal, mockJournal];
+export const mockEntries = [mockEntry, mockEntry, mockEntry];

@@ -6,7 +6,7 @@ export const users = [
     password: "password",
     email: "admin@gmail.com",
     verified: true,
-    journals: [
+    entries: [
       {
         title: "A lot of Text testing height of views",
         entry: `At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti
@@ -15,7 +15,7 @@ export const users = [
 				expedita distinctio.`,
         date: "1/02/2017",
         id: 1,
-        category: "My Journals",
+        category: "My Entries",
       },
       {
         title: "Reflections on a Busy Week",
@@ -72,7 +72,7 @@ export const users = [
           "Looking back on the past year, I've noticed significant changes...",
         date: "2/14/2024",
         id: 9,
-        category: "My Journals",
+        category: "My Entries",
       },
       {
         title: "New Coding Challenge",
@@ -82,8 +82,8 @@ export const users = [
         category: "Programming",
       },
     ],
-    journalCategories: [
-      { category: "My Journals", selected: false },
+    entryCategories: [
+      { category: "My Entries", selected: false },
       { category: "Life Stuff", selected: false },
       { category: "Cooking Recipes", selected: false },
       { category: "Mindfulness", selected: false },
@@ -95,11 +95,11 @@ export const users = [
     ],
   },
   {
-    username: "nojournals",
-    password: "nojournals",
-    email: "nojournals.freistroffer@gmail.com",
+    username: "noentrys",
+    password: "noentrys",
+    email: "noentrys.freistroffer@gmail.com",
     verified: true,
-    journals: [],
-    journalCategories: ["My Journals"],
+    entries: [],
+    entryCategories: ["My Entries"],
   },
 ];

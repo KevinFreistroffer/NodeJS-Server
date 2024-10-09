@@ -33,7 +33,7 @@ router.get(
       }
       return res
         .status(statusCodes.success)
-        .json(genericResponses.success(doc.journals));
+        .json(genericResponses.success(doc.entries));
     } catch (error) {
       return handleCaughtErrorResponse(error, req, res);
     }

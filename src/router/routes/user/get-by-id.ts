@@ -15,6 +15,7 @@ router.get(
   "/:id",
   async (req: express.Request, res: express.Response<IResponse>) => {
     try {
+      console.log("/get-by-id", req.params.id);
       if (!req.params.id || !ObjectId.isValid(req.params.id)) {
         return res
           .status(statusCodes.missing_parameters)

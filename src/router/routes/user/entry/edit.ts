@@ -4,10 +4,7 @@ import * as express from "express";
 import { body, validationResult } from "express-validator";
 import { has } from "lodash";
 import { ObjectId } from "mongodb";
-import {
-  findOneById,
-  updateMany,
-} from "../../../../operations/user_operations";
+import { findOneById, updateOne } from "../../../../operations/user_operations";
 import { responses as userResponses } from "../../../../defs/responses/user";
 import { handleCaughtErrorResponse } from "../../../../utils";
 import {
@@ -17,54 +14,33 @@ import {
 import { statusCodes } from "../../../../defs/responses/status_codes";
 
 const router = express.Router();
-const validatedUserId = body("userId") // TODO convert to zod?
+const validatedIds = body(["userId", "entryId"]) // TODO convert to zod?
   .notEmpty()
   .bail()
   .custom((id) => ObjectId.isValid(id))
-  .withMessage("Invalid userId")
-  .bail()
-  .escape();
-
-const validatedJournalIds = body("journalIds") // TODO convert to zod?
-  .notEmpty()
-  .bail()
-  .isArray({ min: 1 })
-  .custom((ids: string[]) => ids.every((id) => ObjectId.isValid(id)))
-  .withMessage("Invalid journalIds")
+  .withMessage("Invalid userId or entryId")
   .bail()
   .escape();
 const validatedStrings = body(["title", "entry", "category"])
   .optional()
   .isString()
-  .bail()
   .escape();
+
 const validatedFavorite = body("favorite").optional().isBoolean().escape();
 
 // TODO validate title entry category
 
 router.post(
   "/",
-  validatedUserId,
-  validatedJournalIds,
+  validatedIds,
   validatedStrings,
   validatedFavorite,
   async (
-    req: express.Request<
-      {},
-      {},
-      {
-        userId: string;
-        journalIds: string[];
-        title?: string;
-        entry?: string;
-        category?: string;
-        favorite?: boolean;
-      }
-    >,
+    req: express.Request,
+
     res: express.Response<IResponse>
   ) => {
     try {
-      console.log("/EDIT MANY", req.body);
       const errors = validationResult(req);
       console.log(errors);
       if (
@@ -79,36 +55,32 @@ router.post(
           .json(genericResponses.missing_body_fields());
       }
 
-      const { userId, journalIds, title, entry, category, favorite } = req.body;
+      const { userId, entryId, title, entry, category, favorite } = req.body;
       const query: {
-        ["journals.$.title"]?: string;
-        ["journals.$.entry"]?: string;
-        ["journals.$.category"]?: string;
-        ["journals.$.favorite"]?: boolean;
+        ["entries.$.title"]?: string;
+        ["entries.$.entry"]?: string;
+        ["entries.$.category"]?: string;
+        ["entries.$.favorite"]?: boolean;
       } = {};
 
       if (title) {
-        query["journals.$.title"] = title;
+        query["entries.$.title"] = title;
       }
 
       if (entry) {
-        query["journals.$.entry"] = entry;
+        query["entries.$.entry"] = entry;
       }
 
       if (category) {
-        query["journals.$.category"] = category;
+        query["entries.$.category"] = category;
       }
 
-      if (favorite !== undefined) {
-        query["journals.$.favorite"] = Boolean(favorite); // TODO: why is the boolean getting converted to a string?
-      }
-
-      console.log("QUERY", query);
-      const doc = await updateMany(
+      const doc = await updateOne(
         {
-          _id: new ObjectId(userId),
-          "journals._id": { $in: journalIds.map((id) => new ObjectId(id)) },
+          _id: ObjectId.createFromHexString(userId),
+          "entries._id": ObjectId.createFromHexString(entryId),
         },
+
         {
           $set: query,
         }
@@ -141,7 +113,6 @@ router.post(
         .status(statusCodes.success)
         .json(genericResponses.success(userDoc));
     } catch (error) {
-      console.log(error);
       return handleCaughtErrorResponse(error, req, res);
     }
   }
