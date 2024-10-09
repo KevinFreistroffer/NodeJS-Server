@@ -25,12 +25,12 @@ const validatedUserId = body("userId") // TODO convert to zod?
   .bail()
   .escape();
 
-const validatedEntryIds = body("entryIds") // TODO convert to zod?
+const validatedJournalIds = body("journalIds") // TODO convert to zod?
   .notEmpty()
   .bail()
   .isArray({ min: 1 })
   .custom((ids: string[]) => ids.every((id) => ObjectId.isValid(id)))
-  .withMessage("Invalid entryIds")
+  .withMessage("Invalid journalIds")
   .bail()
   .escape();
 const validatedStrings = body(["title", "journal", "category"])
@@ -45,7 +45,7 @@ const validatedFavorite = body("favorite").optional().isBoolean().escape();
 router.post(
   "/",
   validatedUserId,
-  validatedEntryIds,
+  validatedJournalIds,
   validatedStrings,
   validatedFavorite,
   async (
@@ -54,7 +54,7 @@ router.post(
       {},
       {
         userId: string;
-        entryIds: string[];
+        journalIds: string[];
         title?: string;
         journal?: string;
         category?: string;
@@ -79,7 +79,8 @@ router.post(
           .json(genericResponses.missing_body_fields());
       }
 
-      const { userId, entryIds, title, journal, category, favorite } = req.body;
+      const { userId, journalIds, title, journal, category, favorite } =
+        req.body;
       const query: {
         ["journals.$.title"]?: string;
         ["journals.$.journal"]?: string;
@@ -107,7 +108,7 @@ router.post(
       const doc = await updateMany(
         {
           _id: new ObjectId(userId),
-          "journals._id": { $in: entryIds.map((id) => new ObjectId(id)) },
+          "journals._id": { $in: journalIds.map((id) => new ObjectId(id)) },
         },
         {
           $set: query,

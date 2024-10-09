@@ -941,7 +941,7 @@
                     "username": "user1",
                     "email": "email@gmail.com",
                     "journals": [],
-                    "entryCategories": []
+                    "journalCategories": []
                   }
                 }
               }
@@ -1017,7 +1017,7 @@
                   "userId": {
                     "type": "string"
                   },
-                  "entryId": {
+                  "journalId": {
                     "type": "string"
                   },
                   "title": {
@@ -1036,7 +1036,7 @@
               },
               "example": {
                 "userId": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9",
-                "entryId": "eyJhbGciOiJIUzI1NiI4234242423423VCJ9",
+                "journalId": "eyJhbGciOiJIUzI1NiI4234242423423VCJ9",
                 "title": "New Title",
                 "journal": "New journal",
                 "category": "New Category"
@@ -1077,7 +1077,7 @@
                     "username": "user1",
                     "email": "email@gmail.com",
                     "journals": [],
-                    "entryCategories": []
+                    "journalCategories": []
                   }
                 }
               }
@@ -1184,7 +1184,7 @@
                     "username": "user1",
                     "email": "email@gmail.com",
                     "journals": [],
-                    "entryCategories": []
+                    "journalCategories": []
                   }
                 }
               }
@@ -1261,7 +1261,7 @@
                     "description": "The user's document id.",
                     "type": "string"
                   },
-                  "entryIds": {
+                  "journalIds": {
                     "description": "The journal document id(s).",
                     "type": "array",
                     "items": {
@@ -1272,7 +1272,7 @@
               },
               "example": {
                 "userId": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9",
-                "entryIds": ["423221", "421221"]
+                "journalIds": ["423221", "421221"]
               }
             }
           }
@@ -1310,7 +1310,7 @@
                     "username": "user1",
                     "email": "email@gmail.com",
                     "journals": [],
-                    "entryCategories": []
+                    "journalCategories": []
                   }
                 }
               }
@@ -1433,7 +1433,7 @@
                     "username": "user1",
                     "email": "email@gmail.com",
                     "journals": [],
-                    "entryCategories": ["New Category"]
+                    "journalCategories": ["New Category"]
                   }
                 }
               }
@@ -1510,7 +1510,7 @@
                     "description": "The user's document id.",
                     "type": "string"
                   },
-                  "entryIds": {
+                  "journalIds": {
                     "description": "The journal document id(s).",
                     "type": "string"
                   },
@@ -1522,7 +1522,7 @@
               },
               "example": {
                 "userId": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9",
-                "entryIds": [
+                "journalIds": [
                   "eyJhbGciOifgIUzI1NiIsInR5cCI6IkpXVCJ9",
                   "eyJhbhgiOiJIUzI1NiIsInR5cCI6IkpXVCJ9"
                 ],
@@ -1564,7 +1564,7 @@
                     "username": "user1",
                     "email": "email@gmail.com",
                     "journals": [],
-                    "entryCategories": ["New Category"]
+                    "journalCategories": ["New Category"]
                   }
                 }
               }
@@ -1644,7 +1644,7 @@
               "$ref": "#/components/schemas/Journal"
             }
           },
-          "entryCategories": {
+          "journalCategories": {
             "type": "array",
             "items": {
               "type": "object",

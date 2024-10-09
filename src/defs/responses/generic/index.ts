@@ -9,7 +9,7 @@ import {
   TOO_MANY_REQUESTS,
 } from "../../constants";
 import { EMessageType } from "../../enums";
-import { ISanitizedUser, IEntry } from "../../interfaces";
+import { ISanitizedUser, IJournal } from "../../interfaces";
 
 export interface IResponseBase {
   message: EMessageType;
@@ -22,8 +22,8 @@ export interface IResponse extends IResponseBase {
     | ISanitizedUser
     | ISanitizedUser
     | ISanitizedUser[]
-    | IEntry
-    | IEntry[]
+    | IJournal
+    | IJournal[]
     | boolean
     | undefined;
 }
@@ -41,8 +41,8 @@ export interface IGenericResponses {
     data?:
       | ISanitizedUser
       | ISanitizedUser[]
-      | IEntry
-      | IEntry[]
+      | IJournal
+      | IJournal[]
       | boolean
       | undefined,
     description?: string
@@ -105,8 +105,8 @@ export const responses: IGenericResponses = {
     data:
       | ISanitizedUser
       | ISanitizedUser[]
-      | IEntry
-      | IEntry[]
+      | IJournal
+      | IJournal[]
       | boolean
       | undefined,
     description?: string

@@ -13,7 +13,7 @@ import {
   findAllUsers,
 } from "../src/operations/user_operations";
 import { responses } from "../src/defs/responses/user";
-import { mockEntry } from "../__mocks__/mock_entrys";
+import { mockJournal } from "../__mocks__/mock_journals";
 import { getMockUsers } from "../__mocks__/mock_users";
 import dotenv from "dotenv";
 
@@ -25,12 +25,12 @@ jest.mock("../src/operations/user_operations", () => ({
   findOneByEmail: jest.fn(),
   findOneByUsernameOrEmail: jest.fn(),
   findAllUsers: jest.fn(),
-  createEntry: jest.fn(),
-  findAllEntries: jest.fn(),
-  deleteEntry: jest.fn(),
-  deleteSelectedEntries: jest.fn(),
+  createJournal: jest.fn(),
+  findAllJournals: jest.fn(),
+  deleteJournal: jest.fn(),
+  deleteSelectedJournals: jest.fn(),
   deleteSelectedCategories: jest.fn(),
-  updateEntryCategories: jest.fn(),
+  updateJournalCategories: jest.fn(),
   addCategory: jest.fn(),
   updateOne: jest.fn(),
   insertOne: jest.fn(),
@@ -53,17 +53,17 @@ const createRoute = require("../src/router/routes/user/create");
 const usernameAvailableRoute = require("../src/router/routes/user/username-available");
 const emailAvailableRoute = require("../src/router/routes/user/email-available");
 const authBearerRoute = require("../src/router/routes/auth/bearer");
-const entryCreateRoute = require("../src/router/routes/user/journal/create");
-const entryCreateCategoryRoute = require("../src/router/routes/user/journal/category/create");
-const entryEditRoute = require("../src/router/routes/user/journal/edit");
-const entryEntriesRoute = require("../src/router/routes/user/journal/journals");
-const entryDeleteRoute = require("../src/router/routes/user/journal/delete");
-const entryCategoryEditRoute = require("../src/router/routes/user/journal/category/edit");
-const entryCategoryDeleteRoute = require("../src/router/routes/user/journal/category/delete");
-const createManyEntryCategoryRoute = require("../src/router/routes/user/journal/category/create-many");
-// const entryDeleteSelectedEntriesRoute = require("../src/router/routes/user/journal/deleteSelectedEntries");
-// const entryDeleteSelectedCategoriesRoute = require("../src/router/routes/user/journal/deleteSelectedCategories");
-// const entryUpdateEntryCategoriesRoute = require("../src/router/routes/user/journal/updateEntryCategories");
+const journalCreateRoute = require("../src/router/routes/user/journal/create");
+const journalCreateCategoryRoute = require("../src/router/routes/user/journal/category/create");
+const journalEditRoute = require("../src/router/routes/user/journal/edit");
+const journalJournalsRoute = require("../src/router/routes/user/journal/journals");
+const journalDeleteRoute = require("../src/router/routes/user/journal/delete");
+const journalCategoryEditRoute = require("../src/router/routes/user/journal/category/edit");
+const journalCategoryDeleteRoute = require("../src/router/routes/user/journal/category/delete");
+const createManyJournalCategoryRoute = require("../src/router/routes/user/journal/category/create-many");
+// const journalDeleteSelectedJournalsRoute = require("../src/router/routes/user/journal/deleteSelectedJournals");
+// const journalDeleteSelectedCategoriesRoute = require("../src/router/routes/user/journal/deleteSelectedCategories");
+// const journalUpdateJournalCategoriesRoute = require("../src/router/routes/user/journal/updateJournalCategories");
 
 const userId = "66c1fabdebae7aad2803ef28";
 
@@ -75,14 +75,14 @@ app.use("/user/create", createRoute);
 app.use("/user/username-available", usernameAvailableRoute);
 app.use("/user/email-available", emailAvailableRoute);
 app.use("/auth/bearer", authBearerRoute);
-app.use("/user/journal/create", entryCreateRoute);
-app.use("/user/journal/category/create", entryCreateCategoryRoute);
-app.use("/user/journal/edit", entryEditRoute);
-app.use(`/user/journal/journals`, entryEntriesRoute);
-app.use("/user/journal/delete", entryDeleteRoute);
-app.use("/user/journal/category/create-many", createManyEntryCategoryRoute);
-app.use("/user/journal/category/delete", entryCategoryDeleteRoute);
-app.use("/user/journal/category/edit", entryCategoryEditRoute);
+app.use("/user/journal/create", journalCreateRoute);
+app.use("/user/journal/category/create", journalCreateCategoryRoute);
+app.use("/user/journal/edit", journalEditRoute);
+app.use(`/user/journal/journals`, journalJournalsRoute);
+app.use("/user/journal/delete", journalDeleteRoute);
+app.use("/user/journal/category/create-many", createManyJournalCategoryRoute);
+app.use("/user/journal/category/delete", journalCategoryDeleteRoute);
+app.use("/user/journal/category/edit", journalCategoryEditRoute);
 
 beforeEach(() => {
   jest.clearAllMocks();
@@ -95,7 +95,7 @@ describe("Protected Routes - /user/users", () => {
   (findAllUsers as jest.Mock).mockResolvedValue(
     getMockUsers({
       numUsersToGet: 2,
-      numEntriesToGet: 1,
+      numJournalsToGet: 1,
       numCategoriesToGet: 1,
       addMongoObjectIds: true,
     })
@@ -121,7 +121,7 @@ describe("Protected Routes - /user/username-available", () => {
     (findOneByUsername as jest.Mock).mockResolvedValue(
       getMockUsers({
         numUsersToGet: 1,
-        numEntriesToGet: 0,
+        numJournalsToGet: 0,
         numCategoriesToGet: 0,
         addMongoObjectIds: true,
       })
@@ -136,7 +136,7 @@ describe("Protected Routes - /user/username-available", () => {
     (findOneByUsername as jest.Mock).mockResolvedValue(
       getMockUsers({
         numUsersToGet: 1,
-        numEntriesToGet: 0,
+        numJournalsToGet: 0,
         numCategoriesToGet: 0,
         addMongoObjectIds: true,
       })
@@ -159,7 +159,7 @@ describe("Protected Routes - /user/email-available", () => {
     (findOneByEmail as jest.Mock).mockResolvedValue(
       getMockUsers({
         numUsersToGet: 1,
-        numEntriesToGet: 0,
+        numJournalsToGet: 0,
         numCategoriesToGet: 0,
         addMongoObjectIds: true,
       })
@@ -174,7 +174,7 @@ describe("Protected Routes - /user/email-available", () => {
     (findOneByEmail as jest.Mock).mockResolvedValue(
       getMockUsers({
         numUsersToGet: 1,
-        numEntriesToGet: 0,
+        numJournalsToGet: 0,
         numCategoriesToGet: 0,
         addMongoObjectIds: true,
       })
@@ -229,7 +229,7 @@ describe("Protected Routes - /journal/edit", () => {
     });
     const response = await request(app)
       .post("/user/journal/edit")
-      .send(mockEntry)
+      .send(mockJournal)
       .set("Accept", "application/json");
     expect(response.status).toBe(401);
   });
@@ -239,7 +239,7 @@ describe("Protected Routes - /journal/edit", () => {
     (findOneById as jest.Mock).mockResolvedValue(
       getMockUsers({
         numUsersToGet: 1,
-        numEntriesToGet: 1,
+        numJournalsToGet: 1,
         numCategoriesToGet: 0,
         addMongoObjectIds: true,
       })
@@ -258,7 +258,7 @@ describe("Protected Routes - /journal/edit", () => {
 
     const mockUser = getMockUsers({
       numUsersToGet: 1,
-      numEntriesToGet: 1,
+      numJournalsToGet: 1,
       numCategoriesToGet: 0,
       addMongoObjectIds: true,
     })[0];
@@ -267,7 +267,7 @@ describe("Protected Routes - /journal/edit", () => {
       .post("/user/journal/edit")
       .send({
         userId: mockUser._id,
-        entryId: mockUser.journals[0]._id,
+        journalId: mockUser.journals[0]._id,
         title: "New Title",
         journal: "New Journal",
         category: "New Category",
@@ -295,7 +295,7 @@ describe("Protected Routes - /journal/journals", () => {
       username: "user3",
       email: "user3@gmail.com",
       journals: [],
-      entryCategories: [],
+      journalCategories: [],
     });
     const response = await request(app)
       .get("/user/journal/journals/66c1fabdebae7aad2803ef28")
@@ -326,7 +326,7 @@ describe("Protected Routes - /journal/delete", () => {
       .delete("/user/journal/delete")
       .send({
         userId: new ObjectId(),
-        entryIds: [new ObjectId()],
+        journalIds: [new ObjectId()],
       })
       .set("Accept", "application/json")
       .set("Authorization", getBearerToken());
@@ -335,20 +335,20 @@ describe("Protected Routes - /journal/delete", () => {
 });
 
 // TODO: need to implement this route
-describe.skip("Protected Routes - /journal/deleteSelectedEntries", () => {
+describe.skip("Protected Routes - /journal/deleteSelectedJournals", () => {
   it("should deny access and return 401 if no token is provided", async () => {
     const response = await request(app).post(
-      "/user/journal/deleteSelectedEntries"
+      "/user/journal/deleteSelectedJournals"
     );
     expect(response.status).toBe(401);
   });
 
   it("should allow access with a valid token", async () => {
     const response = await request(app)
-      .post("/user/journal/deleteSelectedEntries")
+      .post("/user/journal/deleteSelectedJournals")
       .send({
         userId: new ObjectId(),
-        entryIds: [new ObjectId()],
+        journalIds: [new ObjectId()],
       })
       .set("Accept", "application/json")
       .set("Authorization", getBearerToken());
@@ -370,7 +370,7 @@ describe("Protected Routes - /journal/category/create-many", () => {
       .post("/user/journal/category/create-many")
       .send({
         userId: new ObjectId(),
-        entryIds: [new ObjectId()],
+        journalIds: [new ObjectId()],
         category: "Test Category",
       })
       .set("Accept", "application/json")

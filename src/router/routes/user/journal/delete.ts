@@ -16,7 +16,7 @@ const validatedUserId = body("userId") // TODO convert to zod?
   .isString()
   .bail()
   .escape();
-const validatedEntryIds = body("entryIds") // TODO convert to zod?
+const validatedJournalIds = body("journalIds") // TODO convert to zod?
   .notEmpty()
   .bail()
   .isArray({ min: 1 })
@@ -29,7 +29,7 @@ const router = express.Router();
 router.delete(
   "/",
   validatedUserId,
-  validatedEntryIds,
+  validatedJournalIds,
   async (req: express.Request, res: express.Response<IResponse>) => {
     console.log("Request cookies:", req.cookies);
     try {
@@ -41,7 +41,7 @@ router.delete(
           .json(genericResponses.missing_body_fields());
       }
 
-      const { userId, entryIds } = req.body;
+      const { userId, journalIds } = req.body;
       console.log("Req Body USER ID", userId);
       const user = res.locals.user;
       console.log("LOCALS USER", user);
@@ -51,7 +51,7 @@ router.delete(
           $pull: {
             journals: {
               _id: {
-                $in: entryIds,
+                $in: journalIds,
               },
             },
           },

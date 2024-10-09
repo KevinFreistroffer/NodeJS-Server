@@ -82,7 +82,7 @@ export const users = [
         category: "Programming",
       },
     ],
-    entryCategories: [
+    journalCategories: [
       { category: "My Journals", selected: false },
       { category: "Life Stuff", selected: false },
       { category: "Cooking Recipes", selected: false },
@@ -95,11 +95,11 @@ export const users = [
     ],
   },
   {
-    username: "noentrys",
-    password: "noentrys",
-    email: "noentrys.freistroffer@gmail.com",
+    username: "nojournals",
+    password: "nojournals",
+    email: "nojournals.freistroffer@gmail.com",
     verified: true,
     journals: [],
-    entryCategories: ["My Journals"],
+    journalCategories: ["My Journals"],
   },
 ];

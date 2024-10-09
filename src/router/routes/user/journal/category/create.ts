@@ -22,7 +22,7 @@ const validatedUserId = body("userId") // TODO convert to zod?
   .custom((id) => Types.ObjectId.isValid(id))
   .bail()
   .escape();
-const validatedEntry = body("category") // TODO convert to zod?
+const validatedJournal = body("category") // TODO convert to zod?
   .notEmpty()
   .bail()
   .isString()
@@ -47,7 +47,7 @@ const router = express.Router();
 router.post(
   "/",
   validatedUserId,
-  validatedEntry,
+  validatedJournal,
   validatedReturnUser,
   async (req: express.Request, res: express.Response<IResponse>) => {
     try {
@@ -78,7 +78,7 @@ router.post(
         },
         {
           $addToSet: {
-            entryCategories: {
+            journalCategories: {
               _id: new ObjectId(),
               ...newCategory,
             },

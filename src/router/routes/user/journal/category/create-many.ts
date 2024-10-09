@@ -1,4 +1,4 @@
-import { IEntry } from "../../../../../defs/interfaces";
+import { IJournal } from "../../../../../defs/interfaces";
 import * as express from "express";
 import { body, validationResult } from "express-validator";
 import { responses as userResponses } from "../../../../../defs/responses/user";
@@ -15,7 +15,7 @@ import { handleCaughtErrorResponse } from "../../../../../utils";
 import { statusCodes } from "../../../../../defs/responses/status_codes";
 const router = express.Router();
 
-const validatedEntryIds = body("entryIds")
+const validatedJournalIds = body("journalIds")
   .isArray({ min: 1 })
   .bail()
   .custom((value) => value.every((id: string) => ObjectId.isValid(id)))
@@ -31,7 +31,7 @@ const validatedStrings = body(["userId", "category"])
 router.post(
   "/",
   validatedStrings,
-  validatedEntryIds,
+  validatedJournalIds,
   async (req: express.Request, res: express.Response<IResponse>) => {
     try {
       const validatedFields = validationResult(req);
@@ -41,7 +41,7 @@ router.post(
           .json(genericResponses.missing_body_fields());
       }
 
-      const { userId, entryIds, category } = req.body;
+      const { userId, journalIds, category } = req.body;
 
       const doc = await findOneById(new ObjectId());
 
@@ -57,9 +57,11 @@ router.post(
       /*--------------------------------------------------
        *  Set the journal category on each journal
        *------------------------------------------------*/
-      doc.journals.forEach((journal: IEntry) => {
+      doc.journals.forEach((journal: IJournal) => {
         if (
-          entryIds.includes(((journal as IEntry)._id as ObjectId).toString())
+          journalIds.includes(
+            ((journal as IJournal)._id as ObjectId).toString()
+          )
         ) {
           journal.category = category;
         }

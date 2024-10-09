@@ -58,15 +58,15 @@ module.exports = (app: express.Express) => {
 
   //These routes are not implemented yet
   // app.use(
-  //   "/journal/deleteSelectedEntries",
-  //   require("./routes/journal/deleteSelectedEntries")
+  //   "/journal/deleteSelectedJournals",
+  //   require("./routes/journal/deleteSelectedJournals")
   // );
   // app.use(
   //   "/journal/deleteSelectedCategories",
   //   require("./routes/journal/deleteSelectedCategories")
   // );
   // app.use(
-  //   "/journal/updateEntryCategories",
-  //   require("./routes/journal/updateEntryCategories")
+  //   "/journal/updateJournalCategories",
+  //   require("./routes/journal/updateJournalCategories")
   // );
 };

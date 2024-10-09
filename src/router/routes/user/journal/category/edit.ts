@@ -69,22 +69,22 @@ router.put(
       }
 
       const query: {
-        ["entryCategories.$.category"]?: string;
-        ["entryCategories.$.selected"]?: boolean;
+        ["journalCategories.$.category"]?: string;
+        ["journalCategories.$.selected"]?: boolean;
       } = {};
 
       if (category) {
-        query["entryCategories.$.category"] = category;
+        query["journalCategories.$.category"] = category;
       }
 
       if (selected) {
-        query["entryCategories.$.selected"] = selected;
+        query["journalCategories.$.selected"] = selected;
       }
 
       const updatedDoc = await updateOne(
         {
           _id: ObjectId.createFromHexString(userId),
-          "entryCategories._id": ObjectId.createFromHexString(categoryId),
+          "journalCategories._id": ObjectId.createFromHexString(categoryId),
         },
         {
           $set: query,

@@ -22,7 +22,7 @@ const validatedUserId = body("userId") // TODO convert to zod?
   .bail()
   .custom((id) => ObjectId.isValid(id))
   .escape();
-const validatedEntry = body(["title", "journal", "category"]) // TODO convert to zod?
+const validatedJournal = body(["title", "journal", "category"]) // TODO convert to zod?
   .notEmpty()
   .bail()
   .isString()
@@ -33,7 +33,7 @@ router.post(
   "/",
   body("favorite").notEmpty().bail().isBoolean().bail().escape(),
   validatedUserId,
-  validatedEntry,
+  validatedJournal,
   async (req: express.Request, res: express.Response<IResponse>) => {
     console.log(req.body, typeof req.body.favorite);
 
@@ -54,7 +54,7 @@ router.post(
       console.log("userId", userId);
       const day = moment().day();
       const date = `${days[day]}, ${moment().format("MM-DD-YYYY")}`;
-      const newEntry = new Journal(
+      const newJournal = new Journal(
         title,
         journal,
         category,
@@ -62,7 +62,7 @@ router.post(
         false,
         favorite
       );
-      console.log("newEntry", newEntry);
+      console.log("newJournal", newJournal);
 
       /*--------------------------------------------------
        *  Update user's journals
@@ -76,7 +76,7 @@ router.post(
           .json(userResponses.user_not_found());
       }
 
-      const categoryExists = existingUser?.entryCategories?.some(
+      const categoryExists = existingUser?.journalCategories?.some(
         (cat) => cat.category.toLowerCase() === category.toLowerCase()
       );
 
@@ -85,7 +85,7 @@ router.post(
         {
           $push: {
             journals: {
-              ...newEntry,
+              ...newJournal,
               _id: new ObjectId(),
               createdAt: new Date(),
               updatedAt: new Date(),
@@ -98,7 +98,7 @@ router.post(
             : {
                 // Only add category if it doesn't exist
                 $push: {
-                  entryCategories: {
+                  journalCategories: {
                     _id: new ObjectId(),
                     category,
                     selected: false,

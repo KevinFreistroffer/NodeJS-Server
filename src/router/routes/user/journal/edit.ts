@@ -14,11 +14,11 @@ import {
 import { statusCodes } from "../../../../defs/responses/status_codes";
 
 const router = express.Router();
-const validatedIds = body(["userId", "entryId"]) // TODO convert to zod?
+const validatedIds = body(["userId", "journalId"]) // TODO convert to zod?
   .notEmpty()
   .bail()
   .custom((id) => ObjectId.isValid(id))
-  .withMessage("Invalid userId or entryId")
+  .withMessage("Invalid userId or journalId")
   .bail()
   .escape();
 const validatedStrings = body(["title", "journal", "category"])
@@ -55,7 +55,8 @@ router.post(
           .json(genericResponses.missing_body_fields());
       }
 
-      const { userId, entryId, title, journal, category, favorite } = req.body;
+      const { userId, journalId, title, journal, category, favorite } =
+        req.body;
       const query: {
         ["journals.$.title"]?: string;
         ["journals.$.journal"]?: string;
@@ -78,7 +79,7 @@ router.post(
       const doc = await updateOne(
         {
           _id: ObjectId.createFromHexString(userId),
-          "journals._id": ObjectId.createFromHexString(entryId),
+          "journals._id": ObjectId.createFromHexString(journalId),
         },
 
         {

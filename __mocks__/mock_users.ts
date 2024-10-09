@@ -1,6 +1,6 @@
 import { ObjectId } from "mongodb";
 import { User } from "../src/defs/models/user.model";
-import { IUser, IEntry, ICategory } from "../src/defs/interfaces";
+import { IUser, IJournal, ICategory } from "../src/defs/interfaces";
 
 export const mockUnsavedUser = new User(
   "user1",
@@ -8,9 +8,9 @@ export const mockUnsavedUser = new User(
   "password1"
 );
 
-const getEntries = (numEntriesToGet: number, getSavedEntries: boolean) => {
+const getJournals = (numJournalsToGet: number, getSavedJournals: boolean) => {
   const journals = [];
-  for (let i = 0; i < numEntriesToGet; i++) {
+  for (let i = 0; i < numJournalsToGet; i++) {
     const journal: {
       _id?: ObjectId;
       title: string;
@@ -24,7 +24,7 @@ const getEntries = (numEntriesToGet: number, getSavedEntries: boolean) => {
       category: "My Journals",
     };
 
-    if (getSavedEntries) {
+    if (getSavedJournals) {
       journal["_id"] = new ObjectId();
     }
 
@@ -61,21 +61,21 @@ const getCategories = (
 };
 
 /**
-  export const mockUsersWithEntries = getMockUsers({
+  export const mockUsersWithJournals = getMockUsers({
     numUsersToGet: 2,
-    numEntriesToGet: 1,
+    numJournalsToGet: 1,
     numCategoriesToGet: 1,
     addMongoObjectIds: true,
   });
  */
 export const getMockUsers = ({
   numUsersToGet,
-  numEntriesToGet,
+  numJournalsToGet,
   numCategoriesToGet,
   addMongoObjectIds,
 }: {
   numUsersToGet: number;
-  numEntriesToGet: number;
+  numJournalsToGet: number;
   numCategoriesToGet: number;
   addMongoObjectIds: boolean; // If true, the returned users will have _id fields
 }) => {
@@ -95,7 +95,7 @@ export const getMockUsers = ({
         date: string;
         category: string;
       }[];
-      entryCategories: {
+      journalCategories: {
         _id?: ObjectId;
         category: string;
         selected: boolean;
@@ -107,10 +107,10 @@ export const getMockUsers = ({
       resetPasswordExpires: new Date().toLocaleString(),
       verified: true,
       journals:
-        numEntriesToGet > 0
-          ? getEntries(numEntriesToGet, addMongoObjectIds)
+        numJournalsToGet > 0
+          ? getJournals(numJournalsToGet, addMongoObjectIds)
           : [],
-      entryCategories: numCategoriesToGet
+      journalCategories: numCategoriesToGet
         ? getCategories(numCategoriesToGet, addMongoObjectIds)
         : [],
     };
