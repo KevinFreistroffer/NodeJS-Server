@@ -880,12 +880,12 @@
         }
       }
     },
-    "/entry/create": {
+    "/journal/create": {
       "post": {
-        "description": "Saves a entry.",
-        "tags": ["Entry"],
+        "description": "Saves a journal.",
+        "tags": ["Journal"],
         "requestBody": {
-          "description": "User's document ID and the entry to save.",
+          "description": "User's document ID and the journal to save.",
           "required": true,
           "content": {
             "application/json": {
@@ -898,7 +898,7 @@
                   "title": {
                     "type": "string"
                   },
-                  "entry": {
+                  "journal": {
                     "type": "string"
                   },
                   "category": {
@@ -908,8 +908,8 @@
               },
               "example": {
                 "userId": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9",
-                "title": "Entry",
-                "entry": "A entry about things.",
+                "title": "Journal",
+                "journal": "A journal about things.",
                 "category": "Today"
               }
             }
@@ -936,11 +936,11 @@
                 },
                 "example": {
                   "success": true,
-                  "message": "Entry saved.",
+                  "message": "Journal saved.",
                   "data": {
                     "username": "user1",
                     "email": "email@gmail.com",
-                    "entries": [],
+                    "journals": [],
                     "entryCategories": []
                   }
                 }
@@ -1002,12 +1002,12 @@
         }
       }
     },
-    "/entry/edit": {
+    "/journal/edit": {
       "post": {
-        "description": "Edits a entries title, entry and/or category.",
-        "tags": ["Entry"],
+        "description": "Edits a journals title, journal and/or category.",
+        "tags": ["Journal"],
         "requestBody": {
-          "description": "The title, entry or category is required.",
+          "description": "The title, journal or category is required.",
           "required": true,
           "content": {
             "application/json": {
@@ -1024,7 +1024,7 @@
                     "type": "string",
                     "nullable": true
                   },
-                  "entry": {
+                  "journal": {
                     "type": "string",
                     "nullable": true
                   },
@@ -1038,7 +1038,7 @@
                 "userId": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9",
                 "entryId": "eyJhbGciOiJIUzI1NiI4234242423423VCJ9",
                 "title": "New Title",
-                "entry": "New entry",
+                "journal": "New journal",
                 "category": "New Category"
               }
             }
@@ -1072,11 +1072,11 @@
                 },
                 "example": {
                   "success": true,
-                  "message": "Entry edited.",
+                  "message": "Journal edited.",
                   "data": {
                     "username": "user1",
                     "email": "email@gmail.com",
-                    "entries": [],
+                    "journals": [],
                     "entryCategories": []
                   }
                 }
@@ -1138,10 +1138,10 @@
         }
       }
     },
-    "/entry/entries/{userId}": {
+    "/journal/journals/{userId}": {
       "get": {
-        "summary": "Get a users entries.",
-        "tags": ["Entry"],
+        "summary": "Get a users journals.",
+        "tags": ["Journal"],
         "parameters": [
           {
             "in": "path",
@@ -1179,11 +1179,11 @@
                 },
                 "example": {
                   "success": true,
-                  "message": "Successfully fetched the entries.",
+                  "message": "Successfully fetched the journals.",
                   "data": {
                     "username": "user1",
                     "email": "email@gmail.com",
-                    "entries": [],
+                    "journals": [],
                     "entryCategories": []
                   }
                 }
@@ -1245,12 +1245,12 @@
         }
       }
     },
-    "/entry/delete": {
+    "/journal/delete": {
       "put": {
-        "description": "Deletes entry(s).",
-        "tags": ["Entry"],
+        "description": "Deletes journal(s).",
+        "tags": ["Journal"],
         "requestBody": {
-          "description": "A users document ID and a list of entry document id's.",
+          "description": "A users document ID and a list of journal document id's.",
           "required": true,
           "content": {
             "application/json": {
@@ -1262,7 +1262,7 @@
                     "type": "string"
                   },
                   "entryIds": {
-                    "description": "The entry document id(s).",
+                    "description": "The journal document id(s).",
                     "type": "array",
                     "items": {
                       "type": "string"
@@ -1305,11 +1305,11 @@
                 },
                 "example": {
                   "success": true,
-                  "message": "Entry(s) deleted.",
+                  "message": "Journal(s) deleted.",
                   "data": {
                     "username": "user1",
                     "email": "email@gmail.com",
-                    "entries": [],
+                    "journals": [],
                     "entryCategories": []
                   }
                 }
@@ -1371,10 +1371,10 @@
         }
       }
     },
-    "/entry/new-category": {
+    "/journal/new-category": {
       "post": {
         "description": "Saves a new category.",
-        "tags": ["Entry"],
+        "tags": ["Journal"],
         "requestBody": {
           "description": "A users document ID and a category string.",
           "required": true,
@@ -1432,7 +1432,7 @@
                   "data": {
                     "username": "user1",
                     "email": "email@gmail.com",
-                    "entries": [],
+                    "journals": [],
                     "entryCategories": ["New Category"]
                   }
                 }
@@ -1494,12 +1494,12 @@
         }
       }
     },
-    "/entry/create-many": {
+    "/journal/create-many": {
       "post": {
-        "description": "Saves a category on the entry(s).",
-        "tags": ["Entry"],
+        "description": "Saves a category on the journal(s).",
+        "tags": ["Journal"],
         "requestBody": {
-          "description": "A users document ID, the entry document id's, and a category string.",
+          "description": "A users document ID, the journal document id's, and a category string.",
           "required": true,
           "content": {
             "application/json": {
@@ -1511,7 +1511,7 @@
                     "type": "string"
                   },
                   "entryIds": {
-                    "description": "The entry document id(s).",
+                    "description": "The journal document id(s).",
                     "type": "string"
                   },
                   "category": {
@@ -1559,11 +1559,11 @@
                 },
                 "example": {
                   "success": true,
-                  "message": "Entries updated.",
+                  "message": "Journals updated.",
                   "data": {
                     "username": "user1",
                     "email": "email@gmail.com",
-                    "entries": [],
+                    "journals": [],
                     "entryCategories": ["New Category"]
                   }
                 }
@@ -1638,10 +1638,10 @@
             "type": "string",
             "format": "email"
           },
-          "entries": {
+          "journals": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/Entry"
+              "$ref": "#/components/schemas/Journal"
             }
           },
           "entryCategories": {
@@ -1660,16 +1660,16 @@
           }
         }
       },
-      "Entry": {
+      "Journal": {
         "type": "object",
         "properties": {
           "title": {
             "type": "string",
-            "example": "Entry 1"
+            "example": "Journal 1"
           },
-          "entry": {
+          "journal": {
             "type": "string",
-            "example": "Entry 1"
+            "example": "Journal 1"
           },
           "category": {
             "type": "string"

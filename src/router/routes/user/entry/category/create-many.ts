@@ -55,24 +55,26 @@ router.post(
       }
 
       /*--------------------------------------------------
-       *  Set the entry category on each entry
+       *  Set the journal category on each journal
        *------------------------------------------------*/
-      doc.entries.forEach((entry: IEntry) => {
-        if (entryIds.includes(((entry as IEntry)._id as ObjectId).toString())) {
-          entry.category = category;
+      doc.journals.forEach((journal: IEntry) => {
+        if (
+          entryIds.includes(((journal as IEntry)._id as ObjectId).toString())
+        ) {
+          journal.category = category;
         }
       });
 
       /*--------------------------------------------------
-       *  Save the updated user.entries
+       *  Save the updated user.journals
        *------------------------------------------------*/
       const updatedDoc = await updateOne(
         { _id: ObjectId.createFromHexString(userId) },
         {
           $set: {
-            entries: doc.entries.map((entry) => ({
-              ...entry,
-              _id: new ObjectId(entry._id),
+            journals: doc.journals.map((journal) => ({
+              ...journal,
+              _id: new ObjectId(journal._id),
             })),
           },
         }

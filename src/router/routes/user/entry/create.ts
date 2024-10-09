@@ -2,7 +2,7 @@
 
 import express from "express";
 import moment from "moment";
-import { Entry } from "../../../../defs/models/entry.model";
+import { Journal } from "../../../../defs/models/journal.model";
 import { body, validationResult } from "express-validator";
 import { responses as userResponses } from "../../../../defs/responses/user";
 import {
@@ -22,7 +22,7 @@ const validatedUserId = body("userId") // TODO convert to zod?
   .bail()
   .custom((id) => ObjectId.isValid(id))
   .escape();
-const validatedEntry = body(["title", "entry", "category"]) // TODO convert to zod?
+const validatedEntry = body(["title", "journal", "category"]) // TODO convert to zod?
   .notEmpty()
   .bail()
   .isString()
@@ -50,15 +50,22 @@ router.post(
        * Valid request body.
        * MongoDB User collection
        *------------------------------------------------*/
-      const { userId, title, entry, category, favorite } = req.body;
+      const { userId, title, journal, category, favorite } = req.body;
       console.log("userId", userId);
       const day = moment().day();
       const date = `${days[day]}, ${moment().format("MM-DD-YYYY")}`;
-      const newEntry = new Entry(title, entry, category, date, false, favorite);
+      const newEntry = new Journal(
+        title,
+        journal,
+        category,
+        date,
+        false,
+        favorite
+      );
       console.log("newEntry", newEntry);
 
       /*--------------------------------------------------
-       *  Update user's entries
+       *  Update user's journals
        *------------------------------------------------*/
       // const doc = await users.findOneAndUpdate({ _id: new ObjectId(userId) });
       const existingUser = await findOneById(new ObjectId(userId));
@@ -77,7 +84,7 @@ router.post(
         { _id: new ObjectId(userId) },
         {
           $push: {
-            entries: {
+            journals: {
               ...newEntry,
               _id: new ObjectId(),
               createdAt: new Date(),

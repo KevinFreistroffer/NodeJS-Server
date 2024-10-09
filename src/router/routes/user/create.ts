@@ -79,7 +79,7 @@ router.post(
 
           resetPasswordToken: string;
           resetPasswordTokenExpires: Date | null;
-          entries: any[];
+          journals: any[];
           entryCategories: any[];
           resetPasswordAttempts: { timestamp: string }[];
           isVerified: boolean = false;
@@ -94,7 +94,7 @@ router.post(
         resetPasswordToken: "",
         resetPasswordTokenExpires: null,
         resetPasswordAttempts: [],
-        entries: [],
+        journals: [],
         entryCategories: [],
         isVerified: false,
         createdAt: new Date(),

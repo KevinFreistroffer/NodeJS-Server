@@ -2,7 +2,7 @@ export interface IUserProjection {
   _id: 1;
   username: 1;
   email: 1;
-  entries: 1;
+  journals: 1;
   entryCategories: 1;
 }
 
@@ -14,7 +14,7 @@ export class User {
   password: string;
   resetPasswordToken: string;
   resetPasswordTokenExpires: Date | null;
-  entries: any[];
+  journals: any[];
   entryCategories: any[];
   resetPasswordAttempts: { timestamp: string }[];
   isVerified: boolean = false;
@@ -39,7 +39,7 @@ export class User {
     this.password = password;
     this.resetPasswordToken = "";
     this.resetPasswordTokenExpires = resetPasswordTokenExpires;
-    this.entries = [];
+    this.journals = [];
     this.entryCategories = [];
     this.resetPasswordAttempts = [];
     this.createdAt = new Date();
@@ -52,7 +52,7 @@ export const UserProjection = {
   _id: 1,
   username: 1,
   email: 1,
-  entries: 1,
+  journals: 1,
   entryCategories: 1,
   resetPasswordToken: 1,
   resetPasswordTokenExpires: 1,

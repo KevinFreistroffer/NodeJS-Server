@@ -53,17 +53,17 @@ const createRoute = require("../src/router/routes/user/create");
 const usernameAvailableRoute = require("../src/router/routes/user/username-available");
 const emailAvailableRoute = require("../src/router/routes/user/email-available");
 const authBearerRoute = require("../src/router/routes/auth/bearer");
-const entryCreateRoute = require("../src/router/routes/user/entry/create");
-const entryCreateCategoryRoute = require("../src/router/routes/user/entry/category/create");
-const entryEditRoute = require("../src/router/routes/user/entry/edit");
-const entryEntriesRoute = require("../src/router/routes/user/entry/entries");
-const entryDeleteRoute = require("../src/router/routes/user/entry/delete");
-const entryCategoryEditRoute = require("../src/router/routes/user/entry/category/edit");
-const entryCategoryDeleteRoute = require("../src/router/routes/user/entry/category/delete");
-const createManyEntryCategoryRoute = require("../src/router/routes/user/entry/category/create-many");
-// const entryDeleteSelectedEntriesRoute = require("../src/router/routes/user/entry/deleteSelectedEntries");
-// const entryDeleteSelectedCategoriesRoute = require("../src/router/routes/user/entry/deleteSelectedCategories");
-// const entryUpdateEntryCategoriesRoute = require("../src/router/routes/user/entry/updateEntryCategories");
+const entryCreateRoute = require("../src/router/routes/user/journal/create");
+const entryCreateCategoryRoute = require("../src/router/routes/user/journal/category/create");
+const entryEditRoute = require("../src/router/routes/user/journal/edit");
+const entryEntriesRoute = require("../src/router/routes/user/journal/journals");
+const entryDeleteRoute = require("../src/router/routes/user/journal/delete");
+const entryCategoryEditRoute = require("../src/router/routes/user/journal/category/edit");
+const entryCategoryDeleteRoute = require("../src/router/routes/user/journal/category/delete");
+const createManyEntryCategoryRoute = require("../src/router/routes/user/journal/category/create-many");
+// const entryDeleteSelectedEntriesRoute = require("../src/router/routes/user/journal/deleteSelectedEntries");
+// const entryDeleteSelectedCategoriesRoute = require("../src/router/routes/user/journal/deleteSelectedCategories");
+// const entryUpdateEntryCategoriesRoute = require("../src/router/routes/user/journal/updateEntryCategories");
 
 const userId = "66c1fabdebae7aad2803ef28";
 
@@ -75,14 +75,14 @@ app.use("/user/create", createRoute);
 app.use("/user/username-available", usernameAvailableRoute);
 app.use("/user/email-available", emailAvailableRoute);
 app.use("/auth/bearer", authBearerRoute);
-app.use("/user/entry/create", entryCreateRoute);
-app.use("/user/entry/category/create", entryCreateCategoryRoute);
-app.use("/user/entry/edit", entryEditRoute);
-app.use(`/user/entry/entries`, entryEntriesRoute);
-app.use("/user/entry/delete", entryDeleteRoute);
-app.use("/user/entry/category/create-many", createManyEntryCategoryRoute);
-app.use("/user/entry/category/delete", entryCategoryDeleteRoute);
-app.use("/user/entry/category/edit", entryCategoryEditRoute);
+app.use("/user/journal/create", entryCreateRoute);
+app.use("/user/journal/category/create", entryCreateCategoryRoute);
+app.use("/user/journal/edit", entryEditRoute);
+app.use(`/user/journal/journals`, entryEntriesRoute);
+app.use("/user/journal/delete", entryDeleteRoute);
+app.use("/user/journal/category/create-many", createManyEntryCategoryRoute);
+app.use("/user/journal/category/delete", entryCategoryDeleteRoute);
+app.use("/user/journal/category/edit", entryCategoryEditRoute);
 
 beforeEach(() => {
   jest.clearAllMocks();
@@ -190,23 +190,23 @@ describe("Protected Routes - /user/email-available", () => {
 });
 
 /**
- * /entry/create
+ * /journal/create
  */
-describe("Protected Routes - /entry/create", () => {
+describe("Protected Routes - /journal/create", () => {
   it("should deny access and return 401 if no token is provided", async () => {
     const response = await request(app)
-      .post("/user/entry/create")
+      .post("/user/journal/create")
       .set("Accept", "application/json");
     expect(response.status).toBe(401);
   });
 
   it("should allow access with a valid token", async () => {
     const response = await request(app)
-      .post("/user/entry/create")
+      .post("/user/journal/create")
       .send({
         userId: new ObjectId(),
-        title: "Test Entry",
-        entry: "Test Entry",
+        title: "Test Journal",
+        journal: "Test Journal",
         category: "Test Category",
       })
       .set("Accept", "application/json")
@@ -216,9 +216,9 @@ describe("Protected Routes - /entry/create", () => {
 });
 
 /**
- * /entry/edit
+ * /journal/edit
  */
-describe("Protected Routes - /entry/edit", () => {
+describe("Protected Routes - /journal/edit", () => {
   it("should deny access and return 401 if no token is provided", async () => {
     (updateOne as jest.Mock).mockResolvedValue({
       acknowledged: true,
@@ -228,7 +228,7 @@ describe("Protected Routes - /entry/edit", () => {
       matchedCount: 1,
     });
     const response = await request(app)
-      .post("/user/entry/edit")
+      .post("/user/journal/edit")
       .send(mockEntry)
       .set("Accept", "application/json");
     expect(response.status).toBe(401);
@@ -264,12 +264,12 @@ describe("Protected Routes - /entry/edit", () => {
     })[0];
 
     const response = await request(app)
-      .post("/user/entry/edit")
+      .post("/user/journal/edit")
       .send({
         userId: mockUser._id,
-        entryId: mockUser.entries[0]._id,
+        entryId: mockUser.journals[0]._id,
         title: "New Title",
-        entry: "New Entry",
+        journal: "New Journal",
         category: "New Category",
       })
       .set("Accept", "application/json")
@@ -279,12 +279,12 @@ describe("Protected Routes - /entry/edit", () => {
 });
 
 /**
- * /entry/entries
+ * /journal/journals
  */
-describe("Protected Routes - /entry/entries", () => {
+describe("Protected Routes - /journal/journals", () => {
   it("should deny access and return 401 if no token is provided", async () => {
     const response = await request(app).get(
-      `/user/entry/entries/66c1fabdebae7aad2803ef28`
+      `/user/journal/journals/66c1fabdebae7aad2803ef28`
     );
     expect(response.status).toBe(401);
   });
@@ -294,11 +294,11 @@ describe("Protected Routes - /entry/entries", () => {
       _id: new ObjectId("66c1fabdebae7aad2803ef28"),
       username: "user3",
       email: "user3@gmail.com",
-      entries: [],
+      journals: [],
       entryCategories: [],
     });
     const response = await request(app)
-      .get("/user/entry/entries/66c1fabdebae7aad2803ef28")
+      .get("/user/journal/journals/66c1fabdebae7aad2803ef28")
       .set("Accept", "application/json")
       .set("Authorization", getBearerToken());
     expect(response.status).toBe(200);
@@ -306,11 +306,11 @@ describe("Protected Routes - /entry/entries", () => {
 });
 
 /**
- * /entry/delete
+ * /journal/delete
  */
-describe("Protected Routes - /entry/delete", () => {
+describe("Protected Routes - /journal/delete", () => {
   it("should deny access and return 401 if no token is provided", async () => {
-    const response = await request(app).post("/user/entry/delete");
+    const response = await request(app).post("/user/journal/delete");
     expect(response.status).toBe(401);
   });
 
@@ -323,7 +323,7 @@ describe("Protected Routes - /entry/delete", () => {
       matchedCount: 1,
     });
     const response = await request(app)
-      .delete("/user/entry/delete")
+      .delete("/user/journal/delete")
       .send({
         userId: new ObjectId(),
         entryIds: [new ObjectId()],
@@ -335,17 +335,17 @@ describe("Protected Routes - /entry/delete", () => {
 });
 
 // TODO: need to implement this route
-describe.skip("Protected Routes - /entry/deleteSelectedEntries", () => {
+describe.skip("Protected Routes - /journal/deleteSelectedEntries", () => {
   it("should deny access and return 401 if no token is provided", async () => {
     const response = await request(app).post(
-      "/user/entry/deleteSelectedEntries"
+      "/user/journal/deleteSelectedEntries"
     );
     expect(response.status).toBe(401);
   });
 
   it("should allow access with a valid token", async () => {
     const response = await request(app)
-      .post("/user/entry/deleteSelectedEntries")
+      .post("/user/journal/deleteSelectedEntries")
       .send({
         userId: new ObjectId(),
         entryIds: [new ObjectId()],
@@ -357,17 +357,17 @@ describe.skip("Protected Routes - /entry/deleteSelectedEntries", () => {
 });
 
 /**
- * /entry/create-many
+ * /journal/create-many
  */
-describe("Protected Routes - /entry/category/create-many", () => {
+describe("Protected Routes - /journal/category/create-many", () => {
   it("should deny access and return 401 if no token is provided", async () => {
-    const response = await request(app).post("/user/entry/create-many");
+    const response = await request(app).post("/user/journal/create-many");
     expect(response.status).toBe(401);
   });
 
   it("should allow access with a valid token", async () => {
     const response = await request(app)
-      .post("/user/entry/category/create-many")
+      .post("/user/journal/category/create-many")
       .send({
         userId: new ObjectId(),
         entryIds: [new ObjectId()],
@@ -380,12 +380,12 @@ describe("Protected Routes - /entry/category/create-many", () => {
 });
 
 /**
- * /entry/category/create
+ * /journal/category/create
  */
-describe("Protected Routes - /entry/category/create", () => {
+describe("Protected Routes - /journal/category/create", () => {
   it("should deny access and return 401 if no token is provided", async () => {
     const response = await request(app)
-      .post("/user/entry/category/create")
+      .post("/user/journal/category/create")
       .send({
         userId: new ObjectId(),
         category: "Test Category",
@@ -399,7 +399,7 @@ describe("Protected Routes - /entry/category/create", () => {
       ...responses.success(),
     });
     const response = await request(app)
-      .post("/user/entry/category/create")
+      .post("/user/journal/category/create")
       .send({
         userId: new ObjectId(),
         category: "Test Category",
@@ -411,13 +411,13 @@ describe("Protected Routes - /entry/category/create", () => {
 });
 
 /**
- * /entry/category/delete
+ * /journal/category/delete
  */
-describe("Protected Routes - /entry/category/delete", () => {
+describe("Protected Routes - /journal/category/delete", () => {
   it("should deny access and return 401 if no token is provided", async () => {
     const response = await request(app)
       .delete(
-        "/user/entry/category/delete/66c1fabdebae7aad2803ef28/66c1fabdebae7aad2803ef28"
+        "/user/journal/category/delete/66c1fabdebae7aad2803ef28/66c1fabdebae7aad2803ef28"
       )
       .set("Accept", "application/json");
     expect(response.status).toBe(401);
@@ -429,7 +429,7 @@ describe("Protected Routes - /entry/category/delete", () => {
     });
     const response = await request(app)
       .delete(
-        "/user/entry/category/delete/66c1fabdebae7aad2803ef28/66c1fabdebae7aad2803ef28"
+        "/user/journal/category/delete/66c1fabdebae7aad2803ef28/66c1fabdebae7aad2803ef28"
       )
       .set("Accept", "application/json")
       .set("Authorization", getBearerToken());
@@ -437,10 +437,10 @@ describe("Protected Routes - /entry/category/delete", () => {
   });
 });
 
-describe("Protected Routes - /entry/category/edit", () => {
+describe("Protected Routes - /journal/category/edit", () => {
   it("should deny access and return 401 if no token is provided", async () => {
     const response = await request(app)
-      .put("/user/entry/category/edit")
+      .put("/user/journal/category/edit")
       .send({
         userId: new ObjectId(),
         categoryId: new ObjectId(),
@@ -460,7 +460,7 @@ describe("Protected Routes - /entry/category/edit", () => {
       matchedCount: 1,
     });
     const response = await request(app)
-      .put("/user/entry/category/edit")
+      .put("/user/journal/category/edit")
       .send({
         userId: new ObjectId(),
         categoryId: new ObjectId(),

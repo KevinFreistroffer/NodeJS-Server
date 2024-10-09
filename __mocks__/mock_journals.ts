@@ -4,8 +4,8 @@ import { IEntry } from "../src/defs/interfaces";
 export const mockEntry = {
   userId: new ObjectId(),
   entryId: new ObjectId(),
-  title: "Test Entry",
-  entry: "Test Entry",
+  title: "Test Journal",
+  journal: "Test Journal",
   category: "Test Category",
 };
 

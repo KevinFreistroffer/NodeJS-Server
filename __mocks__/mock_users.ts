@@ -9,29 +9,29 @@ export const mockUnsavedUser = new User(
 );
 
 const getEntries = (numEntriesToGet: number, getSavedEntries: boolean) => {
-  const entries = [];
+  const journals = [];
   for (let i = 0; i < numEntriesToGet; i++) {
-    const entry: {
+    const journal: {
       _id?: ObjectId;
       title: string;
-      entry: string;
+      journal: string;
       date: string;
       category: string;
     } = {
-      title: `Entry ${i} title`,
-      entry: `Entry entry ${i} content.`,
+      title: `Journal ${i} title`,
+      journal: `Journal journal ${i} content.`,
       date: "1/02/2017",
-      category: "My Entries",
+      category: "My Journals",
     };
 
     if (getSavedEntries) {
-      entry["_id"] = new ObjectId();
+      journal["_id"] = new ObjectId();
     }
 
-    entries.push(entry);
+    journals.push(journal);
   }
 
-  return entries;
+  return journals;
 };
 
 const getCategories = (
@@ -88,10 +88,10 @@ export const getMockUsers = ({
       resetPasswordToken: string;
       resetPasswordExpires: string;
       verified: boolean;
-      entries: {
+      journals: {
         _id?: ObjectId;
         title: string;
-        entry: string;
+        journal: string;
         date: string;
         category: string;
       }[];
@@ -106,7 +106,7 @@ export const getMockUsers = ({
       resetPasswordToken: `token${i}`,
       resetPasswordExpires: new Date().toLocaleString(),
       verified: true,
-      entries:
+      journals:
         numEntriesToGet > 0
           ? getEntries(numEntriesToGet, addMongoObjectIds)
           : [],

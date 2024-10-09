@@ -29,41 +29,44 @@ module.exports = (app: express.Express) => {
   app.use("/user/update", require("./routes/user/update"));
 
   app.use("/user/delete-all", require("./routes/user/delete-all"));
-  app.use("/user/entry/create", require("./routes/user/entry/create"));
-  app.use("/user/entry/edit", require("./routes/user/entry/edit"));
-  app.use("/user/entry/edit-many", require("./routes/user/entry/edit-many"));
-  app.use("/user/entry/entries", require("./routes/user/entry/entries"));
-  app.use("/user/entry/delete", require("./routes/user/entry/delete"));
+  app.use("/user/journal/create", require("./routes/user/journal/create"));
+  app.use("/user/journal/edit", require("./routes/user/journal/edit"));
+  app.use(
+    "/user/journal/edit-many",
+    require("./routes/user/journal/edit-many")
+  );
+  app.use("/user/journal/journals", require("./routes/user/journal/journals"));
+  app.use("/user/journal/delete", require("./routes/user/journal/delete"));
 
   app.use(
-    "/user/entry/category/create",
-    require("./routes/user/entry/category/create")
+    "/user/journal/category/create",
+    require("./routes/user/journal/category/create")
   );
   app.use(
-    "/user/entry/category/edit",
-    require("./routes/user/entry/category/edit")
+    "/user/journal/category/edit",
+    require("./routes/user/journal/category/edit")
   );
   app.use(
-    "/user/entry/category/delete",
-    require("./routes/user/entry/category/delete")
+    "/user/journal/category/delete",
+    require("./routes/user/journal/category/delete")
   );
   app.use(
-    "/user/entry/category/create-many",
-    require("./routes/user/entry/category/create-many")
+    "/user/journal/category/create-many",
+    require("./routes/user/journal/category/create-many")
   );
   app.use("/streams/file", require("./routes/streams/file"));
 
   //These routes are not implemented yet
   // app.use(
-  //   "/entry/deleteSelectedEntries",
-  //   require("./routes/entry/deleteSelectedEntries")
+  //   "/journal/deleteSelectedEntries",
+  //   require("./routes/journal/deleteSelectedEntries")
   // );
   // app.use(
-  //   "/entry/deleteSelectedCategories",
-  //   require("./routes/entry/deleteSelectedCategories")
+  //   "/journal/deleteSelectedCategories",
+  //   require("./routes/journal/deleteSelectedCategories")
   // );
   // app.use(
-  //   "/entry/updateEntryCategories",
-  //   require("./routes/entry/updateEntryCategories")
+  //   "/journal/updateEntryCategories",
+  //   require("./routes/journal/updateEntryCategories")
   // );
 };

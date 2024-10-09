@@ -21,14 +21,14 @@ const validatedIds = body(["userId", "entryId"]) // TODO convert to zod?
   .withMessage("Invalid userId or entryId")
   .bail()
   .escape();
-const validatedStrings = body(["title", "entry", "category"])
+const validatedStrings = body(["title", "journal", "category"])
   .optional()
   .isString()
   .escape();
 
 const validatedFavorite = body("favorite").optional().isBoolean().escape();
 
-// TODO validate title entry category
+// TODO validate title journal category
 
 router.post(
   "/",
@@ -46,7 +46,7 @@ router.post(
       if (
         !errors.isEmpty() ||
         (!has(req.body, "title") &&
-          !has(req.body, "entry") &&
+          !has(req.body, "journal") &&
           !has(req.body, "category") &&
           !has(req.body, "favorite"))
       ) {
@@ -55,30 +55,30 @@ router.post(
           .json(genericResponses.missing_body_fields());
       }
 
-      const { userId, entryId, title, entry, category, favorite } = req.body;
+      const { userId, entryId, title, journal, category, favorite } = req.body;
       const query: {
-        ["entries.$.title"]?: string;
-        ["entries.$.entry"]?: string;
-        ["entries.$.category"]?: string;
-        ["entries.$.favorite"]?: boolean;
+        ["journals.$.title"]?: string;
+        ["journals.$.journal"]?: string;
+        ["journals.$.category"]?: string;
+        ["journals.$.favorite"]?: boolean;
       } = {};
 
       if (title) {
-        query["entries.$.title"] = title;
+        query["journals.$.title"] = title;
       }
 
-      if (entry) {
-        query["entries.$.entry"] = entry;
+      if (journal) {
+        query["journals.$.journal"] = journal;
       }
 
       if (category) {
-        query["entries.$.category"] = category;
+        query["journals.$.category"] = category;
       }
 
       const doc = await updateOne(
         {
           _id: ObjectId.createFromHexString(userId),
-          "entries._id": ObjectId.createFromHexString(entryId),
+          "journals._id": ObjectId.createFromHexString(entryId),
         },
 
         {

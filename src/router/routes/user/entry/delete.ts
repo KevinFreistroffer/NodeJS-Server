@@ -49,7 +49,7 @@ router.delete(
         { _id: userId },
         {
           $pull: {
-            entries: {
+            journals: {
               _id: {
                 $in: entryIds,
               },

@@ -575,13 +575,13 @@ paths:
                   message:
                     type: string
                     example: "An error occurred. Error: something went wrong."
-  "/user/entry/create":
+  "/user/journal/create":
     post:
-      description: "Saves a entry."
+      description: "Saves a journal."
       tags:
-        - Entry
+        - Journal
       requestBody:
-        description: "User's document ID and the entry to save."
+        description: "User's document ID and the journal to save."
         required: true
         content:
           application/json:
@@ -592,14 +592,14 @@ paths:
                   type: string
                 title:
                   type: string
-                entry:
+                journal:
                   type: string
                 category:
                   type: string
             example:
               userId: "UNIQUE_ID"
-              title: "Entry"
-              entry: "A entry about things."
+              title: "Journal"
+              journal: "A journal about things."
               category: "Today"
       responses:
         "200":
@@ -617,12 +617,12 @@ paths:
                     $ref: "#/components/schemas/User"
               example:
                 success: true
-                message: "Entry saved."
+                message: "Journal saved."
                 data:
                   {
                     "username": "user1",
                     "email": "email@gmail.com",
-                    "entries": [],
+                    "journals": [],
                     "entryCategories": [],
                   }
         "422":
@@ -659,13 +659,13 @@ paths:
                 success: false
                 message: "An error occurred. Error: something went wrong."
                 data: null
-  "/user/entry/edit":
+  "/user/journal/edit":
     post:
-      description: "Edits a entries title, entry and/or category."
+      description: "Edits a journals title, journal and/or category."
       tags:
-        - Entry
+        - Journal
       requestBody:
-        description: "The title, entry or category is required."
+        description: "The title, journal or category is required."
         required: true
         content:
           application/json:
@@ -679,7 +679,7 @@ paths:
                 title:
                   type: string
                   nullable: true
-                entry:
+                journal:
                   type: string
                   nullable: true
                 category:
@@ -689,7 +689,7 @@ paths:
               userId: "UNIQUE_ID"
               entryId: "UNIQUE_ID"
               title: "New Title"
-              entry: "New entry"
+              journal: "New journal"
               category: "New Category"
       responses:
         "200":
@@ -709,12 +709,12 @@ paths:
                       - nullable: true
               example:
                 success: true
-                message: "Entry edited."
+                message: "Journal edited."
                 data:
                   {
                     "username": "user1",
                     "email": "email@gmail.com",
-                    "entries": [],
+                    "journals": [],
                     "entryCategories": [],
                   }
         "422":
@@ -751,11 +751,11 @@ paths:
                 success: false
                 message: "An error occurred. Error: something went wrong."
                 data: null
-  "/user/entry/entries/{userId}":
+  "/user/journal/journals/{userId}":
     get:
-      summary: "Get a users entries."
+      summary: "Get a users journals."
       tags:
-        - Entry
+        - Journal
       parameters:
         - in: path
           name: userId
@@ -1343,13 +1343,13 @@ paths:
                   message:
                     type: string
                     example: "An error occurred. Error: something went wrong."
-  "/user/entry/create":
+  "/user/journal/create":
     post:
-      description: "Saves a entry."
+      description: "Saves a journal."
       tags:
-        - Entry
+        - Journal
       requestBody:
-        description: "User's document ID and the entry to save."
+        description: "User's document ID and the journal to save."
         required: true
         content:
           application/json:
@@ -1360,14 +1360,14 @@ paths:
                   type: string
                 title:
                   type: string
-                entry:
+                journal:
                   type: string
                 category:
                   type: string
             example:
               userId: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"
-              title: "Entry"
-              entry: "A entry about things."
+              title: "Journal"
+              journal: "A journal about things."
               category: "Today"
       responses:
         "200":
@@ -1385,12 +1385,12 @@ paths:
                     $ref: "#/components/schemas/User"
               example:
                 success: true
-                message: "Entry saved."
+                message: "Journal saved."
                 data:
                   {
                     "username": "user1",
                     "email": "email@gmail.com",
-                    "entries": [],
+                    "journals": [],
                     "entryCategories": [],
                   }
         "422":
@@ -1427,13 +1427,13 @@ paths:
                 success: false
                 message: "An error occurred. Error: something went wrong."
                 data: null
-  "/user/entry/edit":
+  "/user/journal/edit":
     post:
-      description: "Edits a entries title, entry and/or category."
+      description: "Edits a journals title, journal and/or category."
       tags:
-        - Entry
+        - Journal
       requestBody:
-        description: "The title, entry or category is required."
+        description: "The title, journal or category is required."
         required: true
         content:
           application/json:
@@ -1447,7 +1447,7 @@ paths:
                 title:
                   type: string
                   nullable: true
-                entry:
+                journal:
                   type: string
                   nullable: true
                 category:
@@ -1457,7 +1457,7 @@ paths:
               userId: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"
               entryId: "eyJhbGciOiJIUzI1NiI4234242423423VCJ9"
               title: "New Title"
-              entry: "New entry"
+              journal: "New journal"
               category: "New Category"
       responses:
         "200":
@@ -1477,12 +1477,12 @@ paths:
                       - nullable: true
               example:
                 success: true
-                message: "Entry edited."
+                message: "Journal edited."
                 data:
                   {
                     "username": "user1",
                     "email": "email@gmail.com",
-                    "entries": [],
+                    "journals": [],
                     "entryCategories": [],
                   }
         "422":
@@ -1519,11 +1519,11 @@ paths:
                 success: false
                 message: "An error occurred. Error: something went wrong."
                 data: null
-  "/user/entry/entries/{userId}":
+  "/user/journal/journals/{userId}":
     get:
-      summary: "Get a users entries."
+      summary: "Get a users journals."
       tags:
-        - Entry
+        - Journal
       parameters:
         - in: path
           name: userId
@@ -1549,12 +1549,12 @@ paths:
                       - $ref: "#/components/schemas/User"
               example:
                 success: true
-                message: "Successfully fetched the entries."
+                message: "Successfully fetched the journals."
                 data:
                   {
                     "username": "user1",
                     "email": "email@gmail.com",
-                    "entries": [],
+                    "journals": [],
                     "entryCategories": [],
                   }
         "422":
@@ -1591,13 +1591,13 @@ paths:
                 success: false
                 message: "An error occurred. Error: something went wrong."
                 data: null
-  "/user/entry/delete":
+  "/user/journal/delete":
     put:
-      description: "Deletes entry(s)."
+      description: "Deletes journal(s)."
       tags:
-        - Entry
+        - Journal
       requestBody:
-        description: "A users document ID and a list of entry document id's."
+        description: "A users document ID and a list of journal document id's."
         required: true
         content:
           application/json:
@@ -1608,7 +1608,7 @@ paths:
                   description: "The user's document id."
                   type: string
                 entryIds:
-                  description: "The entry document id(s)."
+                  description: "The journal document id(s)."
                   type: array
                   items:
                     type: string
@@ -1633,12 +1633,12 @@ paths:
                       - nullable: true
               example:
                 success: true
-                message: "Entry(s) deleted."
+                message: "Journal(s) deleted."
                 data:
                   {
                     "username": "user1",
                     "email": "email@gmail.com",
-                    "entries": [],
+                    "journals": [],
                     "entryCategories": [],
                   }
         "422":
@@ -1675,11 +1675,11 @@ paths:
                 success: false
                 message: "An error occurred. Error: something went wrong."
                 data: null
-  "/user/entry/category/create":
+  "/user/journal/category/create":
     post:
       description: "Saves a new category."
       tags:
-        - Entry
+        - Journal
       requestBody:
         description: "A users document ID and a category string."
         required: true
@@ -1720,7 +1720,7 @@ paths:
                   {
                     "username": "user1",
                     "email": "email@gmail.com",
-                    "entries": [],
+                    "journals": [],
                     "entryCategories": ["New Category"],
                   }
         "422":
@@ -1757,13 +1757,13 @@ paths:
                 success: false
                 message: "An error occurred. Error: something went wrong."
                 data: null
-  "/user/entry/category/create-many":
+  "/user/journal/category/create-many":
     post:
-      description: "Saves a category on the entry(s)."
+      description: "Saves a category on the journal(s)."
       tags:
-        - Entry
+        - Journal
       requestBody:
-        description: "A users document ID, the entry document id's, and a category string."
+        description: "A users document ID, the journal document id's, and a category string."
         required: true
         content:
           application/json:
@@ -1774,7 +1774,7 @@ paths:
                   description: "The user's document id."
                   type: string
                 entryIds:
-                  description: "The entry document id(s)."
+                  description: "The journal document id(s)."
                   type: array
                   items:
                     type: string
@@ -1807,12 +1807,12 @@ paths:
                       - nullable: true
               example:
                 success: true
-                message: "Entries updated."
+                message: "Journals updated."
                 data:
                   {
                     "username": "user1",
                     "email": "email@gmail.com",
-                    "entries": [],
+                    "journals": [],
                     "entryCategories": ["New Category"],
                   }
         "422":
@@ -1849,11 +1849,11 @@ paths:
                 success: false
                 message: "An error occurred. Error: something went wrong."
                 data: null
-  "/user/entry/category/delete":
+  "/user/journal/category/delete":
     delete:
-      description: "Deletes a entry category."
+      description: "Deletes a journal category."
       tags:
-        - Entry
+        - Journal
       parameters:
         - in: path
           name: userId
@@ -1892,7 +1892,7 @@ paths:
                   {
                     "username": "user1",
                     "email": "email@gmail.com",
-                    "entries": [],
+                    "journals": [],
                     "entryCategories": [],
                   }
         "422":
@@ -1929,11 +1929,11 @@ paths:
                 success: false
                 message: "An error occurred. Error: something went wrong."
                 data: null
-  "/user/entry/category/edit":
+  "/user/journal/category/edit":
     put:
-      description: "Edits a entry category."
+      description: "Edits a journal category."
       tags:
-        - Entry
+        - Journal
       requestBody:
         description: "The userId, categoryId, and the new category details."
         required: true
@@ -1980,7 +1980,7 @@ paths:
                   {
                     "username": "user1",
                     "email": "email@gmail.com",
-                    "entries": [],
+                    "journals": [],
                     "entryCategories": ["Updated Category"],
                   }
         "422":
@@ -2027,10 +2027,10 @@ components:
         email:
           type: string
           format: email
-        entries:
+        journals:
           type: array
           items:
-            $ref: "#/components/schemas/Entry"
+            $ref: "#/components/schemas/Journal"
         entryCategories:
           type: array
           items:
@@ -2040,15 +2040,15 @@ components:
                 type: string
               selected:
                 type: boolean
-    Entry:
+    Journal:
       type: object
       properties:
         title:
           type: string
-          example: "Entry 1"
-        entry:
+          example: "Journal 1"
+        journal:
           type: string
-          example: "Entry 1"
+          example: "Journal 1"
         category:
           type: string
         date:

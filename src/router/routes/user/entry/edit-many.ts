@@ -33,14 +33,14 @@ const validatedEntryIds = body("entryIds") // TODO convert to zod?
   .withMessage("Invalid entryIds")
   .bail()
   .escape();
-const validatedStrings = body(["title", "entry", "category"])
+const validatedStrings = body(["title", "journal", "category"])
   .optional()
   .isString()
   .bail()
   .escape();
 const validatedFavorite = body("favorite").optional().isBoolean().escape();
 
-// TODO validate title entry category
+// TODO validate title journal category
 
 router.post(
   "/",
@@ -56,7 +56,7 @@ router.post(
         userId: string;
         entryIds: string[];
         title?: string;
-        entry?: string;
+        journal?: string;
         category?: string;
         favorite?: boolean;
       }
@@ -70,7 +70,7 @@ router.post(
       if (
         !errors.isEmpty() ||
         (!has(req.body, "title") &&
-          !has(req.body, "entry") &&
+          !has(req.body, "journal") &&
           !has(req.body, "category") &&
           !has(req.body, "favorite"))
       ) {
@@ -79,35 +79,35 @@ router.post(
           .json(genericResponses.missing_body_fields());
       }
 
-      const { userId, entryIds, title, entry, category, favorite } = req.body;
+      const { userId, entryIds, title, journal, category, favorite } = req.body;
       const query: {
-        ["entries.$.title"]?: string;
-        ["entries.$.entry"]?: string;
-        ["entries.$.category"]?: string;
-        ["entries.$.favorite"]?: boolean;
+        ["journals.$.title"]?: string;
+        ["journals.$.journal"]?: string;
+        ["journals.$.category"]?: string;
+        ["journals.$.favorite"]?: boolean;
       } = {};
 
       if (title) {
-        query["entries.$.title"] = title;
+        query["journals.$.title"] = title;
       }
 
-      if (entry) {
-        query["entries.$.entry"] = entry;
+      if (journal) {
+        query["journals.$.journal"] = journal;
       }
 
       if (category) {
-        query["entries.$.category"] = category;
+        query["journals.$.category"] = category;
       }
 
       if (favorite !== undefined) {
-        query["entries.$.favorite"] = Boolean(favorite); // TODO: why is the boolean getting converted to a string?
+        query["journals.$.favorite"] = Boolean(favorite); // TODO: why is the boolean getting converted to a string?
       }
 
       console.log("QUERY", query);
       const doc = await updateMany(
         {
           _id: new ObjectId(userId),
-          "entries._id": { $in: entryIds.map((id) => new ObjectId(id)) },
+          "journals._id": { $in: entryIds.map((id) => new ObjectId(id)) },
         },
         {
           $set: query,

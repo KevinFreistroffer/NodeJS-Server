@@ -5,7 +5,7 @@ const dotenv = require("dotenv");
 dotenv.config();
 
 module.exports = {
-  entry: "./src/server.ts", // The entry point of your application
+  journal: "./src/server.ts", // The journal point of your application
   target: "node", // Target Node.js environment
   mode: "production", // Production mode for optimization
   module: {

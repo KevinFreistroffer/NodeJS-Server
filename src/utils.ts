@@ -21,7 +21,7 @@ export const convertDocToSafeUser = (
     _id: UNSAFE_DOC._id,
     username: UNSAFE_DOC.username,
     email: UNSAFE_DOC.email,
-    entries: UNSAFE_DOC.entries,
+    journals: UNSAFE_DOC.journals,
     entryCategories: UNSAFE_DOC.entryCategories,
     resetPasswordToken: UNSAFE_DOC.resetPasswordToken,
     isVerified: UNSAFE_DOC.isVerified,
@@ -156,7 +156,7 @@ export const sendAccountActivationEmail = async (
   if (process.env.NODE_ENV === "development") {
     verificationLink = `http://localhost:3000/verify-account/${token}`;
   } else {
-    verificationLink = `https://entry-app-production.up.railway.app/verify-account/${token}`;
+    verificationLink = `https://journal-app-production.up.railway.app/verify-account/${token}`;
   }
   const transport = `smtps://${encodeURIComponent(
     process.env.EMAIL_FROM
@@ -170,7 +170,7 @@ export const sendAccountActivationEmail = async (
 
   // setup e-mail data with unicode symbols
   const mailOptions = {
-    from: `"Entry App 👥" <${process.env.EMAIL_FROM}>`,
+    from: `"Journal App 👥" <${process.env.EMAIL_FROM}>`,
     // to: to, // Use the provided email address
     to:
       process.env.NODE_ENV === "development"
@@ -219,7 +219,7 @@ export const sanitizeUser = (user: any): ISanitizedUser => {
     _id: user._id,
     username: user.username,
     email: user.email,
-    entries: user.entries,
+    journals: user.journals,
     entryCategories: user.entryCategories,
     resetPasswordToken: user.resetPasswordToken,
     resetPasswordTokenExpires: user.resetPasswordTokenExpires,
