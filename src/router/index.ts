@@ -55,7 +55,15 @@ module.exports = (app: express.Express) => {
     require("./routes/user/journal/category/create-many")
   );
   app.use("/streams/file", require("./routes/streams/file"));
-
+  // app.use("/x/callback", require("./routes/x/callback"));
+  // app.use("/x/login", require("./routes/x/login"));
+  // app.use("/x/revoke", require("./routes/x/revoke"));
+  // app.use("/x/tweets", require("./routes/x/tweets"));
+  // app.use(
+  //   "/x/request-access-token",
+  //   require("./routes/x/request-access-token")
+  // );
+  app.use("/x", require("./routes/x"));
   //These routes are not implemented yet
   // app.use(
   //   "/journal/deleteSelectedJournals",

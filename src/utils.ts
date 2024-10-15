@@ -225,6 +225,9 @@ export const sanitizeUser = (user: any): ISanitizedUser => {
     resetPasswordTokenExpires: user.resetPasswordTokenExpires,
     resetPasswordAttempts: user.resetPasswordAttempts,
     isVerified: user.isVerified,
+    createdAt: user.createdAt,
+    updatedAt: user.updatedAt,
+    hasAcknolwedgedHelperText: user.hasAcknolwedgedHelperText,
   };
 };
 
@@ -248,3 +251,14 @@ export const generateResetPasswordToken = (expiresInHours: number = 3) => {
   ); // 3 hours
   return { token, expirationDate };
 };
+
+// X integration
+// Generate PKCE challenge
+export function generatePKCE() {
+  const verifier = crypto.randomBytes(32).toString("base64url");
+  const challenge = crypto
+    .createHash("sha256")
+    .update(verifier)
+    .digest("base64url");
+  return { verifier, challenge };
+}
