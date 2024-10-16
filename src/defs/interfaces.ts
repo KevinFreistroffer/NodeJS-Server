@@ -34,7 +34,7 @@ export interface IUser {
   journalCategories: ICategory[];
   createdAt: Date;
   updatedAt: Date;
-  hasAcknolwedgedHelperText: boolean;
+  hasAcknowledgedHelperText: boolean;
 }
 
 export interface IUserDoc extends WithId<IUser> {}

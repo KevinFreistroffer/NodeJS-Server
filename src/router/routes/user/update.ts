@@ -3,8 +3,9 @@ import { body, validationResult } from "express-validator";
 import { ObjectId } from "mongodb";
 import { statusCodes } from "../../../defs/responses/status_codes";
 import { responses as genericResponses } from "../../../defs/responses/generic";
-import { findOneById } from "../../../operations/user_operations";
-
+import { findOneById, updateOne } from "../../../operations/user_operations";
+import { handleCaughtErrorResponse } from "../../../utils";
+import { responses as userResponses } from "../../../defs/responses/user";
 const router = Router();
 
 const validatedUserId = body("userId")
@@ -21,42 +22,39 @@ router.post(
   validatedUpdateFields,
   async (req: Request, res: Response) => {
     try {
+      console.log("/user/update", req.body);
       const errors = validationResult(req);
-
+      console.log(errors);
       if (!errors.isEmpty()) {
+        console.log("!errors.isEmpty()", !errors.isEmpty());
         return res.status(400).json({ errors: errors.array() });
       }
 
-      const { userId, hasSeenHelperText } = req.body;
-
-      if (!hasSeenHelperText) {
-        res
-          .status(statusCodes.missing_parameters)
-          .json(genericResponses.missing_body_fields());
-      }
+      const { userId, hasAcknowledgedHelperText } = req.body;
 
       const doc = await findOneById(new ObjectId(userId));
-
+      console.log("doc", doc);
       if (!doc) {
         return res
           .status(statusCodes.resource_not_found)
           .json(genericResponses.resource_not_found());
       }
 
-      //   const user = await User.findByIdAndUpdate(userId, {
-      //     hasSeenHelperText,
-      //   });
+      const updateResult = await updateOne(
+        { _id: doc._id },
+        { $set: { hasAcknowledgedHelperText } }
+      );
 
-      //   if (!user) {
-      //     return res.status(404).json({ error: "User not found" });
-      //   }
+      console.log("updateResult", updateResult);
 
-      //   // ... handle the update logic here ...
+      if (updateResult.matchedCount === 0 || updateResult.modifiedCount === 0) {
+        return res.json(userResponses.could_not_update());
+      }
 
-      res.status(200).json({ message: "User updated successfully" });
+      return res.json(genericResponses.success());
     } catch (error) {
       console.log(error);
-      res.status(500).json({ error: "Internal server error" });
+      return handleCaughtErrorResponse(error, req, res);
     }
   }
 );

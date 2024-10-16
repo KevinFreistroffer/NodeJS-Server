@@ -60,5 +60,5 @@ export const UserProjection = {
   isVerified: 1,
   createdAt: 1,
   updatedAt: 1,
-  hasAcknolwedgedHelperText: 1,
+  hasAcknowledgedHelperText: 1,
 };
