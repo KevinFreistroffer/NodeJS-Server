@@ -1,10 +1,4 @@
-export interface IUserProjection {
-  _id: 1;
-  username: 1;
-  email: 1;
-  journals: 1;
-  journalCategories: 1;
-}
+import { IReminder } from "../interfaces";
 
 export class User {
   username: string;
@@ -20,7 +14,10 @@ export class User {
   isVerified: boolean = false;
   createdAt: Date;
   updatedAt: Date;
-  hasAcknolwedgedHelperText: boolean;
+  hasAcknowledgedHelperText: boolean;
+  avatar?: string;
+  avatarId?: string;
+  reminders: IReminder[];
   constructor({
     username,
     email,
@@ -44,7 +41,8 @@ export class User {
     this.resetPasswordAttempts = [];
     this.createdAt = new Date();
     this.updatedAt = new Date();
-    this.hasAcknolwedgedHelperText = false;
+    this.hasAcknowledgedHelperText = false;
+    this.reminders = [];
   }
 }
 
@@ -61,4 +59,7 @@ export const UserProjection = {
   createdAt: 1,
   updatedAt: 1,
   hasAcknowledgedHelperText: 1,
+  avatar: 1,
+  avatarId: 1,
+  reminders: 1,
 };

@@ -22,6 +22,8 @@ import {
   insertOne,
 } from "../../../operations/user_operations";
 import { sendAccountActivationEmail, hashPassword } from "../../../utils";
+import { ObjectId } from "mongodb";
+
 const router = express.Router();
 
 // List of functionalities that can be unit tested:
@@ -38,17 +40,9 @@ const router = express.Router();
 
 router.post(
   "/",
-  body([
-    "username",
-    // "userId",
-    "password",
-  ])
-    .notEmpty()
-    .bail()
-    .isString()
-    .bail()
-    .escape(),
+  body(["username", "password"]).notEmpty().bail().isString().bail().escape(),
   body("email").notEmpty().bail().isEmail().bail().escape(),
+  body("avatar").optional().isString().withMessage("Avatar must be a string"),
   async (req: express.Request, res: express.Response<IResponse>) => {
     try {
       const validatedFields = validationResult(req);
@@ -58,7 +52,7 @@ router.post(
           .json(genericResponses.missing_body_fields());
       }
 
-      const { username, email, password } = req.body;
+      const { username, email, password, avatar } = req.body;
       const doc = await findOneByUsernameOrEmail(username, email);
 
       console.log(doc);
@@ -74,16 +68,11 @@ router.post(
 
       const encryptedPassword = await hashPassword(password);
 
-      /**
-
-
-          resetPasswordToken: string;
-          resetPasswordTokenExpires: Date | null;
-          journals: any[];
-          journalCategories: any[];
-          resetPasswordAttempts: { timestamp: string }[];
-          isVerified: boolean = false;
-       */
+      // Generate avatarId if avatar is provided and valid
+      let avatarId: string | undefined;
+      if (typeof avatar === "string" && avatar.trim() !== "") {
+        avatarId = new ObjectId().toString();
+      }
 
       const insertDoc = await insertOne({
         username,
@@ -99,7 +88,10 @@ router.post(
         isVerified: false,
         createdAt: new Date(),
         updatedAt: new Date(),
-        hasAcknolwedgedHelperText: false,
+        hasAcknowledgedHelperText: false,
+        avatar,
+        avatarId: avatarId || "",
+        reminders: [],
       });
 
       if (!insertDoc || !insertDoc.insertedId) {

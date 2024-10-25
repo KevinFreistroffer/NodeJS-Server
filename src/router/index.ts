@@ -11,7 +11,7 @@ module.exports = (app: express.Express) => {
   app.use("/auth/verify-account", require("./routes/auth/verify-account"));
   app.use("/auth/authenticate", require("./routes/auth/authenticate"));
   // app.use("/auth/public-key", require("./routes/auth/public-key"));
-  app.use("/user", require("./routes/user/get-by-id"));
+  app.use("/user", require("./routes/user/get-one-by-id"));
   app.use("/user/create", require("./routes/user/create"));
   app.use("/user/login", require("./routes/user/login"));
   app.use(
@@ -37,7 +37,7 @@ module.exports = (app: express.Express) => {
   );
   app.use("/user/journal/journals", require("./routes/user/journal/journals"));
   app.use("/user/journal/delete", require("./routes/user/journal/delete"));
-
+  app.use("/user/journal", require("./routes/user/journal/get-one-by-id"));
   app.use(
     "/user/journal/category/create",
     require("./routes/user/journal/category/create")

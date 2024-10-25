@@ -25,6 +25,7 @@ export interface IResponse extends IResponseBase {
     | IJournal
     | IJournal[]
     | boolean
+    | string
     | undefined;
 }
 
@@ -44,6 +45,7 @@ export interface IGenericResponses {
       | IJournal
       | IJournal[]
       | boolean
+      | string
       | undefined,
     description?: string
   ) => IResponse;
@@ -108,6 +110,7 @@ export const responses: IGenericResponses = {
       | IJournal
       | IJournal[]
       | boolean
+      | string
       | undefined,
     description?: string
   ) => ({

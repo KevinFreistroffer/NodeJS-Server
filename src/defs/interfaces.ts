@@ -18,6 +18,13 @@ export interface ICategory {
   updatedAt: Date;
 }
 
+export interface IReminder {
+  id: number;
+  title: string;
+  date: string;
+  time: string;
+}
+
 export interface IUser {
   username: string;
   usernameNormalized: string;
@@ -35,6 +42,9 @@ export interface IUser {
   createdAt: Date;
   updatedAt: Date;
   hasAcknowledgedHelperText: boolean;
+  avatar?: string;
+  avatarId?: string;
+  reminders: IReminder[];
 }
 
 export interface IUserDoc extends WithId<IUser> {}

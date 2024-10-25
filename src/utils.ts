@@ -227,7 +227,7 @@ export const sanitizeUser = (user: any): ISanitizedUser => {
     isVerified: user.isVerified,
     createdAt: user.createdAt,
     updatedAt: user.updatedAt,
-    hasAcknolwedgedHelperText: user.hasAcknolwedgedHelperText,
+    hasAcknowledgedHelperText: user.hasAcknowledgedHelperText,
   };
 };
 

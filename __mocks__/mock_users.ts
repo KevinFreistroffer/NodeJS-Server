@@ -2,11 +2,12 @@ import { ObjectId } from "mongodb";
 import { User } from "../src/defs/models/user.model";
 import { IUser, IJournal, ICategory } from "../src/defs/interfaces";
 
-export const mockUnsavedUser = new User(
-  "user1",
-  "user1@example.com",
-  "password1"
-);
+export const mockUnsavedUser = new User({
+  username: "user1",
+  email: "user1@example.com",
+  password: "password1",
+  resetPasswordTokenExpires: new Date(),
+});
 
 const getJournals = (numJournalsToGet: number, getSavedJournals: boolean) => {
   const journals = [];
