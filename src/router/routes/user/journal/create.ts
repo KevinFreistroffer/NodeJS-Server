@@ -22,7 +22,7 @@ const validatedUserId = body("userId") // TODO convert to zod?
   .bail()
   .custom((id) => ObjectId.isValid(id))
   .escape();
-const validatedJournal = body(["title", "journal", "category"]) // TODO convert to zod?
+const validatedJournal = body(["title", "entry", "category"]) // TODO convert to zod?
   .notEmpty()
   .bail()
   .isString()
@@ -50,13 +50,13 @@ router.post(
        * Valid request body.
        * MongoDB User collection
        *------------------------------------------------*/
-      const { userId, title, journal, category, favorite } = req.body;
+      const { userId, title, entry, category, favorite } = req.body;
       console.log("userId", userId);
       const day = moment().day();
       const date = `${days[day]}, ${moment().format("MM-DD-YYYY")}`;
       const newJournal = new Journal(
         title,
-        journal,
+        entry,
         category,
         date,
         false,

@@ -59,7 +59,7 @@ router.post(
         req.body;
       const query: {
         ["journals.$.title"]?: string;
-        ["journals.$.journal"]?: string;
+        ["journals.$.entry"]?: string;
         ["journals.$.category"]?: string;
         ["journals.$.favorite"]?: boolean;
       } = {};
@@ -69,7 +69,7 @@ router.post(
       }
 
       if (journal) {
-        query["journals.$.journal"] = journal;
+        query["journals.$.entry"] = journal;
       }
 
       if (category) {

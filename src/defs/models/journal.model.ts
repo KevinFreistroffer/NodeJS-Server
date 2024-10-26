@@ -1,6 +1,6 @@
 export class Journal {
   title: string;
-  journal: string;
+  entry: string;
   category: string;
   date: string;
   selected: boolean;
@@ -8,14 +8,14 @@ export class Journal {
 
   constructor(
     title: string,
-    journal: string,
+    entry: string,
     category: string,
     date: string,
     selected: boolean,
     favorite: boolean
   ) {
     this.title = title;
-    this.journal = journal;
+    this.entry = entry;
     this.category = category;
     this.date = date;
     this.selected = selected;

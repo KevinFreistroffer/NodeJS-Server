@@ -15,23 +15,30 @@ router.get(
   "/:id",
   async (req: express.Request, res: express.Response<IResponse>) => {
     try {
-      console.log("/get-by-id", req.params.id);
+      console.log("/get-one-by-id", req.params.id);
       if (!req.params.id || !ObjectId.isValid(req.params.id)) {
+        console.log("invalid id");
         return res
           .status(statusCodes.missing_parameters)
           .json(genericResponses.missing_parameters());
       }
 
-      const doc = await findOneById(new ObjectId(req.params.id));
+      console.log("valid id");
 
+      const doc = await findOneById(new ObjectId(req.params.id));
+      console.log("doc", doc);
       if (!doc) {
+        console.log("doc not found");
         return res
           .status(statusCodes.resource_not_found)
           .json(genericResponses.resource_not_found());
       }
 
+      console.log("doc found");
+
       return res.json(genericResponses.success(doc));
     } catch (error) {
+      console.log("error", error);
       return handleCaughtErrorResponse(error, req, res);
     }
   }

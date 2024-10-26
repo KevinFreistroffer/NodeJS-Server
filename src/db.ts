@@ -17,7 +17,9 @@ export const getDBURI = () => {
 };
 
 export const getClient = () => {
+  console.log("getClient()");
   const uri = getDBURI();
+  console.log("uri", uri);
   const client: MongoClient = new MongoClient(uri, {
     serverApi: {
       version: ServerApiVersion.v1,
@@ -25,7 +27,6 @@ export const getClient = () => {
       deprecationErrors: true,
     },
   });
-
   return client;
 };
 

@@ -3,7 +3,7 @@ import { Document, ObjectId, WithId } from "mongodb";
 export interface IJournal extends Document {
   title: string;
   journal: string;
-  category: string;
+  entry: string;
   date: string;
   selected: boolean;
   favorite: boolean;
@@ -19,10 +19,19 @@ export interface ICategory {
 }
 
 export interface IReminder {
-  id: number;
-  title: string;
+  _id: ObjectId;
+  customFrequency: number;
+  customUnit: string;
   date: string;
+  description: string;
+  endDate: string;
+  ends: string;
+  occurrences: number;
+  recurrenceType: string;
+  recurring: boolean;
+  repeatOn: string[];
   time: string;
+  title: string;
 }
 
 export interface IUser {

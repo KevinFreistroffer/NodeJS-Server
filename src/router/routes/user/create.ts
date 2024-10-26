@@ -84,14 +84,38 @@ router.post(
         resetPasswordTokenExpires: null,
         resetPasswordAttempts: [],
         journals: [],
-        journalCategories: [],
+        journalCategories: [
+          {
+            _id: new ObjectId(),
+            category: "My Journals",
+            selected: false,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          },
+        ],
         isVerified: false,
         createdAt: new Date(),
         updatedAt: new Date(),
         hasAcknowledgedHelperText: false,
         avatar,
         avatarId: avatarId || "",
-        reminders: [],
+        reminders: [
+          // {
+          //   _id: new ObjectId(),
+          //   customFrequency: 1,
+          //   customUnit: "day",
+          //   date: "2022-01-01",
+          //   description: "This is a reminder",
+          //   endDate: "2022-12-31",
+          //   ends: "after",
+          //   occurrences: 10,
+          //   recurrenceType: "daily",
+          //   recurring: true,
+          //   repeatOn: ["monday", "tuesday"],
+          //   time: "08:00",
+          //   title: "Test Reminder",
+          // },
+        ],
       });
 
       if (!insertDoc || !insertDoc.insertedId) {
