@@ -2,7 +2,7 @@ import { Document, ObjectId, WithId } from "mongodb";
 
 export interface IJournal extends Document {
   title: string;
-  journal: string;
+  // journal: string;
   entry: string;
   date: string;
   selected: boolean;
