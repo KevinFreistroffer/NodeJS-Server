@@ -5,6 +5,7 @@ export class Journal {
   date: string;
   selected: boolean;
   favorite: boolean;
+  sentimentScore: number;
 
   constructor(
     title: string,
@@ -12,13 +13,15 @@ export class Journal {
     category: string,
     date: string,
     selected: boolean,
-    favorite: boolean
+    favorite: boolean,
+    sentimentScore: number
   ) {
     this.title = title;
     this.entry = entry;
     this.category = category;
     this.date = date;
     this.selected = selected;
-    this.favorite = false;
+    this.favorite = favorite;
+    this.sentimentScore = sentimentScore;
   }
 }

@@ -22,18 +22,26 @@ const validatedUserId = body("userId") // TODO convert to zod?
   .bail()
   .custom((id) => ObjectId.isValid(id))
   .escape();
-const validatedJournal = body(["title", "entry", "category"]) // TODO convert to zod?
+const validatedJournal = body(["title", "entry", "category", "sentimentScore"]) // Added sentimentScore
   .notEmpty()
   .bail()
   .isString()
   .bail()
   .escape();
 
+// Add specific validation for sentimentScore
+const validatedSentimentScore = body("sentimentScore")
+  .notEmpty()
+  .bail()
+  .isNumeric()
+  .bail();
+
 router.post(
   "/",
   body("favorite").notEmpty().bail().isBoolean().bail().escape(),
   validatedUserId,
   validatedJournal,
+  validatedSentimentScore, // Added validator
   async (req: express.Request, res: express.Response<IResponse>) => {
     console.log(req.body, typeof req.body.favorite);
 
@@ -50,7 +58,7 @@ router.post(
        * Valid request body.
        * MongoDB User collection
        *------------------------------------------------*/
-      const { userId, title, entry, category, favorite } = req.body;
+      const { userId, title, entry, category, favorite, sentimentScore } = req.body; // Added sentimentScore
       console.log("userId", userId);
       const day = moment().day();
       const date = `${days[day]}, ${moment().format("MM-DD-YYYY")}`;
@@ -60,7 +68,8 @@ router.post(
         category,
         date,
         false,
-        favorite
+        favorite,
+        sentimentScore // Added sentimentScore
       );
       console.log("newJournal", newJournal);
 

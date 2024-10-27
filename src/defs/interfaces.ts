@@ -9,6 +9,7 @@ export interface IJournal extends Document {
   favorite: boolean;
   createdAt: Date;
   updatedAt: Date;
+  sentimentScore: number;
 }
 export interface ICategory {
   _id: ObjectId;
