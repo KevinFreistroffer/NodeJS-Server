@@ -58,14 +58,23 @@ router.post(
        * Valid request body.
        * MongoDB User collection
        *------------------------------------------------*/
-      const { userId, title, entry, category, favorite, sentimentScore } = req.body; // Added sentimentScore
+      const { userId, title, entry, category, favorite, sentimentScore } =
+        req.body; // Added sentimentScore
+
+      const newCategory = {
+        _id: new ObjectId(),
+        category,
+        selected: false,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
       console.log("userId", userId);
       const day = moment().day();
       const date = `${days[day]}, ${moment().format("MM-DD-YYYY")}`;
       const newJournal = new Journal(
         title,
         entry,
-        category,
+        [newCategory],
         date,
         false,
         favorite,

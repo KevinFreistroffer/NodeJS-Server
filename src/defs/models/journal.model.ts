@@ -1,7 +1,9 @@
+import { ICategory } from "../interfaces";
+
 export class Journal {
   title: string;
   entry: string;
-  category: string;
+  category: ICategory[];
   date: string;
   selected: boolean;
   favorite: boolean;
@@ -10,7 +12,7 @@ export class Journal {
   constructor(
     title: string,
     entry: string,
-    category: string,
+    category: ICategory[],
     date: string,
     selected: boolean,
     favorite: boolean,
