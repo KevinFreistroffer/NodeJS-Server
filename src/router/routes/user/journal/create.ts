@@ -22,9 +22,16 @@ const validatedUserId = body("userId") // TODO convert to zod?
   .bail()
   .custom((id) => ObjectId.isValid(id))
   .escape();
-const validatedJournal = body(["title", "entry", "category", "sentimentScore"]) // Added sentimentScore
+const validatedJournal = body(["title", "entry", "sentimentScore"]) // Removed category from required fields
   .notEmpty()
   .bail()
+  .isString()
+  .bail()
+  .escape();
+
+// Add separate optional category validation
+const validatedCategory = body("category")
+  .optional()
   .isString()
   .bail()
   .escape();
@@ -41,7 +48,8 @@ router.post(
   body("favorite").notEmpty().bail().isBoolean().bail().escape(),
   validatedUserId,
   validatedJournal,
-  validatedSentimentScore, // Added validator
+  validatedCategory, // Add the optional category validator
+  validatedSentimentScore,
   async (req: express.Request, res: express.Response<IResponse>) => {
     console.log(req.body, typeof req.body.favorite);
 
@@ -61,20 +69,22 @@ router.post(
       const { userId, title, entry, category, favorite, sentimentScore } =
         req.body; // Added sentimentScore
 
-      const newCategory = {
-        _id: new ObjectId(),
-        category,
-        selected: false,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      };
-      console.log("userId", userId);
+      const newCategory = category
+        ? {
+            _id: new ObjectId(),
+            category,
+            selected: false,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          }
+        : undefined;
+
       const day = moment().day();
       const date = `${days[day]}, ${moment().format("MM-DD-YYYY")}`;
       const newJournal = new Journal(
         title,
         entry,
-        [newCategory],
+        category ? [newCategory] : [], // Make categories array empty if no category provided
         date,
         false,
         favorite,
@@ -109,12 +119,9 @@ router.post(
               updatedAt: new Date(),
             },
           },
-          // TODO: determine if in the UI, an input would set the category and save it in this request.
-          // or if the existing create category works and this code isnt needed.
-          ...(categoryExists
-            ? {}
-            : {
-                // Only add category if it doesn't exist
+          ...(category && !categoryExists
+            ? {
+                // Only add category if it's provided and doesn't exist
                 $push: {
                   journalCategories: {
                     _id: new ObjectId(),
@@ -124,7 +131,8 @@ router.post(
                     updatedAt: new Date(),
                   },
                 },
-              }),
+              }
+            : {}),
         }
       );
 
