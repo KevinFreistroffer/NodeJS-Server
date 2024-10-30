@@ -3,8 +3,7 @@ import { ICategory } from "../interfaces";
 export class Journal {
   title: string;
   entry: string;
-  category: ICategory[];
-  date: string;
+  categories: ICategory[];
   selected: boolean;
   favorite: boolean;
   sentimentScore: number;
@@ -12,16 +11,14 @@ export class Journal {
   constructor(
     title: string,
     entry: string,
-    category: ICategory[],
-    date: string,
+    categories: ICategory[],
     selected: boolean,
     favorite: boolean,
     sentimentScore: number
   ) {
     this.title = title;
     this.entry = entry;
-    this.category = category;
-    this.date = date;
+    this.categories = categories;
     this.selected = selected;
     this.favorite = favorite;
     this.sentimentScore = sentimentScore;

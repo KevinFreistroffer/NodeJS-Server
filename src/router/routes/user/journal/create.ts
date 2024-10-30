@@ -22,9 +22,7 @@ const validatedUserId = body("userId") // TODO convert to zod?
   .bail()
   .custom((id) => ObjectId.isValid(id))
   .escape();
-const validatedJournal = body(["title", "entry", "sentimentScore"]) // Removed category from required fields
-  .notEmpty()
-  .bail()
+const validatedJournal = body(["title", "entry"]) // Removed category from required fields
   .isString()
   .bail()
   .escape();
@@ -37,11 +35,7 @@ const validatedCategory = body("category")
   .escape();
 
 // Add specific validation for sentimentScore
-const validatedSentimentScore = body("sentimentScore")
-  .notEmpty()
-  .bail()
-  .isNumeric()
-  .bail();
+const validatedSentimentScore = body("sentimentScore").isNumeric().bail();
 
 router.post(
   "/",
@@ -69,23 +63,21 @@ router.post(
       const { userId, title, entry, category, favorite, sentimentScore } =
         req.body; // Added sentimentScore
 
-      const newCategory = category
-        ? {
-            _id: new ObjectId(),
-            category,
-            selected: false,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-          }
-        : undefined;
-
       const day = moment().day();
-      const date = `${days[day]}, ${moment().format("MM-DD-YYYY")}`;
       const newJournal = new Journal(
         title,
         entry,
-        category ? [newCategory] : [], // Make categories array empty if no category provided
-        date,
+        category
+          ? [
+              {
+                _id: new ObjectId(),
+                category,
+                selected: false,
+                createdAt: new Date(),
+                updatedAt: new Date(),
+              },
+            ]
+          : [], // Make categories array empty if no category provided
         false,
         favorite,
         sentimentScore // Added sentimentScore

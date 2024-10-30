@@ -55,8 +55,22 @@ router.post(
           .json(genericResponses.missing_body_fields());
       }
 
-      const { userId, journalId, title, journal, category, favorite } =
-        req.body;
+      const {
+        userId,
+        journalId,
+        title,
+        journal,
+        category,
+        favorite,
+      }: {
+        userId: ObjectId;
+        journalId: ObjectId;
+        title?: string;
+        journal?: string;
+        category?: string;
+        favorite?: boolean;
+      } = req.body;
+      console.log("body", req.body);
       const query: {
         ["journals.$.title"]?: string;
         ["journals.$.entry"]?: string;
@@ -76,10 +90,14 @@ router.post(
         query["journals.$.category"] = category;
       }
 
+      if (favorite !== undefined) {
+        query["journals.$.favorite"] = favorite;
+      }
+
       const doc = await updateOne(
         {
-          _id: ObjectId.createFromHexString(userId),
-          "journals._id": ObjectId.createFromHexString(journalId),
+          _id: userId,
+          "journals._id": journalId,
         },
 
         {
@@ -100,7 +118,7 @@ router.post(
           .json(userResponses.could_not_update());
       }
 
-      const userDoc = await findOneById(ObjectId.createFromHexString(userId));
+      const userDoc = await findOneById(userId);
 
       if (!userDoc) {
         return res

@@ -4,7 +4,6 @@ export interface IJournal extends Document {
   title: string;
   // journal: string;
   entry: string;
-  date: string;
   selected: boolean;
   favorite: boolean;
   createdAt: Date;
