@@ -34,7 +34,7 @@ router.post(
       if (
         !req.body.reminders.every((reminder: IReminder) => {
           return (
-            typeof reminder.id === "number" &&
+            typeof reminder._id === "string" &&
             typeof reminder.title === "string" &&
             typeof reminder.date === "string" &&
             typeof reminder.time === "string"
