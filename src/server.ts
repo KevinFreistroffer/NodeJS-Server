@@ -23,6 +23,31 @@ import dotenv from "dotenv";
 import { rateLimiterMiddleware } from "./middleware";
 import { checkConflictingRouteMiddleware } from "./routes";
 
+const PROTECTED_ROUTES = [
+  "/user/:id",
+  "/user/username-available",
+  "/user/email-available",
+  "/user/journal/create",
+  "/user/journal/edit",
+  "/user/journal/edit-many",
+  "/user/journal/journals",
+  "/user/journal/delete",
+  "/user/journal/bulk-set-category",
+  "/user/journal/deleteSelectedJournals",
+  "/user/journal/deleteSelectedCategories",
+  "/user/journal/updateJournalCategories",
+  "/user/journal/category/create",
+  "/user/journal/category/delete",
+  "/user/journal/category/edit",
+  "/auth/send-verification-email",
+];
+const ADMIN_ROUTES = [
+  "/user/users",
+  "/user/delete-all",
+  "/user/journal/delete-all",
+  "/auth/bearer",
+];
+
 checkConflictingRouteMiddleware();
 
 dotenv.config();
@@ -72,7 +97,20 @@ server.use("*", (req: Request, res: Response, next: NextFunction) => {
     return verifyAccessKey(req, res, next);
   }
 
-  if (protectedRoutes.find((route) => route === req.baseUrl.toLowerCase())) {
+  // Check for protected routes including dynamic routes
+  const isProtected = protectedRoutes.some((route) => {
+    // Convert route pattern to regex
+    const pattern = route
+      .replace(/:[^/]+/g, "[^/]+") // Replace :id with any non-slash characters
+      .replace(/\//g, "\\/"); // Escape forward slashes
+    console.log("PATTERN", pattern);
+    const regex = new RegExp(`^${pattern}$`, "i");
+    return regex.test(req.baseUrl);
+  });
+
+  console.log("IS PROTECTED", isProtected);
+
+  if (isProtected) {
     return verifySessionToken(req, res, next);
   }
 
