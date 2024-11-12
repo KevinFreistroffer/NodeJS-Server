@@ -23,8 +23,14 @@ export const convertDocToSafeUser = (
     email: UNSAFE_DOC.email,
     journals: UNSAFE_DOC.journals,
     journalCategories: UNSAFE_DOC.journalCategories,
+    reminders: UNSAFE_DOC.reminders,
     resetPasswordToken: UNSAFE_DOC.resetPasswordToken,
+    resetPasswordTokenExpires: UNSAFE_DOC.resetPasswordTokenExpires,
+    resetPasswordAttempts: UNSAFE_DOC.resetPasswordAttempts,
     isVerified: UNSAFE_DOC.isVerified,
+    createdAt: UNSAFE_DOC.createdAt,
+    updatedAt: UNSAFE_DOC.updatedAt,
+    hasAcknowledgedHelperText: UNSAFE_DOC.hasAcknowledgedHelperText,
     // jwtToken: UNSAFE_DOC.jwtToken,
   };
 
@@ -221,6 +227,7 @@ export const sanitizeUser = (user: any): ISanitizedUser => {
     email: user.email,
     journals: user.journals,
     journalCategories: user.journalCategories,
+    reminders: user.reminders,
     resetPasswordToken: user.resetPasswordToken,
     resetPasswordTokenExpires: user.resetPasswordTokenExpires,
     resetPasswordAttempts: user.resetPasswordAttempts,

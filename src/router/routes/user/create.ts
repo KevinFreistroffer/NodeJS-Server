@@ -23,8 +23,27 @@ import {
 } from "../../../operations/user_operations";
 import { sendAccountActivationEmail, hashPassword } from "../../../utils";
 import { ObjectId } from "mongodb";
-
+import multer from "multer";
+import { GridFSBucket } from "mongodb";
+import { getClient } from "../../../db";
+import { IUser } from "@/defs/interfaces";
 const router = express.Router();
+
+// Setup multer storage
+const storage = multer.memoryStorage();
+const upload = multer({
+  storage,
+  limits: {
+    fileSize: 5 * 1024 * 1024, // 5MB limit
+  },
+  fileFilter: (_req, file, cb) => {
+    if (file.mimetype.startsWith("image/")) {
+      cb(null, true);
+    } else {
+      cb(new Error("Only image files are allowed"));
+    }
+  },
+});
 
 // List of functionalities that can be unit tested:
 // 1. Rate limiting functionality
@@ -40,9 +59,9 @@ const router = express.Router();
 
 router.post(
   "/",
+  upload.single("avatar"), // Add multer middleware
   body(["username", "password"]).notEmpty().bail().isString().bail().escape(),
   body("email").notEmpty().bail().isEmail().bail().escape(),
-  body("avatar").optional().isString().withMessage("Avatar must be a string"),
   async (req: express.Request, res: express.Response<IResponse>) => {
     try {
       const validatedFields = validationResult(req);
@@ -52,7 +71,7 @@ router.post(
           .json(genericResponses.missing_body_fields());
       }
 
-      const { username, email, password, avatar } = req.body;
+      const { username, email, password } = req.body;
       const doc = await findOneByUsernameOrEmail(username, email);
 
       console.log(doc);
@@ -68,13 +87,29 @@ router.post(
 
       const encryptedPassword = await hashPassword(password);
 
-      // Generate avatarId if avatar is provided and valid
       let avatarId: string | undefined;
-      if (typeof avatar === "string" && avatar.trim() !== "") {
+
+      // Handle avatar file upload if present
+      if (req.file) {
+        const db = await getClient();
+        const bucket = new GridFSBucket(db.db());
+
         avatarId = new ObjectId().toString();
+
+        const uploadStream = bucket.openUploadStream(avatarId, {
+          contentType: req.file.mimetype,
+        });
+
+        uploadStream.write(req.file.buffer);
+        uploadStream.end();
+
+        await new Promise((resolve, reject) => {
+          uploadStream.on("finish", resolve);
+          uploadStream.on("error", reject);
+        });
       }
 
-      const insertDoc = await insertOne({
+      const newUser: IUser = {
         username,
         usernameNormalized: username.toLowerCase(),
         email,
@@ -97,8 +132,10 @@ router.post(
         createdAt: new Date(),
         updatedAt: new Date(),
         hasAcknowledgedHelperText: false,
-        avatar,
-        avatarId: avatarId || "",
+        // avatar: req.file ? req.file.originalname : undefined,
+        // avatarId: avatarId ? new ObjectId(avatarId) : undefined,
+        avatar: undefined,
+        avatarId: undefined,
         reminders: [
           // {
           //   _id: new ObjectId(),
@@ -116,7 +153,9 @@ router.post(
           //   title: "Test Reminder",
           // },
         ],
-      });
+      };
+
+      const insertDoc = await insertOne(newUser);
 
       if (!insertDoc || !insertDoc.insertedId) {
         console.log("inserting DOC. SHOULD BE HERE.");

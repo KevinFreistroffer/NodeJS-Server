@@ -17,6 +17,22 @@
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "noImplicitAny": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "paths": {
+      "@/*": [
+        "./src/*",
+        "./src/router/*",
+        "./src/data/*",
+        "./src/events/*",
+        "./src/logs/*",
+        "./src/operations/*",
+        "./src/utils/*",
+        "./src/middleware/*",
+        "./src/defs/*",
+        "./src/defs/responses/*",
+        "./src/defs/interfaces/*",
+        "./src/defs/requests/*"
+      ]
+    }
   }
 }

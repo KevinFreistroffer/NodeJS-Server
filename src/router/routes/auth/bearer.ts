@@ -18,7 +18,7 @@ const router = Router();
 router.get("/", (req: Request, res: Response<IResponse>) => {
   try {
     const accessKey = req.headers["access-key"];
-
+    console.log(accessKey);
     if (
       typeof accessKey === "undefined" ||
       Array.isArray(accessKey) ||

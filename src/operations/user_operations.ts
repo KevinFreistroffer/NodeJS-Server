@@ -182,9 +182,13 @@ export async function updateOne(
   const client = await getClient();
   try {
     await client.connect();
+    console.log("updateOne query", query);
+    console.log("updateOne update", update);
     const doc = await usersCollection(client).updateOne(query, update);
+    console.log("updateOne doc", doc);
     return doc;
   } catch (error) {
+    console.log("updateOne error", error);
     // TODO: what type of errors? Handle specific errors?
     throw error;
   } finally {

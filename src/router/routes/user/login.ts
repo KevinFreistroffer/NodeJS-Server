@@ -56,6 +56,7 @@ router.post(
         },
         sanitize: false,
       });
+      console.log("UNSAFE_DOC", UNSAFE_DOC);
 
       if (!UNSAFE_DOC) {
         return res

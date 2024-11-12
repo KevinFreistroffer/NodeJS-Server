@@ -99,11 +99,13 @@ server.use("*", (req: Request, res: Response, next: NextFunction) => {
 
   // Check for protected routes including dynamic routes
   const isProtected = protectedRoutes.some((route) => {
-    // Convert route pattern to regex
+    // Convert route pattern to regex, handling :id specially for MongoDB ObjectID
     const pattern = route
-      .replace(/:[^/]+/g, "[^/]+") // Replace :id with any non-slash characters
+      .replace(/:[^/]+/g, (match) => {
+        // If the parameter is :id, match MongoDB ObjectID pattern
+        return match === ":id" ? "[0-9a-fA-F]{24}" : "[^/]+";
+      })
       .replace(/\//g, "\\/"); // Escape forward slashes
-    console.log("PATTERN", pattern);
     const regex = new RegExp(`^${pattern}$`, "i");
     return regex.test(req.baseUrl);
   });

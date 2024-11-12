@@ -52,7 +52,7 @@ export interface IUser {
   updatedAt: Date;
   hasAcknowledgedHelperText: boolean;
   avatar?: string;
-  avatarId?: string;
+  avatarId?: ObjectId;
   reminders: IReminder[];
 }
 
