@@ -5,20 +5,23 @@ import * as bcrypt from "bcryptjs";
 import { sign } from "jsonwebtoken";
 import { body, validationResult } from "express-validator";
 import { has } from "lodash";
-import { responses, statusCodes } from "../../../defs/responses/user";
-import { findOne } from "../../../operations/user_operations";
-import {
-  handleCaughtErrorResponse,
-  sendAccountActivationEmail,
-} from "../../../utils";
+import { responses, statusCodes } from "@/defs/responses/user";
+import { findOne } from "@/operations/user_operations";
 import {
   IResponse,
   responses as genericResponses,
-} from "../../../defs/responses/generic";
+} from "@/defs/responses/generic";
 import dotenv from "dotenv";
-import { ISanitizedUser } from "../../../defs/interfaces";
+import { ISanitizedUser } from "@/defs/interfaces";
 import { ObjectId } from "mongodb";
-import { sanitizeUser, formatSessionCookie } from "../../../utils";
+import {
+  handleCaughtErrorResponse,
+  sendAccountActivationEmail,
+  sanitizeUser,
+  formatSessionCookie,
+  getAvatarStream,
+  streamToDataURL,
+} from "@/utils";
 dotenv.config();
 
 const router = express.Router();
@@ -56,7 +59,6 @@ router.post(
         },
         sanitize: false,
       });
-      console.log("UNSAFE_DOC", UNSAFE_DOC);
 
       if (!UNSAFE_DOC) {
         return res
@@ -81,6 +83,19 @@ router.post(
 
       // Sanitize the UNSAFE_DOC to return an ISanitizedUser interface
       const sanitizedUser = sanitizeUser(UNSAFE_DOC);
+
+      const avatarStream = await getAvatarStream(UNSAFE_DOC._id.toString());
+      console.log("avatarStream", avatarStream, avatarStream?.contentType);
+      // Add avatar data if available
+      if (avatarStream) {
+        sanitizedUser.avatar = {
+          data: await streamToDataURL(
+            avatarStream.stream,
+            avatarStream.contentType || ""
+          ),
+          contentType: avatarStream.contentType || "",
+        };
+      }
 
       if (!sanitizedUser.isVerified) {
         await sendAccountActivationEmail(
@@ -118,7 +133,7 @@ router.post(
       const description = sanitizedUser.isVerified
         ? ""
         : "Login successful, but the account is not verified. A verification email was sent.";
-
+      console.log("sanitizedUserz", sanitizedUser);
       return res.json({
         ...responses.success(sanitizedUser, description),
       });

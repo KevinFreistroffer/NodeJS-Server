@@ -1,4 +1,5 @@
 import { Document, ObjectId, WithId } from "mongodb";
+import { GridFSBucketReadStream } from "mongodb";
 
 export interface IJournal extends Document {
   title: string;
@@ -51,7 +52,10 @@ export interface IUser {
   createdAt: Date;
   updatedAt: Date;
   hasAcknowledgedHelperText: boolean;
-  avatar?: string;
+  avatar?: {
+    data: string;
+    contentType: string;
+  };
   avatarId?: ObjectId;
   reminders: IReminder[];
 }
@@ -66,7 +70,8 @@ export interface ISanitizedUser
     // | "resetPasswordToken"
     // | "resetPasswordTokenExpires"
     // | "jwtToken"
-  > {}
+  >
+}
 
 // export interface ISanitizedUserDoc
 //   extends Omit<

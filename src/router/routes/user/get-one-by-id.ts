@@ -1,14 +1,18 @@
 "use strict";
 
 import * as express from "express";
-import { handleCaughtErrorResponse } from "../../../utils";
+import {
+  handleCaughtErrorResponse,
+  getAvatarStream,
+  streamToDataURL,
+} from "@/utils";
 import {
   IResponse,
   responses as genericResponses,
-} from "../../../defs/responses/generic";
-import { findOneById } from "../../../operations/user_operations";
+} from "@/defs/responses/generic";
+import { findOneById } from "@/operations/user_operations";
 import { ObjectId } from "mongodb";
-import { statusCodes } from "../../../defs/responses/status_codes";
+import { statusCodes } from "@/defs/responses/status_codes";
 const router = express.Router();
 
 router.get(
@@ -36,6 +40,19 @@ router.get(
 
       console.log("doc found");
 
+      const avatarStream = await getAvatarStream(doc._id.toString());
+      console.log("avatarStream", avatarStream, avatarStream?.contentType);
+      // Add avatar data if available
+      if (avatarStream) {
+        doc.avatar = {
+          data: await streamToDataURL(
+            avatarStream.stream,
+            avatarStream.contentType || ""
+          ),
+          contentType: avatarStream.contentType || "",
+        };
+      }
+      console.log("avatarStream", avatarStream);
       return res.json(genericResponses.success(doc));
     } catch (error) {
       console.log("error", error);

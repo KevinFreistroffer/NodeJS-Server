@@ -14,6 +14,9 @@ import nodemailer from "nodemailer";
 import jwt from "jsonwebtoken";
 import { WithId } from "mongodb";
 import crypto from "node:crypto";
+import { GridFSBucket } from "mongodb";
+import { getClient } from "./db";
+
 export const convertDocToSafeUser = (
   UNSAFE_DOC: WithId<ISanitizedUser>
 ): ISanitizedUser => {
@@ -235,6 +238,8 @@ export const sanitizeUser = (user: any): ISanitizedUser => {
     createdAt: user.createdAt,
     updatedAt: user.updatedAt,
     hasAcknowledgedHelperText: user.hasAcknowledgedHelperText,
+    avatar: user.avatar,
+    avatarId: user.avatarId,
   };
 };
 
@@ -268,4 +273,45 @@ export function generatePKCE() {
     .update(verifier)
     .digest("base64url");
   return { verifier, challenge };
+}
+
+export async function getAvatarStream(userId: string) {
+  const client = await getClient();
+  await client.connect();
+  const db = client.db(process.env.DATABASE_NAME);
+  const bucket = new ObjectId(userId);
+  const avatarBucket = new GridFSBucket(db, {
+    bucketName: "avatars",
+  });
+
+  const files = await avatarBucket
+    .find({ "metadata.userId": bucket })
+    .toArray();
+  if (!files.length) {
+    return null;
+  }
+
+  return {
+    contentType: files[0].contentType,
+    stream: avatarBucket.openDownloadStream(files[0]._id),
+  };
+}
+
+/**
+ * Converts a stream to a base64 data URL
+ * @param stream The readable stream to convert
+ * @param contentType The MIME type of the content
+ * @returns Promise<string> The base64 data URL
+ */
+export async function streamToDataURL(
+  stream: NodeJS.ReadableStream,
+  contentType: string
+): Promise<string> {
+  const chunks: Buffer[] = [];
+  for await (const chunk of stream) {
+    chunks.push(chunk as Buffer);
+  }
+  const buffer = Buffer.concat(chunks);
+  const base64 = buffer.toString("base64");
+  return `data:${contentType};base64,${base64}`;
 }

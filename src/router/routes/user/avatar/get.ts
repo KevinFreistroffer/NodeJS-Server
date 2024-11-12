@@ -4,6 +4,7 @@ import { getClient } from "@/db";
 
 import { Router, NextFunction } from "express";
 import { validationResult, param } from "express-validator";
+import { getAvatarStream } from "@/utils";
 const router = Router();
 // Add validation middleware
 const validateRequest = (req: Request, res: Response, next: NextFunction) => {
@@ -25,24 +26,14 @@ router.get(
   validateRequest,
   async (req: Request, res: Response) => {
     try {
-      const client = await getClient();
-      await client.connect();
-      const db = client.db(process.env.DATABASE_NAME);
-      const bucket = new ObjectId(req.params.userId);
-      const avatarBucket = new GridFSBucket(db, {
-        bucketName: "avatars",
-      });
+      const result = await getAvatarStream(req.params.userId);
 
-      const files = await avatarBucket
-        .find({ "metadata.userId": bucket })
-        .toArray();
-
-      if (!files.length) {
+      if (!result) {
         return res.status(404).json({ message: "No avatar found" });
       }
 
-      res.set("Content-Type", files[0].contentType);
-      avatarBucket.openDownloadStream(files[0]._id).pipe(res);
+      res.set("Content-Type", result.contentType);
+      result.stream.pipe(res);
     } catch (error) {
       console.error("Avatar retrieval error:", error);
       res.status(500).json({ message: "Error retrieving avatar" });
