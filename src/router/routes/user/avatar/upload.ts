@@ -49,6 +49,7 @@ const avatarUploadValidation = [
 // Add validation middleware
 const validateRequest = (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
+  console.log("avatar upload validateRequest errors", errors);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
   }
@@ -58,8 +59,6 @@ const validateRequest = (req: Request, res: Response, next: NextFunction) => {
 // Upload avatar route
 router.post(
   "/",
-  avatarUploadValidation,
-  validateRequest,
   async (req: Request, res: Response) => {
     console.log("/upload uploading avatar");
     try {
@@ -67,8 +66,14 @@ router.post(
       const avatarString = req.body.avatar;
       const bucket = ObjectId.createFromHexString(userId);
 
-      // Convert string to buffer
-      const buffer = Buffer.from(avatarString, "base64");
+      // Detect image type from base64 string
+      const imageType = avatarString.match(/^data:image\/(\w+);base64,/)?.[1] || 'png';
+
+      // Remove base64 header if present
+      const cleanAvatarString = avatarString.replace(/^data:image\/\w+;base64,/, '');
+
+      // Convert clean string to buffer
+      const buffer = Buffer.from(cleanAvatarString, "base64");
 
       const client = await getClient();
       await client.connect();
@@ -91,11 +96,11 @@ router.post(
       readStream.push(buffer);
       readStream.push(null);
 
-      // Create upload stream
+      // Create upload stream with dynamic image type
       const uploadStream = avatarBucket.openUploadStream(
-        `avatar-${bucket.toString()}-${Date.now()}.png`, // Assuming PNG format, adjust as needed
+        `avatar-${bucket.toString()}-${Date.now()}.${imageType}`,
         {
-          contentType: "image/png", // Adjust content type as needed
+          contentType: `image/${imageType}`,
           metadata: { userId: bucket },
         }
       );
@@ -133,10 +138,5 @@ router.post(
     }
   }
 );
-
-// Helper function to get file extension
-const getFileExtension = (filename: string): string => {
-  return filename.substring(filename.lastIndexOf("."));
-};
 
 module.exports = router;

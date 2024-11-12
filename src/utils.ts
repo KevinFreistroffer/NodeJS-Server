@@ -287,6 +287,7 @@ export async function getAvatarStream(userId: string) {
   const files = await avatarBucket
     .find({ "metadata.userId": bucket })
     .toArray();
+  console.log("files", files);
   if (!files.length) {
     return null;
   }
@@ -315,3 +316,8 @@ export async function streamToDataURL(
   const base64 = buffer.toString("base64");
   return `data:${contentType};base64,${base64}`;
 }
+
+// Helper function to get file extension
+export const getFileExtension = (filename: string): string => {
+  return filename.substring(filename.lastIndexOf("."));
+};

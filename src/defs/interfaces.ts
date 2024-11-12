@@ -70,8 +70,7 @@ export interface ISanitizedUser
     // | "resetPasswordToken"
     // | "resetPasswordTokenExpires"
     // | "jwtToken"
-  >
-}
+  > {}
 
 // export interface ISanitizedUserDoc
 //   extends Omit<

@@ -15,7 +15,10 @@ export class User {
   createdAt: Date;
   updatedAt: Date;
   hasAcknowledgedHelperText: boolean;
-  avatar?: string;
+  avatar?: {
+    data: string;
+    contentType: string;
+  };
   avatarId?: string;
   reminders: IReminder[];
   constructor({

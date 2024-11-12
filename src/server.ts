@@ -82,7 +82,7 @@ server.disable("x-powered-by");
 const whitelist = ["http://localhost:3000", "127.0.0.1"];
 
 server.use(passport.initialize());
-server.use(express.json());
+server.use(express.json({ limit: "5mb" }));
 server.use(express.urlencoded({ extended: true }));
 server.use(rateLimiterMiddleware());
 server.use("*", (req: Request, res: Response, next: NextFunction) => {

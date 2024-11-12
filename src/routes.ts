@@ -53,6 +53,11 @@ export const routes: RouteConfig[] = [
     requiresAuthorization: true,
   },
   {
+    path: "/user/avatar/upload",
+    requiresAccessKey: false,
+    requiresAuthorization: true,
+  },
+  {
     path: "/streams/file",
     requiresAccessKey: true,
     requiresAuthorization: true,
