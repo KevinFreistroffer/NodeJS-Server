@@ -52,6 +52,11 @@ export class User {
 export const UserProjection = {
   _id: 1,
   username: 1,
+  name: 1,
+  bio: 1,
+  company: 1,
+  location: 1,
+  website: 1,
   email: 1,
   journals: 1,
   journalCategories: 1,

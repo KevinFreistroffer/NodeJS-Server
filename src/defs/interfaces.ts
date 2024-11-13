@@ -38,6 +38,11 @@ export interface IReminder {
 export interface IUser {
   username: string;
   usernameNormalized: string;
+  name?: string;
+  bio?: string;
+  company?: string;
+  location?: string;
+  website?: string;
   email: string;
   emailNormalized: string;
   password: string;

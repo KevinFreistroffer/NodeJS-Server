@@ -112,6 +112,11 @@ router.post(
       const newUser: IUser = {
         username,
         usernameNormalized: username.toLowerCase(),
+        name: "",
+        bio: "",
+        company: "",
+        location: "",
+        website: "",
         email,
         emailNormalized: email.toLowerCase(),
         password: encryptedPassword,
