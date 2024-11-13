@@ -21,6 +21,11 @@ router.post(
   "/",
   upload.single("avatar"), // Handle file upload
   body("userId").isMongoId().withMessage("Invalid userId format"),
+  body("name").optional().isString().withMessage("name must be a string"),
+  body("bio").optional().isString().withMessage("bio must be a string"),
+  body("company").optional().isString().withMessage("company must be a string"),
+  body("location").optional().isString().withMessage("location must be a string"),
+  body("website").optional().isString().withMessage("website must be a string"),
   body("hasAcknowledgedHelperText")
     .optional()
     .isBoolean()
@@ -61,7 +66,15 @@ router.post(
         return res.status(400).json({ errors: errors.array() });
       }
 
-      const { userId, hasAcknowledgedHelperText } = req.body;
+      const {
+        userId,
+        hasAcknowledgedHelperText,
+        name,
+        bio,
+        company,
+        location,
+        website
+      } = req.body;
 
       const doc = await findOneById(userId);
       if (!doc) {
@@ -101,6 +114,12 @@ router.post(
 
         updateFields.avatarId = uploadStream.id.toString();
       }
+
+      if (name !== undefined) updateFields.name = name;
+      if (bio !== undefined) updateFields.bio = bio;
+      if (company !== undefined) updateFields.company = company;
+      if (location !== undefined) updateFields.location = location;
+      if (website !== undefined) updateFields.website = website;
 
       const updateResult = await updateOne(
         { _id: doc._id },
