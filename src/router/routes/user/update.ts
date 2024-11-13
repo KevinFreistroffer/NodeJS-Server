@@ -24,7 +24,10 @@ router.post(
   body("name").optional().isString().withMessage("name must be a string"),
   body("bio").optional().isString().withMessage("bio must be a string"),
   body("company").optional().isString().withMessage("company must be a string"),
-  body("location").optional().isString().withMessage("location must be a string"),
+  body("location")
+    .optional()
+    .isString()
+    .withMessage("location must be a string"),
   body("website").optional().isString().withMessage("website must be a string"),
   body("hasAcknowledgedHelperText")
     .optional()
@@ -53,6 +56,7 @@ router.post(
   }),
   async (req: Request, res: Response) => {
     try {
+      console.log("/user/update...");
       let gfs: GridFSBucket;
       const client = getClient();
       const db = client.db(process.env.DATABASE_NAME);
@@ -62,7 +66,10 @@ router.post(
 
       console.log("/user/update", req.body);
       const errors = validationResult(req);
+      console.log("errors", errors);
       if (!errors.isEmpty()) {
+        const v = errors.array();
+        console.log("v", v);
         return res.status(400).json({ errors: errors.array() });
       }
 
@@ -73,8 +80,9 @@ router.post(
         bio,
         company,
         location,
-        website
+        website,
       } = req.body;
+      console.log("/UPDATE req.body", req.body);
 
       const doc = await findOneById(userId);
       if (!doc) {
@@ -120,7 +128,7 @@ router.post(
       if (company !== undefined) updateFields.company = company;
       if (location !== undefined) updateFields.location = location;
       if (website !== undefined) updateFields.website = website;
-
+      console.log("updateFields", updateFields);
       const updateResult = await updateOne(
         { _id: doc._id },
         { $set: updateFields }
