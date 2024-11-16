@@ -28,6 +28,7 @@ module.exports = (app: express.Express) => {
   app.use("/user/users", require("./routes/user/users"));
   app.use("/user/update", require("./routes/user/update"));
   app.use("/user/avatar/upload", require("./routes/user/avatar/upload"));
+  app.use("/user/avatar/delete", require("./routes/user/avatar/delete"));
   app.use("/user/delete-all", require("./routes/user/delete-all"));
   app.use("/user/journal/create", require("./routes/user/journal/create"));
   app.use("/user/journal/edit", require("./routes/user/journal/edit"));
