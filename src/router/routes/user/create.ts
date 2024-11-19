@@ -88,6 +88,9 @@ router.post(
       const encryptedPassword = await hashPassword(password);
 
       let avatarId: string | undefined;
+      let avatar:
+        | { filename: string; _id: ObjectId; contentType: string; data: string }
+        | undefined;
 
       // Handle avatar file upload if present
       if (req.file) {
@@ -107,6 +110,13 @@ router.post(
           uploadStream.on("finish", resolve);
           uploadStream.on("error", reject);
         });
+
+        avatar = {
+          _id: new ObjectId(avatarId),
+          filename: req.file.originalname,
+          contentType: req.file.mimetype,
+          data: req.file.buffer.toString("base64"), // not sure
+        };
       }
 
       const newUser: IUser = {
@@ -137,27 +147,8 @@ router.post(
         createdAt: new Date(),
         updatedAt: new Date(),
         hasAcknowledgedHelperText: false,
-        // avatar: req.file ? req.file.originalname : undefined,
-        // avatarId: avatarId ? new ObjectId(avatarId) : undefined,
-        avatar: undefined,
-        avatarId: undefined,
-        reminders: [
-          // {
-          //   _id: new ObjectId(),
-          //   customFrequency: 1,
-          //   customUnit: "day",
-          //   date: "2022-01-01",
-          //   description: "This is a reminder",
-          //   endDate: "2022-12-31",
-          //   ends: "after",
-          //   occurrences: 10,
-          //   recurrenceType: "daily",
-          //   recurring: true,
-          //   repeatOn: ["monday", "tuesday"],
-          //   time: "08:00",
-          //   title: "Test Reminder",
-          // },
-        ],
+        avatar,
+        reminders: [],
       };
 
       const insertDoc = await insertOne(newUser);

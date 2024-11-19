@@ -16,10 +16,11 @@ export class User {
   updatedAt: Date;
   hasAcknowledgedHelperText: boolean;
   avatar?: {
+    _id: ObjectId;
     data: string;
     contentType: string;
   };
-  avatarId?: string;
+  // avatarId?: string;
   reminders: IReminder[];
   constructor({
     username,

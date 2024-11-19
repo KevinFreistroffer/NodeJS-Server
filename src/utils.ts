@@ -34,6 +34,12 @@ export const convertDocToSafeUser = (
     createdAt: UNSAFE_DOC.createdAt,
     updatedAt: UNSAFE_DOC.updatedAt,
     hasAcknowledgedHelperText: UNSAFE_DOC.hasAcknowledgedHelperText,
+    avatar: UNSAFE_DOC.avatar,
+    name: UNSAFE_DOC.name,
+    bio: UNSAFE_DOC.bio,
+    company: UNSAFE_DOC.company,
+    location: UNSAFE_DOC.location,
+    website: UNSAFE_DOC.website,
     // jwtToken: UNSAFE_DOC.jwtToken,
   };
 
@@ -239,7 +245,6 @@ export const sanitizeUser = (user: any): ISanitizedUser => {
     updatedAt: user.updatedAt,
     hasAcknowledgedHelperText: user.hasAcknowledgedHelperText,
     avatar: user.avatar,
-    avatarId: user.avatarId,
   };
 };
 

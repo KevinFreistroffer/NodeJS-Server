@@ -34,13 +34,15 @@ router.post(
     .isBoolean()
     .withMessage("hasAcknowledgedHelperText must be a boolean"),
   body().custom((value, { req }) => {
-    if (req.body.reminders) {
-      if (!Array.isArray(req.body.reminders)) {
+    console.log("valuez", value);
+    if (value.reminders) {
+      console.log("value.reminders TRUTHY");
+      if (!Array.isArray(value.reminders)) {
         throw new Error("reminders must be an array");
       }
 
       if (
-        !req.body.reminders.every((reminder: IReminder) => {
+        !value.reminders.every((reminder: IReminder) => {
           return (
             typeof reminder._id === "string" &&
             typeof reminder.title === "string" &&
@@ -52,11 +54,12 @@ router.post(
         throw new Error("reminders must be an array of IReminder");
       }
     }
-    return false;
+    console.log("returning true");
+    return true;
   }),
   async (req: Request, res: Response) => {
     try {
-      console.log("/user/update...");
+      console.log("/user/update...", req.body);
       let gfs: GridFSBucket;
       const client = getClient();
       const db = client.db(process.env.DATABASE_NAME);
@@ -66,10 +69,11 @@ router.post(
 
       console.log("/user/update", req.body);
       const errors = validationResult(req);
-      console.log("errors", errors);
+
       if (!errors.isEmpty()) {
-        const v = errors.array();
-        console.log("v", v);
+        // @ts-ignore
+        const errorFields = errors.array().map((error) => error);
+        console.log("errorFields", errorFields);
         return res.status(400).json({ errors: errors.array() });
       }
 
@@ -82,9 +86,8 @@ router.post(
         location,
         website,
       } = req.body;
-      console.log("/UPDATE req.body", req.body);
-
-      const doc = await findOneById(userId);
+      console.log("/UPDATE req.body", req.body.userId);
+      const doc = await findOneById(new ObjectId(userId.toString()));
       if (!doc) {
         return res
           .status(statusCodes.resource_not_found)
@@ -106,8 +109,8 @@ router.post(
       // Handle avatar upload
       if (req.file) {
         // Delete old avatar if exists
-        if (doc.avatarId) {
-          await gfs.delete(new ObjectId(doc.avatarId));
+        if (doc.avatar) {
+          await gfs.delete(new ObjectId(doc.avatar._id));
         }
 
         // Upload new avatar
@@ -140,7 +143,27 @@ router.post(
         return res.json(userResponses.could_not_update());
       }
 
-      return res.json(genericResponses.success());
+      // Fetch the updated user
+      const updatedUser = await findOneById(doc._id);
+
+      if (!updatedUser) {
+        // Create a modified version of the original doc with the updated fields
+        const modifiedUser = {
+          ...doc,
+          ...updateFields,
+          _id: doc._id.toString(), // Ensure _id is in string format
+        };
+
+        return res.json({
+          ...genericResponses.success(),
+          user: modifiedUser,
+        });
+      }
+
+      return res.json({
+        ...genericResponses.success(),
+        user: updatedUser,
+      });
     } catch (error) {
       console.log(error);
       return handleCaughtErrorResponse(error, req, res);
