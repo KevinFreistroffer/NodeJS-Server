@@ -1,6 +1,11 @@
 import { Document, ObjectId, WithId } from "mongodb";
 import { GridFSBucketReadStream } from "mongodb";
 
+export enum UserRole {
+  ADMIN = "admin",
+  MEMBER = "member",
+}
+
 export interface IJournal extends Document {
   title: string;
   // journal: string;
@@ -40,12 +45,14 @@ export interface IUser {
   usernameNormalized: string;
   name?: string;
   bio?: string;
+  sex?: "male" | "female" | "non-binary";
   company?: string;
   location?: string;
   website?: string;
   email: string;
   emailNormalized: string;
   password: string;
+  role: UserRole;
   resetPasswordToken: string;
   resetPasswordTokenExpires: Date | null;
   resetPasswordAttempts: [];
@@ -64,6 +71,7 @@ export interface IUser {
   };
   // avatarId?: ObjectId;
   reminders: IReminder[];
+  disabled: boolean;
 }
 
 export interface IUserDoc extends WithId<IUser> {}

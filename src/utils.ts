@@ -17,30 +17,50 @@ import crypto from "node:crypto";
 import { GridFSBucket } from "mongodb";
 import { getClient } from "./db";
 
-export const convertDocToSafeUser = (
-  UNSAFE_DOC: WithId<ISanitizedUser>
-): ISanitizedUser => {
+export const convertDocToSafeUser = ({
+  _id,
+  username,
+  email,
+  journals,
+  journalCategories,
+  reminders,
+  resetPasswordToken,
+  resetPasswordTokenExpires,
+  resetPasswordAttempts,
+  isVerified,
+  createdAt,
+  updatedAt,
+  hasAcknowledgedHelperText,
+  avatar,
+  name,
+  bio,
+  company,
+  location,
+  website,
+  sex,
+}: WithId<ISanitizedUser>): ISanitizedUser => {
   const SAFE_DOC: ISanitizedUser = {
-    _id: UNSAFE_DOC._id,
-    username: UNSAFE_DOC.username,
-    email: UNSAFE_DOC.email,
-    journals: UNSAFE_DOC.journals,
-    journalCategories: UNSAFE_DOC.journalCategories,
-    reminders: UNSAFE_DOC.reminders,
-    resetPasswordToken: UNSAFE_DOC.resetPasswordToken,
-    resetPasswordTokenExpires: UNSAFE_DOC.resetPasswordTokenExpires,
-    resetPasswordAttempts: UNSAFE_DOC.resetPasswordAttempts,
-    isVerified: UNSAFE_DOC.isVerified,
-    createdAt: UNSAFE_DOC.createdAt,
-    updatedAt: UNSAFE_DOC.updatedAt,
-    hasAcknowledgedHelperText: UNSAFE_DOC.hasAcknowledgedHelperText,
-    avatar: UNSAFE_DOC.avatar,
-    name: UNSAFE_DOC.name,
-    bio: UNSAFE_DOC.bio,
-    company: UNSAFE_DOC.company,
-    location: UNSAFE_DOC.location,
-    website: UNSAFE_DOC.website,
-    // jwtToken: UNSAFE_DOC.jwtToken,
+    _id,
+    username,
+    email,
+    journals,
+    journalCategories,
+    reminders,
+    resetPasswordToken,
+    resetPasswordTokenExpires,
+    resetPasswordAttempts,
+    isVerified,
+    createdAt,
+    updatedAt,
+    hasAcknowledgedHelperText,
+    avatar,
+    name,
+    bio,
+    company,
+    location,
+    website,
+    sex,
+    // jwtToken,
   };
 
   for (const field in forbiddenResponseFields) {
@@ -245,6 +265,8 @@ export const sanitizeUser = (user: any): ISanitizedUser => {
     updatedAt: user.updatedAt,
     hasAcknowledgedHelperText: user.hasAcknowledgedHelperText,
     avatar: user.avatar,
+    role: user.role,
+    disabled: user.disabled,
   };
 };
 
@@ -280,7 +302,11 @@ export function generatePKCE() {
   return { verifier, challenge };
 }
 
-export async function getAvatarStream(userId: string) {
+export async function getAvatarStream(userId: string): Promise<{
+  _id: ObjectId;
+  stream: NodeJS.ReadableStream;
+  contentType: string | undefined;
+} | null> {
   const client = await getClient();
   await client.connect();
   const db = client.db(process.env.DATABASE_NAME);
@@ -298,6 +324,7 @@ export async function getAvatarStream(userId: string) {
   }
 
   return {
+    _id: files[0]._id,
     contentType: files[0].contentType,
     stream: avatarBucket.openDownloadStream(files[0]._id),
   };

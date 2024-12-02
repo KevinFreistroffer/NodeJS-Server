@@ -26,7 +26,7 @@ import { ObjectId } from "mongodb";
 import multer from "multer";
 import { GridFSBucket } from "mongodb";
 import { getClient } from "../../../db";
-import { IUser } from "@/defs/interfaces";
+import { IUser, UserRole } from "@/defs/interfaces";
 const router = express.Router();
 
 // Setup multer storage
@@ -124,6 +124,7 @@ router.post(
         usernameNormalized: username.toLowerCase(),
         name: "",
         bio: "",
+        sex: undefined,
         company: "",
         location: "",
         website: "",
@@ -149,6 +150,8 @@ router.post(
         hasAcknowledgedHelperText: false,
         avatar,
         reminders: [],
+        role: UserRole.MEMBER,
+        disabled: false,
       };
 
       const insertDoc = await insertOne(newUser);

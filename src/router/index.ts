@@ -25,6 +25,21 @@ module.exports = (app: express.Express) => {
     require("./routes/user/username-available")
   );
 
+  /***
+   *
+   * DELETE THIS
+   *
+   *
+   */
+  app.use("/fake/login", require("./routes/fake/login"));
+  app.use("/fake/auth", require("./routes/fake/auth"));
+  /***
+   *
+   * DELETE THIS
+   *
+   *
+   */
+
   app.use("/user/users", require("./routes/user/users"));
   app.use("/user/update", require("./routes/user/update"));
   app.use("/user/avatar/upload", require("./routes/user/avatar/upload"));

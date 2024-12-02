@@ -45,6 +45,7 @@ router.get(
       // Add avatar data if available
       if (avatarStream) {
         doc.avatar = {
+          _id: doc._id,
           data: await streamToDataURL(
             avatarStream.stream,
             avatarStream.contentType || ""

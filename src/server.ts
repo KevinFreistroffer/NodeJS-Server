@@ -90,7 +90,7 @@ server.use("*", (req: Request, res: Response, next: NextFunction) => {
   next();
 });
 server.use("*", (req: Request, res: Response, next: NextFunction) => {
-  console.log("req.baseUrl", req.baseUrl);
+  console.log("req.baseUrl", req.baseUrl, req.cookies);
   const adminOnlyRoutes = process.env.ADMIN_ROUTES?.split(",") || [];
   const protectedRoutes = process.env.PROTECTED_ROUTES?.split(",") || [];
 

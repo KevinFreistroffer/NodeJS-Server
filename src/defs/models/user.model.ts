@@ -1,4 +1,5 @@
-import { IReminder } from "../interfaces";
+import { ObjectId } from "mongodb";
+import { IReminder, UserRole } from "../interfaces";
 
 export class User {
   username: string;
@@ -20,8 +21,9 @@ export class User {
     data: string;
     contentType: string;
   };
-  // avatarId?: string;
   reminders: IReminder[];
+  role: UserRole;
+  disabled: boolean;
   constructor({
     username,
     email,
@@ -47,6 +49,8 @@ export class User {
     this.updatedAt = new Date();
     this.hasAcknowledgedHelperText = false;
     this.reminders = [];
+    this.role = UserRole.MEMBER;
+    this.disabled = false;
   }
 }
 
@@ -71,4 +75,6 @@ export const UserProjection = {
   avatar: 1,
   avatarId: 1,
   reminders: 1,
+  role: 1,
+  disabled: 1,
 };

@@ -33,6 +33,10 @@ router.post(
     .optional()
     .isBoolean()
     .withMessage("hasAcknowledgedHelperText must be a boolean"),
+  body("sex")
+    .optional()
+    .isIn(["male", "female", "non-binary"])
+    .withMessage("sex must be either 'male', 'female', or 'non-binary'"),
   body().custom((value, { req }) => {
     console.log("valuez", value);
     if (value.reminders) {
@@ -85,6 +89,7 @@ router.post(
         company,
         location,
         website,
+        sex,
       } = req.body;
       console.log("/UPDATE req.body", req.body.userId);
       const doc = await findOneById(new ObjectId(userId.toString()));
@@ -131,6 +136,7 @@ router.post(
       if (company !== undefined) updateFields.company = company;
       if (location !== undefined) updateFields.location = location;
       if (website !== undefined) updateFields.website = website;
+      if (sex !== undefined) updateFields.sex = sex;
       console.log("updateFields", updateFields);
       const updateResult = await updateOne(
         { _id: doc._id },

@@ -89,6 +89,7 @@ router.post(
       // Add avatar data if available
       if (avatarStream) {
         sanitizedUser.avatar = {
+          _id: avatarStream._id,
           data: await streamToDataURL(
             avatarStream.stream,
             avatarStream.contentType || ""
