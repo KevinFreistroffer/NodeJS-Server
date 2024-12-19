@@ -49,7 +49,7 @@ const avatarUploadValidation = [
 // Add validation middleware
 const validateRequest = (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
-  console.log("avatar upload validateRequest errors", errors);
+
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
   }
@@ -58,7 +58,6 @@ const validateRequest = (req: Request, res: Response, next: NextFunction) => {
 
 // Upload avatar route
 router.post("/", async (req: Request, res: Response) => {
-  console.log("/upload uploading avatar", req.body);
   try {
     const userId = req.body.userId;
     const avatarString = req.body.avatar;
@@ -88,7 +87,7 @@ router.post("/", async (req: Request, res: Response) => {
     const oldAvatar = await avatarBucket
       .find({ "metadata.userId": bucket })
       .toArray();
-    console.log("oldAvatar", oldAvatar);
+
     if (oldAvatar.length > 0) {
       await avatarBucket.delete(oldAvatar[0]._id);
     }
@@ -112,15 +111,11 @@ router.post("/", async (req: Request, res: Response) => {
       readStream.pipe(uploadStream).on("finish", resolve).on("error", reject);
     });
 
-    console.log("uploadStream.id", uploadStream.id, typeof uploadStream.id);
-
     // Update user's avatarId in the database
     const updateResult = await updateOne(
       { _id: ObjectId.createFromHexString(userId) },
       { $set: { avatarId: uploadStream.id } }
     );
-
-    console.log("updateResult", updateResult);
 
     // Check if update was successful
     if (!updateResult.matchedCount || !updateResult.modifiedCount) {

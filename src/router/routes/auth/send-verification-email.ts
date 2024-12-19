@@ -17,7 +17,7 @@ router.get(
   async (req: express.Request, res: express.Response<IResponse>) => {
     try {
       const { userId } = req.params;
-
+      console.log("SEND VERIFICATION EMAIL GET()()()()()");
       if (!userId) {
         return res
           .status(statusCodes.invalid_request)
@@ -44,7 +44,6 @@ router.get(
         .status(statusCodes.success)
         .json(responses.success(undefined, "Verification email sent"));
     } catch (error) {
-      console.log("error: ", error);
       return handleCaughtErrorResponse(error, req, res);
     }
   }

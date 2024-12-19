@@ -32,9 +32,7 @@ try {
     }
 
     if (event === "event_logUserId") {
-      emitter.on("event_logUserId", function (userId: any) {
-        console.log("event_logUserId: ", userId);
-      });
+      emitter.on("event_logUserId", function (userId: any) {});
     }
   });
 

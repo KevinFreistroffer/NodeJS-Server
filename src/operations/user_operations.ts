@@ -38,11 +38,10 @@ export async function findOne({
   query: Filter<IUser>;
   sanitize: boolean;
 }): Promise<IUser | ISanitizedUser | null> {
-  console.log("findOne query", query);
   const client = await getClient();
   try {
     await client.connect();
-    console.log("client connected");
+
     return await usersCollection(client).findOne<IUser | ISanitizedUser>(
       query,
       {
@@ -50,10 +49,8 @@ export async function findOne({
       }
     );
   } catch (error) {
-    console.log("findOne error", error);
     throw error;
   } finally {
-    console.log("closing client");
     await client.close();
   }
 }
@@ -101,7 +98,6 @@ export const findAllUsers = async () => await findAll({}, true);
  * @param id
  */
 export const findOneById = async (id: ObjectId) => {
-  console.log("findOneById id", id);
   return await findOne({ query: { _id: id }, sanitize: true });
 };
 
@@ -182,13 +178,11 @@ export async function updateOne(
   const client = await getClient();
   try {
     await client.connect();
-    console.log("updateOne query", query);
-    console.log("updateOne update", update);
+
     const doc = await usersCollection(client).updateOne(query, update);
-    console.log("updateOne doc", doc);
+
     return doc;
   } catch (error) {
-    console.log("updateOne error", error);
     // TODO: what type of errors? Handle specific errors?
     throw error;
   } finally {
@@ -212,7 +206,7 @@ export async function updateMany(
     return doc;
   } catch (error) {
     // TODO: what type of errors? Handle specific errors?
-    console.log("ERROR", error);
+
     throw error;
   } finally {
     client.close();

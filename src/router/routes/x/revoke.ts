@@ -23,9 +23,7 @@ router.get("/", async function (req, res) {
   try {
     const response = await authClient.revokeAccessToken();
     res.send(response);
-  } catch (error) {
-    console.log(error);
-  }
+  } catch (error) {}
 });
 
 module.exports = router;

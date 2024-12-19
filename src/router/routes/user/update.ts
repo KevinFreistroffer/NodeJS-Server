@@ -38,9 +38,7 @@ router.post(
     .isIn(["male", "female", "non-binary"])
     .withMessage("sex must be either 'male', 'female', or 'non-binary'"),
   body().custom((value, { req }) => {
-    console.log("valuez", value);
     if (value.reminders) {
-      console.log("value.reminders TRUTHY");
       if (!Array.isArray(value.reminders)) {
         throw new Error("reminders must be an array");
       }
@@ -58,12 +56,11 @@ router.post(
         throw new Error("reminders must be an array of IReminder");
       }
     }
-    console.log("returning true");
+
     return true;
   }),
   async (req: Request, res: Response) => {
     try {
-      console.log("/user/update...", req.body);
       let gfs: GridFSBucket;
       const client = getClient();
       const db = client.db(process.env.DATABASE_NAME);
@@ -71,13 +68,12 @@ router.post(
         bucketName: "avatars",
       });
 
-      console.log("/user/update", req.body);
       const errors = validationResult(req);
 
       if (!errors.isEmpty()) {
         // @ts-ignore
         const errorFields = errors.array().map((error) => error);
-        console.log("errorFields", errorFields);
+
         return res.status(400).json({ errors: errors.array() });
       }
 
@@ -91,7 +87,7 @@ router.post(
         website,
         sex,
       } = req.body;
-      console.log("/UPDATE req.body", req.body.userId);
+
       const doc = await findOneById(new ObjectId(userId.toString()));
       if (!doc) {
         return res
@@ -137,13 +133,11 @@ router.post(
       if (location !== undefined) updateFields.location = location;
       if (website !== undefined) updateFields.website = website;
       if (sex !== undefined) updateFields.sex = sex;
-      console.log("updateFields", updateFields);
+
       const updateResult = await updateOne(
         { _id: doc._id },
         { $set: updateFields }
       );
-
-      console.log("updateResult", updateResult);
 
       if (updateResult.matchedCount === 0 || updateResult.modifiedCount === 0) {
         return res.json(userResponses.could_not_update());
@@ -171,7 +165,6 @@ router.post(
         user: updatedUser,
       });
     } catch (error) {
-      console.log(error);
       return handleCaughtErrorResponse(error, req, res);
     }
   }

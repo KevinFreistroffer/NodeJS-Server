@@ -11,7 +11,7 @@ module.exports = (app: express.Express) => {
   app.use("/auth/verify-account", require("./routes/auth/verify-account"));
   app.use("/auth/authenticate", require("./routes/auth/authenticate"));
   // app.use("/auth/public-key", require("./routes/auth/public-key"));
-  app.use("/user", require("./routes/user/get-one-by-id"));
+
   app.use("/user/create", require("./routes/user/create"));
   app.use("/user/login", require("./routes/user/login"));
   app.use(
@@ -24,7 +24,7 @@ module.exports = (app: express.Express) => {
     "/user/username-available",
     require("./routes/user/username-available")
   );
-
+  app.use("/user", require("./routes/user/get-one-by-id"));
   /***
    *
    * DELETE THIS
@@ -70,6 +70,7 @@ module.exports = (app: express.Express) => {
     "/user/journal/category/create-many",
     require("./routes/user/journal/category/create-many")
   );
+  app.use("/user/reminders", require("./routes/user/reminders"));
   app.use("/streams/file", require("./routes/streams/file"));
   // app.use("/x/callback", require("./routes/x/callback"));
   // app.use("/x/login", require("./routes/x/login"));

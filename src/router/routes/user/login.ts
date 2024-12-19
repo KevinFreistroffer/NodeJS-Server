@@ -85,7 +85,7 @@ router.post(
       const sanitizedUser = sanitizeUser(UNSAFE_DOC);
 
       const avatarStream = await getAvatarStream(UNSAFE_DOC._id.toString());
-      console.log("avatarStream", avatarStream, avatarStream?.contentType);
+
       // Add avatar data if available
       if (avatarStream) {
         sanitizedUser.avatar = {
@@ -120,8 +120,6 @@ router.post(
         }
       );
 
-      console.log("token", token);
-
       if (!token) {
         throw new Error("Error generating JWT token.");
       }
@@ -134,12 +132,11 @@ router.post(
       const description = sanitizedUser.isVerified
         ? ""
         : "Login successful, but the account is not verified. A verification email was sent.";
-      console.log("sanitizedUserz", sanitizedUser);
+
       return res.json({
         ...responses.success(sanitizedUser, description),
       });
     } catch (error) {
-      console.log("error", error);
       return handleCaughtErrorResponse(error, req, res);
     }
   }

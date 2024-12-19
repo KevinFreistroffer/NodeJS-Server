@@ -42,8 +42,8 @@ router.post(
   validatedToken,
   validatedPassword,
   async (req: express.Request, res: express.Response<IResponse>) => {
+    console.log("RESET PASSWORD POST()()()()()");
     try {
-      console.log(req.body);
       const validatedErrors = validationResult(req).array();
       if (validatedErrors.length) {
         return res
@@ -77,8 +77,6 @@ router.post(
         },
         sanitize: true,
       });
-
-      console.log(userDoc);
 
       if (!userDoc) {
         return res
@@ -195,7 +193,6 @@ router.post(
         .status(statusCodes.success)
         .json(genericResponses.success(undefined, description));
     } catch (error) {
-      console.log("error: ", error);
       return handleCaughtErrorResponse(error, req, res);
     }
   }

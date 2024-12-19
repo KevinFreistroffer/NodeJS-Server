@@ -9,7 +9,7 @@ import passport from "passport";
 import cors from "cors";
 import debug from "debug";
 import http from "http";
-import { verifyAccessKey, verifySessionToken } from "./middleware";
+import { verifyAccessKey, verifySessionToken, sandboxVerifySessionToken } from "./middleware";
 import * as fs from "fs";
 import path from "path";
 import { getErrorDetails, getFilePath } from "./utils";
@@ -90,11 +90,11 @@ server.use("*", (req: Request, res: Response, next: NextFunction) => {
   next();
 });
 server.use("*", (req: Request, res: Response, next: NextFunction) => {
-  console.log("req.baseUrl", req.baseUrl, req.cookies);
   const adminOnlyRoutes = process.env.ADMIN_ROUTES?.split(",") || [];
   const protectedRoutes = process.env.PROTECTED_ROUTES?.split(",") || [];
 
   if (adminOnlyRoutes.find((route) => route === req.baseUrl.toLowerCase())) {
+    console.log("admin only route", req.baseUrl);
     return verifyAccessKey(req, res, next);
   }
 
@@ -111,9 +111,11 @@ server.use("*", (req: Request, res: Response, next: NextFunction) => {
     return regex.test(req.baseUrl);
   });
 
-  console.log("IS PROTECTED", isProtected);
-
   if (isProtected) {
+    // Use sandboxVerifySessionToken for /fake routes, otherwise use regular verifySessionToken
+    if (req.baseUrl.startsWith('/fake')) {
+      return sandboxVerifySessionToken(req, res, next);
+    }
     return verifySessionToken(req, res, next);
   }
 
@@ -140,6 +142,7 @@ server.use(
     res: express.Response,
     next: NextFunction
   ) => {
+    console.log("ERROR", error);
     const details = getErrorDetails(error);
     const filePath = getFilePath(path.join(__dirname, "logs"), "error.log");
 

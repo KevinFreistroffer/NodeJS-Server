@@ -51,9 +51,7 @@ router.post(
   validatedReturnUser,
   async (req: express.Request, res: express.Response<IResponse>) => {
     try {
-      console.log(req.url, req.baseUrl, req.path);
       const { returnUser } = req.query;
-      console.log("returnUser", returnUser);
 
       let query: { returnUser?: boolean } = {};
 
@@ -61,9 +59,8 @@ router.post(
         query.returnUser = returnUser === "true";
       }
 
-      console.log(req.body);
       const validatedFields = validationResult(req);
-      console.log("validatedFields", validatedFields);
+
       if (!validatedFields.isEmpty()) {
         return res
           .status(statusCodes.missing_body_fields)
@@ -85,8 +82,6 @@ router.post(
           },
         }
       );
-
-      console.log("doc", doc);
 
       if (!doc.matchedCount) {
         return res
@@ -120,7 +115,6 @@ router.post(
 
       return res.status(statusCodes.success).json(genericResponses.success());
     } catch (error) {
-      console.log("ERROR", error);
       return handleCaughtErrorResponse(error, req, res);
     }
   }

@@ -12,12 +12,13 @@ const router = express.Router();
 router.get(
   "/",
   async (req: express.Request, res: express.Response<IResponse>) => {
-    console.log("GET /user/users");
+    console.log("GETETETETETETETETETETETETETETETETETE /user/users");
     try {
       const doc = await findAllUsers();
-
+      console.log("DOC", doc);
       return res.json(genericResponses.success(doc));
     } catch (error) {
+      console.log("ERROR", error);
       return handleCaughtErrorResponse(error, req, res);
     }
   }

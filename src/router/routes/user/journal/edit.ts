@@ -42,7 +42,7 @@ router.post(
   ) => {
     try {
       const errors = validationResult(req);
-      console.log(errors);
+
       if (
         !errors.isEmpty() ||
         (!has(req.body, "title") &&
@@ -70,7 +70,7 @@ router.post(
         category?: string;
         favorite?: boolean;
       } = req.body;
-      console.log("body", req.body);
+
       const query: {
         ["journals.$.title"]?: string;
         ["journals.$.entry"]?: string;

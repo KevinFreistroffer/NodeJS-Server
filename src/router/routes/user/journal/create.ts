@@ -45,11 +45,9 @@ router.post(
   validatedCategory, // Add the optional category validator
   validatedSentimentScore,
   async (req: express.Request, res: express.Response<IResponse>) => {
-    console.log(req.body, typeof req.body.favorite);
-
     try {
       const validatedFields = validationResult(req);
-      console.log("validatedFields", validatedFields);
+
       if (!validatedFields.isEmpty()) {
         return res
           .status(statusCodes.missing_body_fields)
@@ -82,7 +80,6 @@ router.post(
         favorite,
         sentimentScore // Added sentimentScore
       );
-      console.log("newJournal", newJournal);
 
       /*--------------------------------------------------
        *  Update user's journals
@@ -128,8 +125,6 @@ router.post(
         }
       );
 
-      console.log("DOC", doc);
-
       if (!doc?.acknowledged || !doc.modifiedCount) {
         return res
           .status(statusCodes.could_not_update)
@@ -137,7 +132,7 @@ router.post(
       }
 
       const foundDoc = await findOneById(new ObjectId(userId));
-      console.log("FOUND DOC", foundDoc);
+
       if (!foundDoc) {
         return res
           .status(statusCodes.user_not_found)
@@ -148,7 +143,6 @@ router.post(
         .status(statusCodes.success)
         .json(genericResponses.success(foundDoc));
     } catch (error) {
-      console.log("error: ", error);
       return handleCaughtErrorResponse(error, req, res);
     }
   }

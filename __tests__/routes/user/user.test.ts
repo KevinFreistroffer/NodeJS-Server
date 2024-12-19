@@ -67,7 +67,7 @@ describe.skip("/user/create", () => {
     // Test rate limiting functionality
     const makeRequests = async (count: number) => {
       const requests: any[] = [];
-      console.log(requests);
+
       for (let i = 0; i < count; i++) {
         requests.push(
           request(app).post("/user/create").send({

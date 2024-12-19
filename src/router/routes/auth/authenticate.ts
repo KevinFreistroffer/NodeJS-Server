@@ -21,30 +21,24 @@ router.get(
         throw new Error("JWT_SECRET is not set");
       }
 
-      console.log(req.headers);
       const authHeader = req.headers["authorization"];
       if (!authHeader) {
         return res.send(responses.success());
       }
 
-      console.log("authHeader", authHeader);
-
       const [bearer, token] = authHeader.split(" ");
-      console.log("bearer", bearer);
-      console.log("token", token);
+
       if (bearer.toLowerCase() !== "bearer" || !token) {
         return res.send(responses.success());
       }
 
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      console.log("decoded", decoded);
 
       if (!decoded || !has(decoded, "data")) {
         return res.send(responses.success());
       }
 
       const user = await findOneById(new ObjectId(decoded.data as string));
-      console.log("user", user);
 
       if (!user || !user._id) {
         return res.send(responses.access_denied());
@@ -92,11 +86,11 @@ module.exports = router;
 //       }
 //       let token = req.body.token;
 
-//       console.log("/authenticate reached...");
-//       console.log("request body data: ", req.body);
+//
+//
 
 //      const resp = await verifyJWT(token);
-//         console.log(resp);
+//
 //         verify(token, config.jwtSecret, async (decodeError, decoded) => {
 //           // Error decoding the JWT token
 //           if (decodeError) {
@@ -129,7 +123,7 @@ module.exports = router;
 //             /*--------------------------------------------------
 //              * User found
 //              *------------------------------------------------*/
-//             console.log("Found a user by username/email.");
+//
 //             bcrypt.compare(
 //               decoded.data.password,
 //               doc.password,
@@ -157,14 +151,14 @@ module.exports = router;
 //                 /*--------------------------------------------------
 //                  * Valid password
 //                  *------------------------------------------------*/
-//                 console.log("SUCCESSFULL login");
+//
 //                 return res.json(responses.success(doc));
 //               }
 //             );
 //           }
 //         });
 //     } catch (error) {
-//       console.log("[/authenticate] Caught error. Error: ", error);
+//
 //       return res.status(500).json(responses.caught_error(error));
 //     }
 //   }

@@ -27,8 +27,8 @@
 // fs.writeFileSync("public.pem", publicKey);
 // fs.writeFileSync("private.pem", privateKey);
 
-// console.log("Public Key:", publicKey);
-// console.log("Private Key:", privateKey);
+//
+//
 
 // router.get("/", (req: express.Request, res: express.Response) => {
 //   try {

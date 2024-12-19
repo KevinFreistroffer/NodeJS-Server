@@ -38,6 +38,8 @@ export const convertDocToSafeUser = ({
   location,
   website,
   sex,
+  role,
+  disabled,
 }: WithId<ISanitizedUser>): ISanitizedUser => {
   const SAFE_DOC: ISanitizedUser = {
     _id,
@@ -60,6 +62,8 @@ export const convertDocToSafeUser = ({
     location,
     website,
     sex,
+    role,
+    disabled,
     // jwtToken,
   };
 
@@ -149,7 +153,6 @@ export const logUncaughtException = async (error: any, url: string) => {
     });
 
     if (!insertDoc.insertedId) {
-      console.log("Error inserting error document.");
     }
 
     process.exit(0);
@@ -179,9 +182,6 @@ export const sendAccountActivationEmail = async (
     throw new Error("JWT secret is not set in the environment.");
   }
 
-  console.log("userId", userId);
-  console.log("process.env.JWT_SECRET", process.env.JWT_SECRET);
-
   const token = jwt.sign({ userId }, process.env.JWT_SECRET, {
     expiresIn: "1d",
   });
@@ -196,7 +196,7 @@ export const sendAccountActivationEmail = async (
   const transport = `smtps://${encodeURIComponent(
     process.env.EMAIL_FROM
   )}:${encodeURIComponent(process.env.EMAIL_APP_PASSWORD)}@smtp.gmail.com`;
-  console.log("transport: ", transport);
+
   const transporter = nodemailer.createTransport(
     `smtps://${encodeURIComponent(process.env.EMAIL_FROM)}:${encodeURIComponent(
       process.env.EMAIL_APP_PASSWORD
@@ -225,8 +225,6 @@ export const sendAccountActivationEmail = async (
 
   // send mail with defined transport object
   transporter.sendMail(mailOptions, (err, info) => {
-    console.log("err: ", err);
-    console.log("info: ", info);
     if (err) {
       throw err;
     }
@@ -249,7 +247,6 @@ export const isJwtPayload = (arg: any): arg is jwt.JwtPayload => {
 // TODO: Is this a Document or WithId<IUser>?
 
 export const sanitizeUser = (user: any): ISanitizedUser => {
-  console.log("sanitizingUser", user);
   return {
     _id: user._id,
     username: user.username,
@@ -318,7 +315,7 @@ export async function getAvatarStream(userId: string): Promise<{
   const files = await avatarBucket
     .find({ "metadata.userId": bucket })
     .toArray();
-  console.log("files", files);
+
   if (!files.length) {
     return null;
   }

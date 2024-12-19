@@ -25,9 +25,7 @@ router.get("/", async function (req, res) {
       "AAAAAAAAAAAAAAAAAAAAAEdcwQEAAAAAdZGJuF%2Biy%2BBZrgEw3FVNwLw1nYM%3DRzJKK3xucYObrnOgC4D0EVQ2XtoDSWGS6oRq2xLi2BGf0RPvCm"
     );
     res.send(response);
-  } catch (error) {
-    console.log(error);
-  }
+  } catch (error) {}
 });
 
 module.exports = router;

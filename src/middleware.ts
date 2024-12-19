@@ -21,9 +21,7 @@ export const rateLimiterMiddleware = () => {
       req.ip === "127.0.0.1" || process.env.NODE_ENV === "development", // TODO: Remove this before deploying
   });
 
-  console.log("LIMITER", limiter, typeof limiter);
   const v = limiter.getKey;
-  console.log(v, typeof v);
 
   return limiter;
 };
@@ -54,6 +52,7 @@ export const verifyToken = (
     }
 
     res.locals.auth = authData;
+    console.log("ACCESS NEXT()()()()()");
     next();
   });
 };
@@ -64,7 +63,7 @@ export const verifySessionToken = (
   next: NextFunction
 ) => {
   const sessionToken = req.cookies.session_token;
-  console.log("SESSION TOKEN", sessionToken);
+  console.log("VERIFYSESSIONTOKEN req.baseUrl", req.baseUrl);
   if (!sessionToken || typeof sessionToken === "undefined") {
     return res.sendStatus(401);
   }
@@ -73,21 +72,20 @@ export const verifySessionToken = (
     sessionToken,
     process.env.JWT_SECRET as string,
     async (err: any, authData: any) => {
-      console.log("AUTH DATA", authData);
-      console.log("ERR", err);
+      console.log("authData", authData);
+      console.log("err", err);
       if (!authData || !authData.data || err) {
         return res.sendStatus(401);
       }
 
       const userId = authData.data;
-      console.log("USER ID", userId);
 
       try {
-        const user = await findOneById(new ObjectId(userId));
+        const user = await findOneById(ObjectId.createFromHexString(userId));
         if (!user) {
           return res.sendStatus(401);
         }
-        console.log("USER", user);
+
         res.locals.user = user;
       } catch (error) {
         console.error("Error fetching user:", error);
@@ -95,9 +93,32 @@ export const verifySessionToken = (
       }
 
       res.locals.auth = authData;
+      console.log("SESSION NEXT()()()()(");
       next();
     }
   );
+};
+
+export const sandboxVerifySessionToken = (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  const sessionToken = req.cookies.session_token;
+  console.log("VERIFYSESSIONTOKEN", sessionToken);
+  if (!sessionToken || typeof sessionToken === "undefined") {
+    return res.sendStatus(401);
+  }
+
+  jwt.verify(sessionToken, "SECRET_KEY", async (err: any, authData: any) => {
+    console.log("authData", authData);
+    console.log("err", err);
+    if (!authData || !authData.id || err) {
+      return res.sendStatus(401);
+    }
+
+    next();
+  });
 };
 
 export const verifyAccessKey = (
@@ -113,6 +134,6 @@ export const verifyAccessKey = (
   ) {
     return res.sendStatus(401);
   }
-
+  console.log("ACCESS NEXT()()()()()");
   next();
 };

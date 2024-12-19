@@ -27,9 +27,7 @@ router.post(
   body("email").isEmail().bail().normalizeEmail(),
   body("redirectURL").isURL({ require_tld: false }).bail(),
   async (req: express.Request, res: express.Response<IResponse>) => {
-    console.log(req.body);
     try {
-      console.log("send-reset-password-email", req.body);
       const validatedErrors = validationResult(req).array();
 
       if (validatedErrors.length) {
@@ -77,7 +75,7 @@ router.post(
       // // Save the user.
 
       // const savedUser = await foundUser.save().toArray();
-      // console.log(savedUser);
+      //
 
       /*--------------------------------------------------
        * Send the password reset email
@@ -92,7 +90,7 @@ router.post(
         ":" +
         process.env.EMAIL_APP_PASSWORD +
         "@smtp.gmail.com";
-      console.log(transport);
+
       const transporter = nodemailer.createTransport(
         "smtps://" +
           process.env.EMAIL_FROM +
@@ -132,7 +130,6 @@ router.post(
 
       return res.status(statusCodes.success).json(genericResponses.success());
     } catch (error) {
-      console.log("Error:", error);
       return handleCaughtErrorResponse(error, req, res);
     }
   }

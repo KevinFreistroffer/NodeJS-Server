@@ -25,11 +25,8 @@ router.get("/", async function (req, res) {
       text: "hjkjkhjkhjkh",
     });
 
-    console.log("response", JSON.stringify(response, null, 2));
     res.send(response);
-  } catch (error) {
-    console.log("tweets error", error);
-  }
+  } catch (error) {}
 });
 
 module.exports = router;

@@ -51,3 +51,5 @@ if (!updateResult.matchedCount || !updateResult.modifiedCount) {
 }
 
 possible to set A MongoDB schema, using validator?
+
+remove duplicate reminders creation in /user/update (remove) and /user/reminders

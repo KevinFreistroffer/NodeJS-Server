@@ -16,9 +16,10 @@ dotenv.config();
 const router = Router();
 
 router.get("/", (req: Request, res: Response<IResponse>) => {
+  console.log("BEARER GET()()()()()");
   try {
     const accessKey = req.headers["access-key"];
-    console.log(accessKey);
+
     if (
       typeof accessKey === "undefined" ||
       Array.isArray(accessKey) ||

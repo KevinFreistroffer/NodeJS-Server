@@ -64,9 +64,8 @@ router.post(
     res: express.Response<IResponse>
   ) => {
     try {
-      console.log("/EDIT MANY", req.body);
       const errors = validationResult(req);
-      console.log(errors);
+
       if (
         !errors.isEmpty() ||
         (!has(req.body, "title") &&
@@ -104,7 +103,6 @@ router.post(
         query["journals.$.favorite"] = Boolean(favorite); // TODO: why is the boolean getting converted to a string?
       }
 
-      console.log("QUERY", query);
       const doc = await updateMany(
         {
           _id: new ObjectId(userId),
@@ -142,7 +140,6 @@ router.post(
         .status(statusCodes.success)
         .json(genericResponses.success(userDoc));
     } catch (error) {
-      console.log(error);
       return handleCaughtErrorResponse(error, req, res);
     }
   }
