@@ -12,7 +12,7 @@ const router = express.Router();
 router.get(
   "/",
   async (req: express.Request, res: express.Response<IResponse>) => {
-    console.log("GETETETETETETETETETETETETETETETETETE /user/users");
+    console.log("GET /user/users");
     try {
       const doc = await findAllUsers();
       console.log("DOC", doc);
