@@ -18,10 +18,6 @@ import {
 } from "../../../utils";
 const router = express.Router();
 
-/**
- * So i need to reset m password. i am not sure what my password is. send reset password email. an email with a link and a token or something is sent. the t
- */
-
 router.post(
   "/",
   body("email").isEmail().bail().normalizeEmail(),
