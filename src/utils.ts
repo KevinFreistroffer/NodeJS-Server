@@ -350,3 +350,9 @@ export async function streamToDataURL(
 export const getFileExtension = (filename: string): string => {
   return filename.substring(filename.lastIndexOf("."));
 };
+
+export const asyncHandler = (fn: (req: Request, res: Response, next: NextFunction) => Promise<void>) => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    fn(req, res, next).catch(next);
+  };
+};

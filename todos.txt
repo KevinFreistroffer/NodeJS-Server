@@ -1,12 +1,3 @@
-const asyncHandler = fn => (req, res, next) => {
-    Promise.resolve(fn(req, res, next)).catch(next);
-};
-
-// Now you can write routes without try/catch
-app.get('/users', asyncHandler(async (req, res) => {
-    const users = await User.findAll();
-    res.json(users);
-}));
 
 the handleUncaughtErroResponse is not linked to the user responses interface. May need to create handlers for each user/auth etc.
 
