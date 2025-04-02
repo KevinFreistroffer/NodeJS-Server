@@ -6,6 +6,7 @@ dotenv.config();
 
 export const getDBURI = () => {
   return (
+    process.env.DATABASE_URI ||
     "mongodb+srv://" +
     encodeURIComponent(process.env.DATABASE_USERNAME || "") +
     ":" +

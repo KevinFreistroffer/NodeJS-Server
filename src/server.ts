@@ -20,8 +20,10 @@ import { Timestamp } from "mongodb";
 import { AsyncLocalStorage } from "node:async_hooks";
 import { LambdaClient, InvokeCommand } from "@aws-sdk/client-lambda";
 import dotenv from "dotenv";
-import { rateLimiterMiddleware } from "./middleware";
+// import { zlib }  from 'node:zlib';
+import compression from 'compression'; 
 import { checkConflictingRouteMiddleware } from "./routes";
+import { rateLimiterMiddleware } from "./middleware";
 
 const PROTECTED_ROUTES = [
   "/user/:id",
@@ -77,6 +79,7 @@ server.use(
 );
 server.use(logger("dev"));
 server.use(cookieParser());
+server.use(compression());
 server.use(helmet());
 server.disable("x-powered-by");
 const whitelist = ["http://localhost:3000", "127.0.0.1"];
