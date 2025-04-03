@@ -2,6 +2,7 @@ import { Router } from "express";
 import { journalValidation } from "./journal.validation";
 import { asyncRouteHandler } from "@/utils";
 import { JournalController } from "./journal.controller";
+import { cacheMiddleware } from "@/redis/cacheMiddleware";
 
 const router = Router();
 
@@ -10,6 +11,7 @@ router.get(
   journalValidation.userId,
   journalValidation.entryId,
   journalValidation.returnUser,
+  cacheMiddleware(60),
   asyncRouteHandler(JournalController.getOneById)
 );
 

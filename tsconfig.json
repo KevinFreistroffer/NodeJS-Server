@@ -31,7 +31,8 @@
         "./src/defs/*",
         "./src/defs/responses/*",
         "./src/defs/interfaces/*",
-        "./src/defs/requests/*"
+        "./src/defs/requests/*",
+        "./src/redis/*"
       ]
     }
   }

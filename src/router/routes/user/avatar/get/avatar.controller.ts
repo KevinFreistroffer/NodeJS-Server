@@ -35,6 +35,7 @@ export class AvatarController {
       return res.status(statusCodes.success).json(genericResponses.success(user));
     }
 
-    return res.status(statusCodes.success).json(genericResponses.success(user.avatar));
+    // TODO update success() to take an avatar obj, or return a sanitiezed user, or re think this architecture
+    return res.status(statusCodes.success).json(genericResponses.success(user.avatar as any));
   }
 } 
