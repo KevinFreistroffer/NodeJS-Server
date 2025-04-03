@@ -8,6 +8,7 @@ import { body, param, validationResult } from "express-validator";
 import { updateOne } from "@/operations/user_operations";
 import { statusCodes } from "@/defs/responses/status_codes";
 import { responses as userResponses } from "@/defs/responses/user";
+import { asyncRouteHandler } from "@/utils";
 
 const router = Router();
 dotenv.config();
@@ -27,50 +28,47 @@ const validateRequest = (req: Request, res: Response, next: NextFunction) => {
 };
 
 // Remove avatar route
-router.delete("/", avatarRemoveValidation, validateRequest, async (req: Request, res: Response) => {
-  try {
-    const userId = req.body.userId;
-    const bucket = ObjectId.createFromHexString(userId);
+router.delete("/", avatarRemoveValidation, validateRequest, asyncRouteHandler(async (req: Request, res: Response) => {
+  const userId = req.body.userId;
+  const bucket = ObjectId.createFromHexString(userId);
 
-    const client = await getClient();
-    await client.connect();
-    const db = client.db(process.env.DATABASE_NAME);
-    const avatarBucket = new GridFSBucket(db, {
-      bucketName: "avatars",
-    });
+  const client = await getClient();
+  await client.connect();
+  const db = client.db(process.env.DATABASE_NAME);
+  const avatarBucket = new GridFSBucket(db, {
+    bucketName: "avatars",
+  });
 
-    // Find and delete the avatar
-    const oldAvatar = await avatarBucket
-      .find({ "metadata.userId": bucket })
-      .toArray();
+  // Find and delete the avatar
+  const oldAvatar = await avatarBucket
+    .find({ "metadata.userId": bucket })
+    .toArray();
 
-    if (oldAvatar.length === 0) {
-      return res.status(404).json({ message: "No avatar found for this user" });
-    }
-
-    // Delete the avatar file
-    await avatarBucket.delete(oldAvatar[0]._id);
-
-    // Update user's avatarId to null in the database
-    const updateResult = await updateOne(
-      { _id: ObjectId.createFromHexString(userId) },
-      { $set: { avatarId: null } }
-    );
-
-    // Check if update was successful
-    if (!updateResult.matchedCount || !updateResult.modifiedCount) {
-      return res
-        .status(statusCodes.could_not_update)
-        .json(userResponses.could_not_update());
-    }
-
-    return res.json({
-      message: "Avatar removed successfully"
-    });
-  } catch (error) {
-    console.error("Avatar removal error:", error);
-    res.status(500).json({ message: "Error removing avatar" });
+  if (oldAvatar.length === 0) {
+    return res.status(404).json({ message: "No avatar found for this user" });
   }
-});
+
+  // Delete the avatar file
+  await avatarBucket.delete(oldAvatar[0]._id);
+
+  // Update user's avatarId to null in the database
+  const updateResult = await updateOne(
+    { _id: ObjectId.createFromHexString(userId) },
+    { $set: { avatarId: null } }
+  );
+
+  // Check if update was successful
+  if (!updateResult.matchedCount || !updateResult.modifiedCount) {
+    return res
+      .status(statusCodes.could_not_update)
+      .json(userResponses.could_not_update());
+  }
+
+  return res.json({
+    message: "Avatar removed successfully"
+  });
+
+})
+);
 
 module.exports = router;

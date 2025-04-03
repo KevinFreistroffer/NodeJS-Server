@@ -4,7 +4,7 @@ import { getClient } from "@/db";
 
 import { Router, NextFunction } from "express";
 import { validationResult, param } from "express-validator";
-import { getAvatarStream } from "@/utils";
+import { getAvatarStream, asyncRouteHandler } from "@/utils";
 const router = Router();
 // Add validation middleware
 const validateRequest = (req: Request, res: Response, next: NextFunction) => {
@@ -24,21 +24,16 @@ router.get(
   "/:userId",
   avatarGetValidation,
   validateRequest,
-  async (req: Request, res: Response) => {
-    try {
-      const result = await getAvatarStream(req.params.userId);
+  asyncRouteHandler(async (req: Request, res: Response) => {
+    const result = await getAvatarStream(req.params.userId);
 
-      if (!result) {
-        return res.status(404).json({ message: "No avatar found" });
-      }
-
-      res.set("Content-Type", result.contentType);
-      result.stream.pipe(res);
-    } catch (error) {
-      console.error("Avatar retrieval error:", error);
-      res.status(500).json({ message: "Error retrieving avatar" });
+    if (!result) {
+      return res.status(404).json({ message: "No avatar found" });
     }
-  }
+
+    res.set("Content-Type", result.contentType);
+    result.stream.pipe(res);
+  })
 );
 
 module.exports = router;

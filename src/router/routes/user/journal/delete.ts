@@ -8,7 +8,7 @@ import {
   IResponse,
 } from "../../../../defs/responses/generic";
 import { statusCodes } from "../../../../defs/responses/status_codes";
-import { handleCaughtErrorResponse } from "../../../../utils";
+import { handleCaughtErrorResponse, asyncRouteHandler } from "../../../../utils";
 
 const validatedUserId = body("userId") // TODO convert to zod?
   .notEmpty()
@@ -30,50 +30,46 @@ router.delete(
   "/",
   validatedUserId,
   validatedJournalIds,
-  async (req: express.Request, res: express.Response<IResponse>) => {
-    try {
-      const validatedResults = validationResult(req);
+  asyncRouteHandler(async (req: express.Request, res: express.Response<IResponse>) => {
+    const validatedResults = validationResult(req);
 
-      if (!validatedResults.isEmpty()) {
-        return res
-          .status(statusCodes.missing_body_fields)
-          .json(genericResponses.missing_body_fields());
-      }
+    if (!validatedResults.isEmpty()) {
+      return res
+        .status(statusCodes.missing_body_fields)
+        .json(genericResponses.missing_body_fields());
+    }
 
-      const { userId, journalIds } = req.body;
+    const { userId, journalIds } = req.body;
 
-      const user = res.locals.user;
+    const user = res.locals.user;
 
-      const updatedDoc = await updateOne(
-        { _id: userId },
-        {
-          $pull: {
-            journals: {
-              _id: {
-                $in: journalIds,
-              },
+    const updatedDoc = await updateOne(
+      { _id: userId },
+      {
+        $pull: {
+          journals: {
+            _id: {
+              $in: journalIds,
             },
           },
-        }
-      );
-
-      if (!updatedDoc.matchedCount) {
-        return res
-          .status(statusCodes.user_not_found)
-          .json(userResponses.user_not_found());
+        },
       }
+    );
 
-      if (!updatedDoc.modifiedCount) {
-        return res
-          .status(statusCodes.could_not_update)
-          .json(userResponses.could_not_update());
-      }
-
-      return res.status(statusCodes.success).json(genericResponses.success());
-    } catch (error) {
-      return handleCaughtErrorResponse(error, req, res);
+    if (!updatedDoc.matchedCount) {
+      return res
+        .status(statusCodes.user_not_found)
+        .json(userResponses.user_not_found());
     }
-  }
+
+    if (!updatedDoc.modifiedCount) {
+      return res
+        .status(statusCodes.could_not_update)
+        .json(userResponses.could_not_update());
+    }
+
+    return res.status(statusCodes.success).json(genericResponses.success());
+  })
 );
 
 module.exports = router;

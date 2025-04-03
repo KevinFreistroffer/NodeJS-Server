@@ -4,7 +4,7 @@ import { forbiddenResponseFields } from "./defs/constants";
 import * as bcrypt from "bcryptjs";
 import path from "node:path";
 import process from "node:process";
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import { responses, statusCodes } from "./defs/responses/generic";
 import { insertOne } from "./operations/file_operations";
 import { findOne } from "./operations/user_operations";
@@ -231,6 +231,53 @@ export const sendAccountActivationEmail = async (
   });
 };
 
+export const sendResetPasswordEmail = async (
+  toEmail: string,
+  resetToken: string
+) => {
+  if (!process.env.EMAIL_FROM || !process.env.EMAIL_APP_PASSWORD) {
+    throw new Error("Email credentials are not set in the environment.");
+  }
+
+  if (!process.env.JWT_SECRET) {
+    throw new Error("JWT secret is not set in the environment.");
+  }
+
+  const url = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
+  const mailConfiguration = {
+    transporter: nodemailer.createTransport(
+      `smtps://${encodeURIComponent(process.env.EMAIL_FROM)}:${encodeURIComponent(
+        process.env.EMAIL_APP_PASSWORD
+      )}@smtp.gmail.com`),
+    options: {
+      from: `"Journal App 👥" <${process.env.EMAIL_FROM}>`,
+      // to: to, // Use the provided email address
+      to:
+        process.env.NODE_ENV === "development"
+          ? "kevin.freistroffer@gmail.com"
+          : toEmail, // Use the provided email address
+      subject: "Password Reset Request",
+      text: `You are receiving this email because you (or someone else) has requested a password reset.
+      Please click on the following link to reset your password: ${url}
+      If you did not request this, please ignore this email.`,
+      html: `
+        <p>You are receiving this email because you (or someone else) has requested a password reset.</p>
+        <p>Please click on the following link to reset your password:</p>
+        <a href="${url}">Reset Password</a>
+        <p>If you did not request this, please ignore this email.</p>
+      `,
+    }
+  }
+
+
+  // send mail with defined transport object
+  mailConfiguration.transporter.sendMail(mailConfiguration.options, (err, info) => {
+    if (err) {
+      throw err;
+    }
+  });
+};
+
 export const verifyJWT = (token: string, callback?: Function) => {
   if (!process.env.JWT_SECRET) {
     throw new Error("JWT secret is not set in the environment.");
@@ -271,11 +318,9 @@ export const formatSessionCookie = (token: string) => {
   return {
     "Access-Control-Allow-Origin": "*", // Allow all origins (or specify your frontend's origin)
     "Access-Control-Expose-Headers": "Set-Cookie",
-    "Set-Cookie": `session_token=${token}; HttpOnly; ${
-      process.env.NODE_ENV === "production" ? "Secure; " : ""
-    }Max-Age=${14 * 24 * 60 * 60};  SameSite=None${
-      process.env.NODE_ENV === "production" ? "; Secure" : ""
-    }`,
+    "Set-Cookie": `session_token=${token}; HttpOnly; ${process.env.NODE_ENV === "production" ? "Secure; " : ""
+      }Max-Age=${14 * 24 * 60 * 60};  SameSite=None${process.env.NODE_ENV === "production" ? "; Secure" : ""
+      }`,
   };
 };
 
@@ -337,9 +382,9 @@ export async function streamToDataURL(
   stream: NodeJS.ReadableStream,
   contentType: string
 ): Promise<string> {
-  const chunks: Buffer[] = [];
+  const chunks: Uint8Array[] = [];
   for await (const chunk of stream) {
-    chunks.push(chunk as Buffer);
+    chunks.push(chunk as Uint8Array);
   }
   const buffer = Buffer.concat(chunks);
   const base64 = buffer.toString("base64");
@@ -351,8 +396,8 @@ export const getFileExtension = (filename: string): string => {
   return filename.substring(filename.lastIndexOf("."));
 };
 
-export const asyncHandler = (fn: (req: Request, res: Response, next: NextFunction) => Promise<void>) => {
+export const asyncRouteHandler = (fn: (req: Request, res: Response, next: NextFunction) => Promise<any>) => {
   return (req: Request, res: Response, next: NextFunction) => {
-    fn(req, res, next).catch(next);
+    fn(req, res, next).catch((error) => handleCaughtErrorResponse(error, req, res));
   };
 };

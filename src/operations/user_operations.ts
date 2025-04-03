@@ -122,8 +122,8 @@ export const findOneByUsername = async (username: string) => {
  * @param email
  */
 export const findOneByUsernameOrEmail = async (
-  username: string,
-  email: string
+  username?: string,
+  email?: string
 ) =>
   await findOne({
     query: {
@@ -156,8 +156,7 @@ export async function insertOne(
       throw new Error("Network error: Unable to connect to the database.");
     } else {
       throw new Error(
-        `Unexpected error: ${
-          error instanceof Error ? error.message : String(error)
+        `Unexpected error: ${error instanceof Error ? error.message : String(error)
         }`
       );
     }

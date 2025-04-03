@@ -6,7 +6,7 @@ import * as nodemailer from "nodemailer";
 import { EStage } from "../../../../defs/enums";
 import { ObjectId } from "mongodb";
 import { updateOne } from "@/operations/user_operations";
-
+import { asyncRouteHandler } from "@/utils";
 const router = Router();
 
 // Validation rules for reminder creation
@@ -75,124 +75,111 @@ const createReminderValidation = [
 router.post(
   "/",
   createReminderValidation,
-  async (req: Request, res: Response) => {
+  asyncRouteHandler(async (req: Request, res: Response) => {
     console.log("Creating reminder");
-    try {
-      const { userId } = req.body;
-      const reminderData = req.body;
+    const { userId } = req.body;
+    const reminderData = req.body;
 
-      console.log("userId:", userId);
-      console.log("reminderData:", reminderData);
+    console.log("userId:", userId);
+    console.log("reminderData:", reminderData);
 
-      const updateResult = await updateOne(
-        { _id: new ObjectId(userId) },
-        {
-          $push: {
-            reminders: {
-              _id: new ObjectId(),
-              title: reminderData.title,
-              description: reminderData.description,
-              date: reminderData.date,
-              time: reminderData.time,
-              recurring: reminderData.recurring,
-              recurrenceType: reminderData.recurrenceType,
-              customFrequency: reminderData.customFrequency,
-              customUnit: reminderData.customUnit,
-              repeatOn: reminderData.repeatOn,
-              ends: reminderData.ends,
-              endDate: reminderData.endDate,
-              occurrences: reminderData.occurrences,
-            },
+    const updateResult = await updateOne(
+      { _id: new ObjectId(userId) },
+      {
+        $push: {
+          reminders: {
+            _id: new ObjectId(),
+            title: reminderData.title,
+            description: reminderData.description,
+            date: reminderData.date,
+            time: reminderData.time,
+            recurring: reminderData.recurring,
+            recurrenceType: reminderData.recurrenceType,
+            customFrequency: reminderData.customFrequency,
+            customUnit: reminderData.customUnit,
+            repeatOn: reminderData.repeatOn,
+            ends: reminderData.ends,
+            endDate: reminderData.endDate,
+            occurrences: reminderData.occurrences,
           },
-        }
-      );
-
-      console.log("Update result:", JSON.stringify(updateResult, null, 2));
-
-      if (updateResult.matchedCount === 0) {
-        return res.status(404).json({
-          message: "User not found",
-        });
+        },
       }
+    );
 
-      if (updateResult.modifiedCount === 0) {
-        return res.status(400).json({
-          message: "Reminder was not added to user",
-        });
-      }
+    console.log("Update result:", JSON.stringify(updateResult, null, 2));
 
-      // Send email notification
-      const transport = `smtps://${process.env.EMAIL_FROM}:${process.env.EMAIL_APP_PASSWORD}@smtp.gmail.com`;
-      const transporter = nodemailer.createTransport(transport);
+    if (updateResult.matchedCount === 0) {
+      return res.status(404).json({
+        message: "User not found",
+      });
+    }
 
-      const mailOptions = {
-        from: `Reminder Notification 📅 <${process.env.EMAIL_FROM}>`,
-        to: `${
-          process.env.NODE_ENV === EStage.DEVELOPMENT
-            ? process.env.EMAIL_FROM
-            : reminderData.email // You'll need to ensure this is available
+    if (updateResult.modifiedCount === 0) {
+      return res.status(400).json({
+        message: "Reminder was not added to user",
+      });
+    }
+
+    // Send email notification
+    const transport = `smtps://${process.env.EMAIL_FROM}:${process.env.EMAIL_APP_PASSWORD}@smtp.gmail.com`;
+    const transporter = nodemailer.createTransport(transport);
+
+    const mailOptions = {
+      from: `Reminder Notification 📅 <${process.env.EMAIL_FROM}>`,
+      to: `${process.env.NODE_ENV === EStage.DEVELOPMENT
+        ? process.env.EMAIL_FROM
+        : reminderData.email // You'll need to ensure this is available
         }`,
-        subject: `Reminder: ${reminderData.title}`,
-        text: `
+      subject: `Reminder: ${reminderData.title}`,
+      text: `
           Your reminder has been set:
 
           Title: ${reminderData.title}
-          ${
-            reminderData.description
-              ? `Description: ${reminderData.description}\n`
-              : ""
-          }
+          ${reminderData.description
+          ? `Description: ${reminderData.description}\n`
+          : ""
+        }
           Date: ${reminderData.date}
           Time: ${reminderData.time}
-          ${
-            reminderData.recurring
-              ? `
+          ${reminderData.recurring
+          ? `
           Recurring: ${reminderData.recurrenceType}
           ${reminderData.ends !== "never" ? `Ends: ${reminderData.ends}` : ""}
           `
-              : ""
-          }
+          : ""
+        }
         `,
-        html: `
+      html: `
           <h2>Your reminder has been set</h2>
           <div style="font-family: 'Tahoma', geneva, sans-serif; color: #333; padding: 20px;">
             <p><strong>Title:</strong> ${reminderData.title}</p>
-            ${
-              reminderData.description
-                ? `<p><strong>Description:</strong> ${reminderData.description}</p>`
-                : ""
-            }
+            ${reminderData.description
+          ? `<p><strong>Description:</strong> ${reminderData.description}</p>`
+          : ""
+        }
             <p><strong>Date:</strong> ${reminderData.date}</p>
             <p><strong>Time:</strong> ${reminderData.time}</p>
-            ${
-              reminderData.recurring
-                ? `
+            ${reminderData.recurring
+          ? `
             <p><strong>Recurring:</strong> ${reminderData.recurrenceType}</p>
-            ${
-              reminderData.ends !== "never"
-                ? `<p><strong>Ends:</strong> ${reminderData.ends}</p>`
-                : ""
-            }
+            ${reminderData.ends !== "never"
+            ? `<p><strong>Ends:</strong> ${reminderData.ends}</p>`
+            : ""
+          }
             `
-                : ""
-            }
+          : ""
+        }
           </div>
         `,
-      };
+    };
 
-      await transporter.sendMail(mailOptions);
+    await transporter.sendMail(mailOptions);
 
-      res.status(201).json({
-        message: "Reminder created successfully and notification sent",
-        data: { userId, ...reminderData },
-      });
-    } catch (error) {
-      res.status(500).json({
-        message: "Error creating reminder",
-        error: error instanceof Error ? error.message : "Unknown error",
-      });
-    }
-  }
+    res.status(201).json({
+      message: "Reminder created successfully and notification sent",
+      data: { userId, ...reminderData },
+    });
+  })
 );
 
 module.exports = router;

@@ -6,7 +6,7 @@ import { GridFSBucket } from "mongodb";
 import { statusCodes } from "../../../defs/responses/status_codes";
 import { responses as genericResponses } from "../../../defs/responses/generic";
 import { findOneById, updateOne } from "../../../operations/user_operations";
-import { handleCaughtErrorResponse } from "../../../utils";
+import { handleCaughtErrorResponse, asyncRouteHandler } from "../../../utils";
 import { responses as userResponses } from "../../../defs/responses/user";
 import { getClient } from "../../../db";
 import { IReminder } from "../../../defs/interfaces";
@@ -59,115 +59,112 @@ router.post(
 
     return true;
   }),
-  async (req: Request, res: Response) => {
-    try {
-      let gfs: GridFSBucket;
-      const client = getClient();
-      const db = client.db(process.env.DATABASE_NAME);
-      gfs = new GridFSBucket(db, {
-        bucketName: "avatars",
+  asyncRouteHandler(async (req: Request, res: Response) => {
+    let gfs: GridFSBucket;
+    const client = getClient();
+    const db = client.db(process.env.DATABASE_NAME);
+    gfs = new GridFSBucket(db, {
+      bucketName: "avatars",
+    });
+
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      // @ts-ignore
+      const errorFields = errors.array().map((error) => error);
+
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    const {
+      userId,
+      hasAcknowledgedHelperText,
+      name,
+      bio,
+      company,
+      location,
+      website,
+      sex,
+    } = req.body;
+
+    const doc = await findOneById(new ObjectId(userId.toString()));
+    if (!doc) {
+      return res
+        .status(statusCodes.resource_not_found)
+        .json(genericResponses.resource_not_found());
+    }
+
+    const updateFields: { [key: string]: any } = {};
+
+    // hasAcknowledgedHelperText
+    if (hasAcknowledgedHelperText !== undefined) {
+      updateFields.hasAcknowledgedHelperText = hasAcknowledgedHelperText;
+    }
+
+    // reminders
+    if (req.body.reminders) {
+      updateFields.reminders = req.body.reminders;
+    }
+
+    // Handle avatar upload
+    if (req.file) {
+      // Delete old avatar if exists
+      if (doc.avatar) {
+        await gfs.delete(new ObjectId(doc.avatar._id));
+      }
+
+      // Upload new avatar
+      const uploadStream = gfs.openUploadStream(req.file.originalname, {
+        contentType: req.file.mimetype,
+      });
+      await new Promise<void>((resolve, reject) => {
+        uploadStream.on("error", reject);
+        uploadStream.on("finish", resolve);
+        uploadStream.end(req.file!.buffer);
       });
 
-      const errors = validationResult(req);
+      updateFields.avatarId = uploadStream.id.toString();
+    }
 
-      if (!errors.isEmpty()) {
-        // @ts-ignore
-        const errorFields = errors.array().map((error) => error);
+    if (name !== undefined) updateFields.name = name;
+    if (bio !== undefined) updateFields.bio = bio;
+    if (company !== undefined) updateFields.company = company;
+    if (location !== undefined) updateFields.location = location;
+    if (website !== undefined) updateFields.website = website;
+    if (sex !== undefined) updateFields.sex = sex;
 
-        return res.status(400).json({ errors: errors.array() });
-      }
+    const updateResult = await updateOne(
+      { _id: doc._id },
+      { $set: updateFields }
+    );
 
-      const {
-        userId,
-        hasAcknowledgedHelperText,
-        name,
-        bio,
-        company,
-        location,
-        website,
-        sex,
-      } = req.body;
+    if (updateResult.matchedCount === 0 || updateResult.modifiedCount === 0) {
+      return res.json(userResponses.could_not_update());
+    }
 
-      const doc = await findOneById(new ObjectId(userId.toString()));
-      if (!doc) {
-        return res
-          .status(statusCodes.resource_not_found)
-          .json(genericResponses.resource_not_found());
-      }
+    // Fetch the updated user
+    const updatedUser = await findOneById(doc._id);
 
-      const updateFields: { [key: string]: any } = {};
-
-      // hasAcknowledgedHelperText
-      if (hasAcknowledgedHelperText !== undefined) {
-        updateFields.hasAcknowledgedHelperText = hasAcknowledgedHelperText;
-      }
-
-      // reminders
-      if (req.body.reminders) {
-        updateFields.reminders = req.body.reminders;
-      }
-
-      // Handle avatar upload
-      if (req.file) {
-        // Delete old avatar if exists
-        if (doc.avatar) {
-          await gfs.delete(new ObjectId(doc.avatar._id));
-        }
-
-        // Upload new avatar
-        const uploadStream = gfs.openUploadStream(req.file.originalname, {
-          contentType: req.file.mimetype,
-        });
-        await new Promise<void>((resolve, reject) => {
-          uploadStream.on("error", reject);
-          uploadStream.on("finish", resolve);
-          uploadStream.end(req.file!.buffer);
-        });
-
-        updateFields.avatarId = uploadStream.id.toString();
-      }
-
-      if (name !== undefined) updateFields.name = name;
-      if (bio !== undefined) updateFields.bio = bio;
-      if (company !== undefined) updateFields.company = company;
-      if (location !== undefined) updateFields.location = location;
-      if (website !== undefined) updateFields.website = website;
-      if (sex !== undefined) updateFields.sex = sex;
-
-      const updateResult = await updateOne(
-        { _id: doc._id },
-        { $set: updateFields }
-      );
-
-      if (updateResult.matchedCount === 0 || updateResult.modifiedCount === 0) {
-        return res.json(userResponses.could_not_update());
-      }
-
-      // Fetch the updated user
-      const updatedUser = await findOneById(doc._id);
-
-      if (!updatedUser) {
-        // Create a modified version of the original doc with the updated fields
-        const modifiedUser = {
-          ...doc,
-          ...updateFields,
-          _id: doc._id.toString(), // Ensure _id is in string format
-        };
-
-        return res.json({
-          ...genericResponses.success(),
-          user: modifiedUser,
-        });
-      }
+    if (!updatedUser) {
+      // Create a modified version of the original doc with the updated fields
+      const modifiedUser = {
+        ...doc,
+        ...updateFields,
+        _id: doc._id.toString(), // Ensure _id is in string format
+      };
 
       return res.json({
         ...genericResponses.success(),
-        user: updatedUser,
+        user: modifiedUser,
       });
-    } catch (error) {
-      return handleCaughtErrorResponse(error, req, res);
     }
-  }
+
+    return res.json({
+      ...genericResponses.success(),
+      user: updatedUser,
+    });
+
+  })
 );
 
 module.exports = router;

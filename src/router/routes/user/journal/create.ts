@@ -13,7 +13,7 @@ import { statusCodes } from "../../../../defs/responses/status_codes";
 import { ObjectId } from "mongodb";
 
 import { findOneById, updateOne } from "../../../../operations/user_operations";
-import { handleCaughtErrorResponse } from "../../../../utils";
+import { asyncRouteHandler } from "../../../../utils";
 
 const router = express.Router();
 const days = ["Sun", "Mon", "Tue", "Wed", "Thur", "Fri", "Sat"];
@@ -44,108 +44,104 @@ router.post(
   validatedJournal,
   validatedCategory, // Add the optional category validator
   validatedSentimentScore,
-  async (req: express.Request, res: express.Response<IResponse>) => {
-    try {
-      const validatedFields = validationResult(req);
+  asyncRouteHandler(async (req: express.Request, res: express.Response<IResponse>) => {
+    const validatedFields = validationResult(req);
 
-      if (!validatedFields.isEmpty()) {
-        return res
-          .status(statusCodes.missing_body_fields)
-          .json(genericResponses.missing_body_fields());
-      }
+    if (!validatedFields.isEmpty()) {
+      return res
+        .status(statusCodes.missing_body_fields)
+        .json(genericResponses.missing_body_fields());
+    }
 
-      /*--------------------------------------------------
-       * Valid request body.
-       * MongoDB User collection
-       *------------------------------------------------*/
-      const { userId, title, entry, category, favorite, sentimentScore } =
-        req.body; // Added sentimentScore
+    /*--------------------------------------------------
+     * Valid request body.
+     * MongoDB User collection
+     *------------------------------------------------*/
+    const { userId, title, entry, category, favorite, sentimentScore } =
+      req.body; // Added sentimentScore
 
-      const day = moment().day();
-      const newJournal = new Journal(
-        title,
-        entry,
-        category
-          ? [
-              {
+    const day = moment().day();
+    const newJournal = new Journal(
+      title,
+      entry,
+      category
+        ? [
+          {
+            _id: new ObjectId(),
+            category,
+            selected: false,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          },
+        ]
+        : [], // Make categories array empty if no category provided
+      false,
+      favorite,
+      sentimentScore // Added sentimentScore
+    );
+
+    /*--------------------------------------------------
+     *  Update user's journals
+     *------------------------------------------------*/
+    // const doc = await users.findOneAndUpdate({ _id: new ObjectId(userId) });
+    const existingUser = await findOneById(new ObjectId(userId));
+
+    if (!existingUser) {
+      return res
+        .status(statusCodes.user_not_found)
+        .json(userResponses.user_not_found());
+    }
+
+    const categoryExists = existingUser?.journalCategories?.some(
+      (cat) => cat.category.toLowerCase() === category.toLowerCase()
+    );
+
+    const doc = await updateOne(
+      { _id: new ObjectId(userId) },
+      {
+        $push: {
+          journals: {
+            ...newJournal,
+            _id: new ObjectId(),
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          },
+        },
+        ...(category && !categoryExists
+          ? {
+            // Only add category if it's provided and doesn't exist
+            $push: {
+              journalCategories: {
                 _id: new ObjectId(),
                 category,
                 selected: false,
                 createdAt: new Date(),
                 updatedAt: new Date(),
               },
-            ]
-          : [], // Make categories array empty if no category provided
-        false,
-        favorite,
-        sentimentScore // Added sentimentScore
-      );
-
-      /*--------------------------------------------------
-       *  Update user's journals
-       *------------------------------------------------*/
-      // const doc = await users.findOneAndUpdate({ _id: new ObjectId(userId) });
-      const existingUser = await findOneById(new ObjectId(userId));
-
-      if (!existingUser) {
-        return res
-          .status(statusCodes.user_not_found)
-          .json(userResponses.user_not_found());
-      }
-
-      const categoryExists = existingUser?.journalCategories?.some(
-        (cat) => cat.category.toLowerCase() === category.toLowerCase()
-      );
-
-      const doc = await updateOne(
-        { _id: new ObjectId(userId) },
-        {
-          $push: {
-            journals: {
-              ...newJournal,
-              _id: new ObjectId(),
-              createdAt: new Date(),
-              updatedAt: new Date(),
             },
-          },
-          ...(category && !categoryExists
-            ? {
-                // Only add category if it's provided and doesn't exist
-                $push: {
-                  journalCategories: {
-                    _id: new ObjectId(),
-                    category,
-                    selected: false,
-                    createdAt: new Date(),
-                    updatedAt: new Date(),
-                  },
-                },
-              }
-            : {}),
-        }
-      );
-
-      if (!doc?.acknowledged || !doc.modifiedCount) {
-        return res
-          .status(statusCodes.could_not_update)
-          .json(userResponses.could_not_update());
+          }
+          : {}),
       }
+    );
 
-      const foundDoc = await findOneById(new ObjectId(userId));
-
-      if (!foundDoc) {
-        return res
-          .status(statusCodes.user_not_found)
-          .json(userResponses.user_not_found());
-      }
-
+    if (!doc?.acknowledged || !doc.modifiedCount) {
       return res
-        .status(statusCodes.success)
-        .json(genericResponses.success(foundDoc));
-    } catch (error) {
-      return handleCaughtErrorResponse(error, req, res);
+        .status(statusCodes.could_not_update)
+        .json(userResponses.could_not_update());
     }
-  }
+
+    const foundDoc = await findOneById(new ObjectId(userId));
+
+    if (!foundDoc) {
+      return res
+        .status(statusCodes.user_not_found)
+        .json(userResponses.user_not_found());
+    }
+
+    return res
+      .status(statusCodes.success)
+      .json(genericResponses.success(foundDoc));
+  })
 );
 
 module.exports = router;

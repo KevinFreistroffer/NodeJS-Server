@@ -25,11 +25,7 @@ import compression from 'compression';
 import { checkConflictingRouteMiddleware } from "./routes";
 import { rateLimiterMiddleware } from "./middleware";
 
-export const asyncHandler = (fn: (req: Request, res: Response, next: NextFunction) => Promise<void>) => {
-  return (req: Request, res: Response, next: NextFunction) => {
-    fn(req, res, next).catch(next);
-  };
-};
+
 
 const PROTECTED_ROUTES = [
   "/user/:id",

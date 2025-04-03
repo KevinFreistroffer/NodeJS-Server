@@ -47,6 +47,8 @@ export interface IResponses {
   ) => IEmailAvailableResponse;
   error_inserting_user: (description?: string) => IResponse;
   could_not_update: (description?: string) => IResponse;
+  could_not_send_email: (description?: string) => IResponse;
+  resource_not_found: (description?: string) => IResponse;
   success: (
     user?: ISanitizedUser | ISanitizedUser[],
     description?: string
@@ -123,6 +125,18 @@ export const responses: IResponses = {
     code: 1015,
     data: undefined,
   }),
+  could_not_send_email: (description) => ({
+    message: EMessageType.error,
+    description: description || "Could not send email",
+    code: 1017,
+    data: undefined,
+  }),
+  resource_not_found: (description) => ({
+    message: EMessageType.error,
+    description: description || "Resource not found",
+    code: 1016,
+    data: undefined,
+  }),
   success: (
     user?: ISanitizedUser | ISanitizedUser[],
     description?: string
@@ -147,6 +161,7 @@ export const statusCodes = {
   username_or_email_already_registered: 409,
   username_available: 409,
   email_available: 409,
+  could_not_send_email: 500,
   error_inserting_user: 500,
   could_not_update: 500,
   success: 200,

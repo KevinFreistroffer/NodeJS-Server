@@ -5,7 +5,7 @@ const dotenv = require("dotenv");
 dotenv.config();
 
 module.exports = {
-  journal: "./src/server.ts", // The journal point of your application
+  entry: "./src/server.ts", // The entry point of your application
   target: "node", // Target Node.js environment
   mode: "production", // Production mode for optimization
   module: {
@@ -19,6 +19,9 @@ module.exports = {
   },
   resolve: {
     extensions: [".ts", ".js"], // Resolve these extensions
+    alias: {
+      '@': path.resolve(__dirname, 'src'), // Add alias for '@' to point to 'src' directory
+    },
   },
   output: {
     filename: "bundle.js", // The output bundled file

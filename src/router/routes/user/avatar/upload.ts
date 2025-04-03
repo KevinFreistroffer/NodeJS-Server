@@ -8,7 +8,7 @@ import { body, param, validationResult } from "express-validator";
 import { updateOne } from "@/operations/user_operations";
 import { statusCodes } from "@/defs/responses/status_codes";
 import { responses as userResponses } from "@/defs/responses/user";
-
+import { asyncRouteHandler } from "@/utils";
 const router = Router();
 dotenv.config();
 
@@ -57,82 +57,78 @@ const validateRequest = (req: Request, res: Response, next: NextFunction) => {
 };
 
 // Upload avatar route
-router.post("/", async (req: Request, res: Response) => {
-  try {
-    const userId = req.body.userId;
-    const avatarString = req.body.avatar;
-    const bucket = ObjectId.createFromHexString(userId);
+router.post("/", asyncRouteHandler(async (req: Request, res: Response) => {
+  const userId = req.body.userId;
+  const avatarString = req.body.avatar;
+  const bucket = ObjectId.createFromHexString(userId);
 
-    // Detect image type from base64 string
-    const imageType =
-      avatarString.match(/^data:image\/(\w+);base64,/)?.[1] || "png";
+  // Detect image type from base64 string
+  const imageType =
+    avatarString.match(/^data:image\/(\w+);base64,/)?.[1] || "png";
 
-    // Remove base64 header if present
-    const cleanAvatarString = avatarString.replace(
-      /^data:image\/\w+;base64,/,
-      ""
-    );
+  // Remove base64 header if present
+  const cleanAvatarString = avatarString.replace(
+    /^data:image\/\w+;base64,/,
+    ""
+  );
 
-    // Convert clean string to buffer
-    const buffer = Buffer.from(cleanAvatarString, "base64");
+  // Convert clean string to buffer
+  const buffer = Buffer.from(cleanAvatarString, "base64");
 
-    const client = await getClient();
-    await client.connect();
-    const db = client.db(process.env.DATABASE_NAME);
-    const avatarBucket = new GridFSBucket(db, {
-      bucketName: "avatars",
-    });
+  const client = await getClient();
+  await client.connect();
+  const db = client.db(process.env.DATABASE_NAME);
+  const avatarBucket = new GridFSBucket(db, {
+    bucketName: "avatars",
+  });
 
-    // Delete old avatar if exists
-    const oldAvatar = await avatarBucket
-      .find({ "metadata.userId": bucket })
-      .toArray();
+  // Delete old avatar if exists
+  const oldAvatar = await avatarBucket
+    .find({ "metadata.userId": bucket })
+    .toArray();
 
-    if (oldAvatar.length > 0) {
-      await avatarBucket.delete(oldAvatar[0]._id);
-    }
-
-    // Create readable stream from buffer
-    const readStream = new Readable();
-    readStream.push(buffer);
-    readStream.push(null);
-
-    // Create upload stream with dynamic image type
-    const uploadStream = avatarBucket.openUploadStream(
-      `avatar-${bucket.toString()}-${Date.now()}.${imageType}`,
-      {
-        contentType: `image/${imageType}`,
-        metadata: { userId: bucket },
-      }
-    );
-
-    // Handle upload completion
-    await new Promise((resolve, reject) => {
-      readStream.pipe(uploadStream).on("finish", resolve).on("error", reject);
-    });
-
-    // Update user's avatarId in the database
-    const updateResult = await updateOne(
-      { _id: ObjectId.createFromHexString(userId) },
-      { $set: { avatarId: uploadStream.id } }
-    );
-
-    // Check if update was successful
-    if (!updateResult.matchedCount || !updateResult.modifiedCount) {
-      return res
-        .status(statusCodes.could_not_update)
-        .json(userResponses.could_not_update());
-    }
-
-    return res.json({
-      message: "Avatar uploaded successfully",
-      fileId: uploadStream.id,
-      filename: uploadStream.filename,
-    });
-  } catch (error) {
-    console.error("Avatar upload error:", error);
-    res.status(500).json({ message: "Error uploading avatar" });
+  if (oldAvatar.length > 0) {
+    await avatarBucket.delete(oldAvatar[0]._id);
   }
-});
+
+  // Create readable stream from buffer
+  const readStream = new Readable();
+  readStream.push(buffer);
+  readStream.push(null);
+
+  // Create upload stream with dynamic image type
+  const uploadStream = avatarBucket.openUploadStream(
+    `avatar-${bucket.toString()}-${Date.now()}.${imageType}`,
+    {
+      contentType: `image/${imageType}`,
+      metadata: { userId: bucket },
+    }
+  );
+
+  // Handle upload completion
+  await new Promise((resolve, reject) => {
+    readStream.pipe(uploadStream).on("finish", resolve).on("error", reject);
+  });
+
+  // Update user's avatarId in the database
+  const updateResult = await updateOne(
+    { _id: ObjectId.createFromHexString(userId) },
+    { $set: { avatarId: uploadStream.id } }
+  );
+
+  // Check if update was successful
+  if (!updateResult.matchedCount || !updateResult.modifiedCount) {
+    return res
+      .status(statusCodes.could_not_update)
+      .json(userResponses.could_not_update());
+  }
+
+  return res.json({
+    message: "Avatar uploaded successfully",
+    fileId: uploadStream.id,
+    filename: uploadStream.filename,
+  });
+
+}));
 
 module.exports = router;

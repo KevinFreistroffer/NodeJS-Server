@@ -3,7 +3,7 @@
 import * as express from "express";
 import { Client, auth } from "twitter-api-sdk";
 import dotenv from "dotenv";
-import { handleCaughtErrorResponse } from "../../../utils";
+import { handleCaughtErrorResponse, asyncRouteHandler } from "../../../utils";
 dotenv.config();
 const URL = (process.env.URL as string) || "http://127.0.0.1";
 const PORT = process.env.PORT ? parseInt(process.env.PORT) : 3001;
@@ -19,14 +19,13 @@ const client = new Client(authClient);
 
 const STATE = "california";
 
-router.get("/", async function (req, res) {
-  try {
-    const response = await client.tweets.createTweet({
-      text: "hjkjkhjkhjkh",
-    });
+router.get("/", asyncRouteHandler(async (req: express.Request, res: express.Response) => {
+  const response = await client.tweets.createTweet({
+    text: "hjkjkhjkhjkh",
+  });
 
-    res.send(response);
-  } catch (error) {}
-});
+  res.send(response);
+})
+);
 
 module.exports = router;

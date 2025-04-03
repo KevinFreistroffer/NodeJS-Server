@@ -6,38 +6,34 @@ import {
   responses,
   statusCodes,
 } from "../../../defs/responses/generic";
-import { getFilePath } from "../../../utils";
+import { getFilePath, asyncRouteHandler } from "../../../utils";
 import { stat } from "node:fs/promises";
 
 const router = express.Router();
 
 router.get(
   "/",
-  async (
+  asyncRouteHandler(async (
     req: express.Request,
     res: express.Response<IResponse>,
     next: express.NextFunction
   ) => {
-    try {
-      // ;
-      const fileName = "lorem.txt";
+    // ;
+    const fileName = "lorem.txt";
 
-      // Check if a file exists in the current directory
-      const filePath = getFilePath(__dirname, fileName);
+    // Check if a file exists in the current directory
+    const filePath = getFilePath(__dirname, fileName);
 
-      const status = await stat(filePath);
+    const status = await stat(filePath);
 
-      if (!status.isFile()) {
-        return res
-          .status(statusCodes.resource_not_found)
-          .json(responses.route_not_found());
-      }
-      res.json(responses.success());
-    } catch (error) {
-      return next(error);
-    } finally {
+    if (!status.isFile()) {
+      return res
+        .status(statusCodes.resource_not_found)
+        .json(responses.route_not_found());
     }
-  }
+    res.json(responses.success());
+
+  })
 );
 
 module.exports = router;

@@ -1,11 +1,13 @@
+import * as express from "express";
 import { Router } from "express";
-import { formatSessionCookie } from "@/utils";
+import { asyncRouteHandler, formatSessionCookie } from "@/utils";
 import { sign } from "jsonwebtoken";
+import { IResponse, responses } from "@/defs/responses/generic";
 
 const router = Router();
 const token = "fake-jwt-token";
 
-router.post("/", (req, res) => {
+router.post("/", asyncRouteHandler(async (req: express.Request, res: express.Response<IResponse>) => {
   // const token = sign(
   //   { data: UNSAFE_DOC._id.toString() },
   //   process.env.JWT_SECRET,
@@ -15,9 +17,7 @@ router.post("/", (req, res) => {
   // );
   // res.set(formatSessionCookie(token));
   // Simulate successful auth
-  res.json({
-    success: true,
-  });
-});
+  res.json(responses.success());
+}));
 
 module.exports = router;

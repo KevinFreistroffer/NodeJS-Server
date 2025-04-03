@@ -1,3 +1,5 @@
+use mongodb watch() to listen to user creation and automate sending an email to verify the account,
+using a lambda
 
 the handleUncaughtErroResponse is not linked to the user responses interface. May need to create handlers for each user/auth etc.
 

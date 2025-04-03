@@ -14,5 +14,6 @@ export const statusCodes = {
   caught_error: 500,
   error_inserting_user: 500,
   could_not_update: 500,
+  could_not_send_email: 500,
   success: 200,
 };

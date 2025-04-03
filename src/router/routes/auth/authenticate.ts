@@ -6,7 +6,7 @@ import {
   responses,
   statusCodes,
 } from "../../../defs/responses/generic";
-import { handleCaughtErrorResponse } from "../../../utils";
+import { asyncRouteHandler, handleCaughtErrorResponse } from "../../../utils";
 import { has } from "lodash";
 import jwt from "jsonwebtoken";
 import { findOneById } from "../../../operations/user_operations";
@@ -15,7 +15,7 @@ const router = express.Router();
 
 router.get(
   "/",
-  async (req: express.Request, res: express.Response<IResponse>) => {
+  asyncRouteHandler(async (req: express.Request, res: express.Response<IResponse>) => {
     try {
       if (!process.env.JWT_SECRET) {
         throw new Error("JWT_SECRET is not set");
@@ -49,7 +49,7 @@ router.get(
     } catch (error) {
       return handleCaughtErrorResponse(error, req, res);
     }
-  }
+  })
 );
 
 module.exports = router;

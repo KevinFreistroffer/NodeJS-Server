@@ -1,7 +1,7 @@
 import express from "express";
 import request from "supertest";
 import { findOneByUsernameOrEmail } from "../../../src/operations/user_operations";
-import { responses as genericResponses } from "../../../src/defs/responses/generic_responses";
+import { responses as genericResponses } from "../../../src/defs/responses/generic";
 import { rateLimiterMiddleware } from "../../../src/middleware";
 import dotenv from "dotenv";
 import { rateLimit } from "express-rate-limit";
@@ -14,7 +14,7 @@ mockRateLimit.mockImplementation(() => {
   const middleware = (req: any, res: any, next: any) =>
     genericResponses.too_many_requests();
   return Object.assign(middleware, {
-    resetKey: () => {},
+    resetKey: () => { },
     getKey: () => undefined,
   });
 });

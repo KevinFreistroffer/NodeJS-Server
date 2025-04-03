@@ -3,7 +3,7 @@
 import * as express from "express";
 import { Client, auth } from "twitter-api-sdk";
 import dotenv from "dotenv";
-import { handleCaughtErrorResponse } from "../../../utils";
+import { handleCaughtErrorResponse, asyncRouteHandler } from "../../../utils";
 import axios from "axios";
 dotenv.config();
 const URL = (process.env.URL as string) || "http://127.0.0.1";
@@ -23,38 +23,33 @@ const client = new Client(authClient);
 const STATE = "california";
 
 // Handle OAuth callback
-router.get("/callback", async (req: express.Request, res: express.Response) => {
+router.get("/callback", asyncRouteHandler(async (req: express.Request, res: express.Response) => {
   const { code } = req.query;
+  const tokenResponse = await axios.post(
+    "https://api.twitter.com/2/oauth2/token",
+    null,
+    {
+      params: {
+        code,
+        grant_type: "authorization_code",
+        client_id: CLIENT_ID,
+        redirect_uri: REDIRECT_URI,
+        code_verifier: pkceVerifier,
+      },
+      auth: {
+        username: CLIENT_ID,
+        password: CLIENT_SECRET,
+      },
+    }
+  );
 
-  try {
-    const tokenResponse = await axios.post(
-      "https://api.twitter.com/2/oauth2/token",
-      null,
-      {
-        params: {
-          code,
-          grant_type: "authorization_code",
-          client_id: CLIENT_ID,
-          redirect_uri: REDIRECT_URI,
-          code_verifier: pkceVerifier,
-        },
-        auth: {
-          username: CLIENT_ID,
-          password: CLIENT_SECRET,
-        },
-      }
-    );
-
-    const { access_token } = tokenResponse.data;
-    // In a real app, you'd store this token securely and associate it with the user's session
-    res.send(
-      `<script>localStorage.setItem('twitter_token', '${access_token}'); window.location.href = '/';</script>`
-    );
-  } catch (error) {
-    console.error("Error getting access token:", error);
-    res.status(500).send("Authentication failed");
-  }
-});
+  const { access_token } = tokenResponse.data as { access_token: string };
+  // In a real app, you'd store this token securely and associate it with the user's session
+  res.send(
+    `<script>localStorage.setItem('twitter_token', '${access_token}'); window.location.href = '/';</script>`
+  );
+})
+);
 
 // router.get("/", async function (req, res) {
 //   try {
