@@ -39,7 +39,7 @@ export const journalValidation = {
         throw new Error("Categories must be an array");
       }
       for (const cat of categories) {
-        if (!Types.ObjectId.isValid(cat._id)) {
+        if (!cat._id || !Types.ObjectId.isValid(cat._id)) {
           throw new Error("Invalid category ID");
         }
         if (typeof cat.category !== "string") {

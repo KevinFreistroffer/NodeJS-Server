@@ -252,3 +252,13 @@ export async function findOneAndUpdate(
     client.close();
   }
 }
+
+/**
+ * Find all journals for a user
+ * @param userId
+ */
+export const findAllJournals = async (userId: ObjectId) => {
+  const user = await findOne({ query: { _id: userId }, sanitize: false });
+  if (!user) return null;
+  return user.journals || [];
+};

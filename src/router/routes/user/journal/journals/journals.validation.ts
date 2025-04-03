@@ -1,15 +1,8 @@
 import { body, query } from "express-validator";
 import { Types } from "mongoose";
 
-export const journalValidation = {
+export const journalsValidation = {
   userId: body("userId")
-    .notEmpty()
-    .bail()
-    .custom((id) => Types.ObjectId.isValid(id))
-    .bail()
-    .escape(),
-
-  journalId: body("journalId")
     .notEmpty()
     .bail()
     .custom((id) => Types.ObjectId.isValid(id))
@@ -25,6 +18,5 @@ export const journalValidation = {
         throw new Error('returnUser must be "true" or "false" (case insensitive)');
       }
       return true;
-    }),
-};
-
+    })
+}; 

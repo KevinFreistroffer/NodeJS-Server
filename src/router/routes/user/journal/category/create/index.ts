@@ -13,4 +13,4 @@ router.post(
   asyncRouteHandler(CategoryController.create)
 );
 
-export default router;
+module.exports = router;
