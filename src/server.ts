@@ -21,9 +21,10 @@ import { AsyncLocalStorage } from "node:async_hooks";
 import { LambdaClient, InvokeCommand } from "@aws-sdk/client-lambda";
 import dotenv from "dotenv";
 // import { zlib }  from 'node:zlib';
-import compression from 'compression'; 
+import compression from 'compression';
 import { checkConflictingRouteMiddleware } from "./routes";
 import { rateLimiterMiddleware } from "./middleware";
+import { UserWatcher } from "./db/watchers/user.watcher";
 
 
 
@@ -195,6 +196,8 @@ server.use(
 // ----------------------------------------------------
 process.on("SIGINT", async () => {
   console.log("SIGINT received. Closing server...");
+  const userWatcher = new UserWatcher();
+  await userWatcher.stopWatching();
   process.exit(0);
 });
 
@@ -210,8 +213,12 @@ process.on("unhandledRejection", (error) => {
 
 // Server Port
 // ----------------------------------------------------
-const listener = server.listen(port, () => {
+const listener = server.listen(port, async () => {
   console.log("Listening on port " + port + ".");
+
+  // Initialize and start the user watcher
+  const userWatcher = new UserWatcher();
+  await userWatcher.startWatching();
 });
 
 const getListener = async () => {

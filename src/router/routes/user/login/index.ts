@@ -5,6 +5,8 @@ import { asyncRouteHandler } from "@/utils";
 
 const router = Router();
 
-router.post("/", ...Object.values(loginValidation), asyncRouteHandler(LoginController.login));
+// console.log(...Object.values(loginValidation))
+
+router.post("/", loginValidation.usernameOrEmail, loginValidation.password, loginValidation.staySignedIn, asyncRouteHandler(LoginController.login));
 
 module.exports = router;

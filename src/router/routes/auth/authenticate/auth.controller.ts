@@ -4,8 +4,8 @@ import { compare } from "bcrypt";
 import { sign } from "jsonwebtoken";
 import { findOneByUsernameOrEmail } from "@/operations/user_operations";
 import { responses as userResponses } from "@/defs/responses/user";
-import { responses as genericResponses, IResponse } from "@/defs/responses/generic";
-import { statusCodes } from "@/defs/responses/status_codes";
+import { responses as genericResponses, IResponse, statusCodes } from "@/defs/responses/generic";
+import { errorCodes } from "@/defs/responses/status_codes";
 import { IUserDoc } from "@/defs/interfaces";
 
 interface IAuthResponse {
@@ -36,7 +36,7 @@ export class AuthController {
       const user = await findOneByUsernameOrEmail(usernameOrEmail, usernameOrEmail) as IUserDoc;
       if (!user) {
         return res
-          .status(statusCodes.invalid_usernameOrEmail_and_password)
+          .status(statusCodes.resource_not_found)
           .json(userResponses.invalid_usernameOrEmail_and_password("Invalid username/email or password"));
       }
 
@@ -44,7 +44,7 @@ export class AuthController {
       const isPasswordValid = await compare(password, user.password);
       if (!isPasswordValid) {
         return res
-          .status(statusCodes.invalid_usernameOrEmail_and_password)
+          .status(statusCodes.access_denied)
           .json(userResponses.invalid_usernameOrEmail_and_password("Invalid username/email or password"));
       }
 
@@ -63,7 +63,11 @@ export class AuthController {
       );
 
       // Prepare user data for response
-      const { password: _, usernameNormalized, emailNormalized, ...sanitizedUser } = user;
+      const {
+        password: _,
+        // usernameNormalized,
+        // emailNormalized, 
+        ...sanitizedUser } = user;
 
       // Return token and user data
       const response: IAuthResponse = {

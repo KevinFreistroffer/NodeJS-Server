@@ -3,8 +3,8 @@ import { validationResult } from "express-validator";
 import { ObjectId } from "mongodb";
 import { updateOne, findOneById } from "@/operations/user_operations";
 import { responses as userResponses } from "@/defs/responses/user";
-import { responses as genericResponses, IResponse } from "@/defs/responses/generic";
-import { statusCodes } from "@/defs/responses/status_codes";
+import { responses as genericResponses, IResponse, statusCodes } from "@/defs/responses/generic";
+import { errorCodes } from "@/defs/responses/status_codes";
 
 export class AvatarController {
   static async delete(req: Request, res: Response<IResponse>) {
@@ -25,13 +25,13 @@ export class AvatarController {
 
     if (!doc.matchedCount) {
       return res
-        .status(statusCodes.user_not_found)
+        .status(statusCodes.resource_not_found)
         .json(userResponses.user_not_found("User not found."));
     }
 
     if (doc.modifiedCount === 0) {
       return res
-        .status(statusCodes.could_not_update)
+        .status(statusCodes.something_went_wrong)
         .json(userResponses.could_not_update("Avatar not deleted."));
     }
 
@@ -39,7 +39,7 @@ export class AvatarController {
       const user = await findOneById(new ObjectId(userId));
       if (!user) {
         return res
-          .status(statusCodes.user_not_found)
+          .status(statusCodes.resource_not_found)
           .json(userResponses.user_not_found("User not found."));
       }
       return res.status(statusCodes.success).json(genericResponses.success(user));

@@ -18,15 +18,14 @@ import * as bcrypt from "bcryptjs";
 
 export class LoginController {
   static async login(req: Request, res: Response<IResponse>, next: NextFunction) {
+    console.log(req.body);
     try {
       const validStaySignedIn = has(req.body, "staySignedIn")
-        ? typeof req.body.staySignedIn === "boolean"
+        ? req.body.staySignedIn === "true" || req.body.staySignedIn === "false"
           ? true
           : false
         : true;
-
       const validatedResults = validationResult(req);
-
       if (validatedResults.array().length || !validStaySignedIn) {
         return res
           .status(statusCodes.missing_body_fields)
@@ -40,6 +39,7 @@ export class LoginController {
         },
         sanitize: false,
       });
+      console.log("UNSAFE_DOC", UNSAFE_DOC)
 
       if (!UNSAFE_DOC) {
         return res
@@ -91,6 +91,7 @@ export class LoginController {
 
       return res.json(genericResponses.success(sanitizedUser));
     } catch (error) {
+      console.log("error", error)
       next(error);
     }
   }

@@ -40,9 +40,15 @@ export interface IReminder {
   title: string;
 }
 
+export interface IAvatar {
+  _id: ObjectId;
+  data: string;
+  contentType: string;
+}
+
 export interface IUser {
+  _id: ObjectId;
   username: string;
-  usernameNormalized: string;
   name?: string;
   bio?: string;
   sex?: "male" | "female" | "non-binary";
@@ -50,51 +56,59 @@ export interface IUser {
   location?: string;
   website?: string;
   email: string;
-  emailNormalized: string;
   password: string;
   role: UserRole;
   resetPasswordToken: string;
   resetPasswordTokenExpires: Date | null;
   resetPasswordAttempts: [];
-  isVerified: boolean; // Todo should make this required and setup the email verification
-  // jwtToken: string; // TODO: I don't think this is needed. The token would get generated and sent to the client. Client sends the token, server parses it, and compares it to the found users
-  // password
+  isVerified: boolean;
+  journals: IJournal[];
+  journalCategories: ICategory[];
+  createdAt: Date;
+  updatedAt: Date;
+  hasAcknowledgedHelperText: boolean;
+  avatar?: IAvatar;
+  reminders: IReminder[];
+  disabled: boolean;
+}
+
+export interface IUserCreate {
+  username: string;
+  name?: string;
+  bio?: string;
+  sex?: "male" | "female" | "non-binary";
+  company?: string;
+  location?: string;
+  website?: string;
+  email: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+  role: UserRole;
+  resetPasswordToken: string;
+  resetPasswordTokenExpires: Date | null;
+  resetPasswordAttempts: [];
+  isVerified: boolean;
   journals: IJournal[];
   journalCategories: ICategory[];
   createdAt: Date;
   updatedAt: Date;
   hasAcknowledgedHelperText: boolean;
   avatar?: {
-    _id: ObjectId;
     data: string;
     contentType: string;
   };
-  // avatarId?: ObjectId;
   reminders: IReminder[];
   disabled: boolean;
 }
 
-export interface IUserDoc extends WithId<IUser> {}
+export interface IUserDoc extends WithId<IUser> { }
 
 export interface ISanitizedUser
   extends Omit<
     IUserDoc,
-    "password" | "usernameNormalized" | "emailNormalized"
-
-    // | "resetPasswordToken"
-    // | "resetPasswordTokenExpires"
-    // | "jwtToken"
-  > {}
-
-// export interface ISanitizedUserDoc
-//   extends Omit<
-//     IUserDoc,
-//     "password" | "usernameNormalized" | "emailNormalized"
-
-//     // | "resetPasswordToken"
-//     // | "resetPasswordTokenExpires"
-//     // | "jwtToken"
-//   > {}
+    "password"
+  > { }
 
 export interface ISession {
   _id: string;

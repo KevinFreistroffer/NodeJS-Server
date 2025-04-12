@@ -52,12 +52,12 @@ export class UserController {
 
     if (username) {
       updateFields.username = username;
-      updateFields.usernameNormalized = username.toLowerCase();
+      // updateFields.usernameNormalized = username.toLowerCase();
     }
 
     if (email) {
       updateFields.email = email;
-      updateFields.emailNormalized = email.toLowerCase();
+      // updateFields.emailNormalized = email.toLowerCase();
     }
 
     if (firstName) updateFields.firstName = firstName;

@@ -2,11 +2,14 @@ import { Request, Response } from "express";
 import { validationResult } from "express-validator";
 import { findOneByEmail } from "@/operations/user_operations";
 import { responses as userResponses } from "@/defs/responses/user";
-import { responses as genericResponses, IResponse } from "@/defs/responses/generic";
-import { statusCodes } from "@/defs/responses/status_codes";
+import { responses as genericResponses, IResponse, statusCodes } from "@/defs/responses/generic";
 import { IUserDoc } from "@/defs/interfaces";
 import { sign } from "jsonwebtoken";
 import nodemailer from "nodemailer";
+import dotenv from "dotenv";
+
+// Load environment variables
+dotenv.config();
 
 // Create a transporter for sending emails
 const transporter = nodemailer.createTransport({
@@ -15,9 +18,10 @@ const transporter = nodemailer.createTransport({
   secure: process.env.EMAIL_SECURE === "true",
   auth: {
     user: process.env.EMAIL_USER || "user@example.com",
-    pass: process.env.EMAIL_PASSWORD || "password",
+    pass: process.env.EMAIL_APP_PASSWORD || "password",
   },
 });
+console.log("transporter", transporter);
 
 // Function to send email
 const sendEmail = async (options: {
@@ -25,6 +29,7 @@ const sendEmail = async (options: {
   subject: string;
   html: string;
 }) => {
+  console.log("sendEmail", options);
   const mailOptions = {
     from: process.env.EMAIL_FROM || "noreply@example.com",
     to: options.to,
@@ -37,6 +42,7 @@ const sendEmail = async (options: {
 
 export class EmailController {
   static async sendVerification(req: Request, res: Response<IResponse>) {
+    console.log("sendVerification", req.body);
     const validatedFields = validationResult(req);
     if (!validatedFields.isEmpty()) {
       return res
@@ -48,14 +54,15 @@ export class EmailController {
 
     try {
       // Find user by email
-      const user = await findOneByEmail(email) as IUserDoc;
-      if (!user) {
+      const UNSAFE_USER = await findOneByEmail(email) as IUserDoc;
+      console.log("EmailVerification unsafe_user", UNSAFE_USER);
+      if (!UNSAFE_USER) {
         // Return success even if user doesn't exist to prevent email enumeration
         return res.status(statusCodes.success).json(genericResponses.success());
       }
 
       // Check if user is already verified
-      if (user.isVerified) {
+      if (UNSAFE_USER.isVerified) {
         return res
           .status(statusCodes.invalid_request)
           .json(genericResponses.invalid_request("Email is already verified"));
@@ -63,21 +70,21 @@ export class EmailController {
 
       // Generate verification token
       const verificationToken = sign(
-        { userId: user._id },
+        { userId: UNSAFE_USER._id },
         process.env.JWT_SECRET || "your-secret-key",
         { expiresIn: "24h" }
       );
 
       // Create verification URL
-      const verificationUrl = `${process.env.FRONTEND_URL || "http://localhost:3000"}/verify-email?token=${verificationToken}`;
+      const verificationUrl = `${process.env.FRONTEND_URL || "http://localhost:3000"}/verify-account?token=${verificationToken}`;
 
       // Send verification email
       await sendEmail({
-        to: user.email,
+        to: process.env.NODE_ENV === "development" ? "kevin.freistroffer@gmail.com" : UNSAFE_USER.email,
         subject: "Verify your email",
         html: `
           <h1>Email Verification</h1>
-          <p>Hello ${user.username},</p>
+          <p>Hello ${UNSAFE_USER.username},</p>
           <p>Please verify your email by clicking the link below:</p>
           <a href="${verificationUrl}">${verificationUrl}</a>
           <p>This link will expire in 24 hours.</p>

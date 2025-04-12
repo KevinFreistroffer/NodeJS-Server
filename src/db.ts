@@ -1,5 +1,5 @@
-import { Collection, Document, MongoClient, ServerApiVersion } from "mongodb";
-import { IErrorLog, ISession, IUser } from "./defs/interfaces";
+import { Collection, Document, MongoClient, ServerApiVersion, ObjectId } from "mongodb";
+import { IErrorLog, ISession, IUser, IUserCreate } from "./defs/interfaces";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -35,7 +35,9 @@ export const usersCollection = (client: MongoClient) => {
 
   return db.collection<IUser>("users", {
     //www.mongodb.com/resources/products/compatibilities/using-typescript-with-mongodb-tutorial
-  });
+  }) as Collection<IUser> & {
+    insertOne(doc: IUserCreate): Promise<{ acknowledged: boolean; insertedId: ObjectId }>;
+  };
 };
 
 export const sessionsCollection = (client: MongoClient) =>

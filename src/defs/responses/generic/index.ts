@@ -9,7 +9,7 @@ import {
   TOO_MANY_REQUESTS,
 } from "../../constants";
 import { EMessageType } from "../../enums";
-import { ISanitizedUser, IJournal } from "../../interfaces";
+import { ISanitizedUser, IJournal, IAvatar } from "../../interfaces";
 
 export interface IResponseBase {
   message: EMessageType;
@@ -19,14 +19,16 @@ export interface IResponseBase {
 
 export interface IResponse extends IResponseBase {
   data:
-    | ISanitizedUser
-    | ISanitizedUser
-    | ISanitizedUser[]
-    | IJournal
-    | IJournal[]
-    | boolean
-    | string
-    | undefined;
+  | ISanitizedUser
+  | ISanitizedUser
+  | ISanitizedUser[]
+  | IJournal
+  | IJournal[]
+  | IAvatar
+  | IAvatar[]
+  | boolean
+  | string
+  | undefined;
 }
 
 export interface IGenericResponses {
@@ -44,6 +46,8 @@ export interface IGenericResponses {
       | ISanitizedUser[]
       | IJournal
       | IJournal[]
+      | IAvatar
+      | IAvatar[]
       | boolean
       | string
       | undefined,
@@ -91,9 +95,8 @@ export const responses: IGenericResponses = {
   }),
   caught_error: (error: unknown) => ({
     message: EMessageType.error,
-    description: `Caught error: ${
-      error instanceof Error ? error.message : String(error)
-    }`,
+    description: `Caught error: ${error instanceof Error ? error.message : String(error)
+      }`,
     code: 1013,
     data: undefined,
   }),
@@ -109,6 +112,8 @@ export const responses: IGenericResponses = {
       | ISanitizedUser[]
       | IJournal
       | IJournal[]
+      | IAvatar
+      | IAvatar[]
       | boolean
       | string
       | undefined,
@@ -129,6 +134,7 @@ export const responses: IGenericResponses = {
 
 export const statusCodes = {
   resource_not_found: 404,
+  resource_unavailable: 409,
   invalid_request: 400,
   missing_parameters: 400,
   missing_body_fields: 422,

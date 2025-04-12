@@ -3,8 +3,8 @@ import { validationResult } from "express-validator";
 import { ObjectId } from "mongodb";
 import { findOneById } from "@/operations/user_operations";
 import { responses as userResponses } from "@/defs/responses/user";
-import { responses as genericResponses, IResponse } from "@/defs/responses/generic";
-import { statusCodes } from "@/defs/responses/status_codes";
+import { responses as genericResponses, IResponse, statusCodes } from "@/defs/responses/generic";
+import { errorCodes } from "@/defs/responses/status_codes";
 
 export class AvatarController {
   static async get(req: Request, res: Response<IResponse>) {
@@ -21,8 +21,8 @@ export class AvatarController {
     const user = await findOneById(new ObjectId(userId));
     if (!user) {
       return res
-        .status(statusCodes.user_not_found)
-        .json(userResponses.user_not_found("User not found."));
+        .status(statusCodes.resource_not_found)
+        .json(userResponses.resource_not_found("User not found."));
     }
 
     if (!user.avatar) {
@@ -35,6 +35,6 @@ export class AvatarController {
       return res.status(statusCodes.success).json(genericResponses.success(user));
     }
 
-    return res.status(statusCodes.success).json(genericResponses.success(user.avatar));
+    return res.status(statusCodes.success).json(genericResponses.success(user.avatar.data));
   }
 } 

@@ -4,8 +4,8 @@ import { verify } from "jsonwebtoken";
 import { ObjectId } from "mongodb";
 import { findOneById } from "@/operations/user_operations";
 import { responses as userResponses } from "@/defs/responses/user";
-import { responses as genericResponses, IResponse } from "@/defs/responses/generic";
-import { statusCodes } from "@/defs/responses/status_codes";
+import { responses as genericResponses, IResponse, statusCodes } from "@/defs/responses/generic";
+import { errorCodes } from "@/defs/responses/status_codes";
 import { IUserDoc } from "@/defs/interfaces";
 
 export class BearerController {
@@ -34,12 +34,15 @@ export class BearerController {
       const user = await findOneById(new ObjectId(decoded.userId)) as IUserDoc;
       if (!user) {
         return res
-          .status(statusCodes.user_not_found)
+          .status(statusCodes.resource_not_found)
           .json(userResponses.user_not_found("User not found"));
       }
 
       // Return user information
-      const { password, usernameNormalized, emailNormalized, ...sanitizedUser } = user;
+      const { password,
+        // usernameNormalized,
+        // emailNormalized,
+        ...sanitizedUser } = user;
       return res.status(statusCodes.success).json(genericResponses.success(sanitizedUser));
     } catch (error) {
       return res

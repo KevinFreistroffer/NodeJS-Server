@@ -3,9 +3,9 @@ import { IReminder, UserRole } from "../interfaces";
 
 export class User {
   username: string;
-  usernameNormalized: string;
+  // usernameNormalized: string;
   email: string;
-  emailNormalized: string;
+  // emailNormalized: string;
   password: string;
   resetPasswordToken: string;
   resetPasswordTokenExpires: Date | null;
@@ -36,9 +36,9 @@ export class User {
     resetPasswordTokenExpires: Date | null;
   }) {
     this.username = username;
-    this.usernameNormalized = username.toLowerCase();
+    // this.usernameNormalized = username.toLowerCase();
     this.email = email;
-    this.emailNormalized = email.toLowerCase();
+    // this.emailNormalized = email.toLowerCase();
     this.password = password;
     this.resetPasswordToken = "";
     this.resetPasswordTokenExpires = resetPasswordTokenExpires;

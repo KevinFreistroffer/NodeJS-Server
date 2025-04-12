@@ -53,6 +53,8 @@ export interface IResponses {
     user?: ISanitizedUser | ISanitizedUser[],
     description?: string
   ) => IResponse;
+  could_not_create: (description?: string) => IResponse;
+  resource_exists: (description?: string) => IResponse;
 }
 
 export type IResponsesWithAvailability = IResponses & {
@@ -116,12 +118,24 @@ export const responses: IResponses = {
   error_inserting_user: (description) => ({
     message: EMessageType.error,
     description: description || ERROR_INSERTING_USER,
-    code: 1015,
+    code: 1013,
     data: undefined,
   }),
   could_not_update: (description) => ({
     message: EMessageType.error,
     description: description || COULD_NOT_UPDATE,
+    code: 1014,
+    data: undefined,
+  }),
+  could_not_create: (description) => ({
+    message: EMessageType.error,
+    description: description || COULD_NOT_UPDATE,
+    code: 1014,
+    data: undefined,
+  }),
+  resource_exists: (description) => ({
+    message: EMessageType.error,
+    description: description || USERNAME_OR_EMAIL_ALREADY_REGISTERED,
     code: 1015,
     data: undefined,
   }),

@@ -1,6 +1,8 @@
 use mongodb watch() to listen to user creation and automate sending an email to verify the account,
 using a lambda
 
+set reques timeout. been a while, testing this code, not sure if mongo is connected, login request taking forever. 
+
 the handleUncaughtErroResponse is not linked to the user responses interface. May need to create handlers for each user/auth etc.
 
 update express 5

@@ -7,11 +7,7 @@ const router = Router();
 
 router.post(
   "/",
-  userValidation.username,
-  userValidation.email,
-  userValidation.password,
-  userValidation.firstName,
-  userValidation.lastName,
+  ...Object.values(userValidation),
   asyncRouteHandler(UserController.create)
 );
 

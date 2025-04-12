@@ -11,7 +11,7 @@ import {
 } from "mongodb";
 import { getClient, usersCollection } from "../db";
 
-import { ISanitizedUser, IUser } from "../defs/interfaces";
+import { ISanitizedUser, IUser, IUserCreate } from "../defs/interfaces";
 import { UserProjection } from "../defs/models/user.model";
 
 /**
@@ -40,7 +40,10 @@ export async function findOne({
 }): Promise<IUser | ISanitizedUser | null> {
   const client = await getClient();
   try {
+    console.log("connecting...")
     await client.connect();
+    console.log("connected...")
+    console.log("query", query)
 
     return await usersCollection(client).findOne<IUser | ISanitizedUser>(
       query,
@@ -137,7 +140,7 @@ export const findOneByUsernameOrEmail = async (
  * @param document
  */
 export async function insertOne(
-  document: OptionalId<IUser>
+  document: IUserCreate
 ): Promise<InsertOneResult<IUser>> {
   const client = await getClient();
   try {
