@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { validationResult } from "express-validator";
 import { compare } from "bcrypt";
 import { sign } from "jsonwebtoken";
-import { findOneByUsernameOrEmail } from "@/operations/user_operations";
+import { findOneByUsernameOrEmail } from "@/db/operations/user_operations";
 import { responses as userResponses } from "@/defs/responses/user";
 import { responses as genericResponses, IResponse, statusCodes } from "@/defs/responses/generic";
 import { errorCodes } from "@/defs/responses/status_codes";

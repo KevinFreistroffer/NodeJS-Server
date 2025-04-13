@@ -1,7 +1,7 @@
 import * as express from "express";
 import { Router } from "express";
 import { verifyJWT } from "../../../utils";
-import { findOneById, updateOne } from "../../../operations/user_operations";
+import { findOneById, updateOne } from "../../../db/operations/user_operations";
 import * as jwt from "jsonwebtoken";
 import { ObjectId } from "mongodb";
 import {

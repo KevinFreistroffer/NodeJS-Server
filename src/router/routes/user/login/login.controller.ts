@@ -3,7 +3,7 @@ import { validationResult } from "express-validator";
 import { sign } from "jsonwebtoken";
 import { has } from "lodash";
 import { responses, statusCodes } from "@/defs/responses/user";
-import { findOne } from "@/operations/user_operations";
+import { findOne } from "@/db/operations/user_operations";
 import { responses as genericResponses, IResponse } from "@/defs/responses/generic";
 import { ISanitizedUser } from "@/defs/interfaces";
 import { ObjectId } from "mongodb";

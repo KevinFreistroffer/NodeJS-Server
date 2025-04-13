@@ -15,7 +15,7 @@ import path from "path";
 import { getErrorDetails, getFilePath } from "./utils";
 import { responses, statusCodes } from "./defs/responses/generic";
 import { stat, writeFile } from "fs/promises";
-import { findOneById, insertOne } from "./operations/file_operations";
+import { findOneById, insertOne } from "./db/operations/file_operations";
 import { Timestamp } from "mongodb";
 import { AsyncLocalStorage } from "node:async_hooks";
 import { LambdaClient, InvokeCommand } from "@aws-sdk/client-lambda";

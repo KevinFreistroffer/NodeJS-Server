@@ -7,7 +7,7 @@ import {
   statusCodes,
 } from "../../../defs/responses/generic";
 import { handleCaughtErrorResponse, asyncRouteHandler } from "../../../utils";
-import { findOneById } from "../../../operations/user_operations";
+import { findOneById } from "../../../db/operations/user_operations";
 import { ObjectId } from "mongodb";
 import { sendAccountActivationEmail } from "../../../utils";
 const router = express.Router();

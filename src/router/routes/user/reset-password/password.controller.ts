@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { validationResult } from "express-validator";
-import { findOne, updateOne } from "@/operations/user_operations";
+import { findOne, updateOne } from "@/db/operations/user_operations";
 import { responses as userResponses } from "@/defs/responses/user";
 import { responses as genericResponses, IResponse } from "@/defs/responses/generic";
 import { statusCodes } from "@/defs/responses/status_codes";

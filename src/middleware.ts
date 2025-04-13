@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import { rateLimit } from "express-rate-limit";
 import { responses as genericResponses } from "./defs/responses/generic";
-import { findOneById } from "./operations/user_operations";
+import { findOneById } from "./db/operations/user_operations";
 import { ObjectId } from "mongodb";
 dotenv.config();
 

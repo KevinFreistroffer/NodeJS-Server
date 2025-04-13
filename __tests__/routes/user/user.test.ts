@@ -1,6 +1,6 @@
 import express from "express";
 import request from "supertest";
-import { findOneByUsernameOrEmail } from "../../../src/operations/user_operations";
+import { findOneByUsernameOrEmail } from "../../../src/db/operations/user_operations";
 import { responses as genericResponses } from "../../../src/defs/responses/generic";
 import { rateLimiterMiddleware } from "../../../src/middleware";
 import dotenv from "dotenv";

@@ -9,10 +9,10 @@ import {
   MongoServerError,
   MongoNetworkError,
 } from "mongodb";
-import { getClient, usersCollection } from "../db";
+import { getClient, usersCollection } from "../../db";
 
-import { ISanitizedUser, IUser, IUserCreate } from "../defs/interfaces";
-import { UserProjection } from "../defs/models/user.model";
+import { ISanitizedUser, IUser, IUserCreate } from "../../defs/interfaces";
+import { UserProjection } from "../../defs/models/user.model";
 
 /**
  * Find one

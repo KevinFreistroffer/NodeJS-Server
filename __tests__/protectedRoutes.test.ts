@@ -11,7 +11,7 @@ import {
   insertOne,
   findOneByUsernameOrEmail,
   findAllUsers,
-} from "../src/operations/user_operations";
+} from "../src/db/operations/user_operations";
 import { responses } from "../src/defs/responses/user";
 import { mockJournal } from "../__mocks__/mock_journals";
 import { getMockUsers } from "../__mocks__/mock_users";

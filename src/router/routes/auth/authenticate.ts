@@ -9,7 +9,7 @@ import {
 import { asyncRouteHandler, handleCaughtErrorResponse } from "../../../utils";
 import { has } from "lodash";
 import jwt from "jsonwebtoken";
-import { findOneById } from "../../../operations/user_operations";
+import { findOneById } from "../../../db/operations/user_operations";
 import { ObjectId } from "mongodb";
 const router = express.Router();
 

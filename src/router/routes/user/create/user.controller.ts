@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { validationResult } from "express-validator";
 import bcrypt from "bcrypt";
-import { insertOne, findOneByEmail, findOneByUsername } from "@/operations/user_operations";
+import { insertOne, findOneByEmail, findOneByUsername } from "@/db/operations/user_operations";
 import { responses as userResponses } from "@/defs/responses/user";
 import { responses as genericResponses, IResponse, statusCodes } from "@/defs/responses/generic";
 import { errorCodes } from "@/defs/responses/status_codes";

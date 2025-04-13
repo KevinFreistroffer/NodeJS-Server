@@ -25,7 +25,7 @@
         "./src/data/*",
         "./src/events/*",
         "./src/logs/*",
-        "./src/operations/*",
+        "./src/db/operations/*",
         "./src/utils/*",
         "./src/middleware/*",
         "./src/defs/*",

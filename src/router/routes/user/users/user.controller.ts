@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { findAllUsers } from "@/operations/user_operations";
+import { findAllUsers } from "@/db/operations/user_operations";
 import { responses as genericResponses, IResponse } from "@/defs/responses/generic";
 
 export class UserController {
