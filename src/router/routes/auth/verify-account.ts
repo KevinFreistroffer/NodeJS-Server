@@ -1,16 +1,16 @@
 import * as express from "express";
 import { Router } from "express";
-import { verifyJWT } from "../../../utils";
-import { findOneById, updateOne } from "../../../db/operations/user_operations";
+import { verifyJWT } from "@/utils";
+import { findOneById, updateOne } from "@/db/operations/user_operations";
 import * as jwt from "jsonwebtoken";
 import { ObjectId } from "mongodb";
 import {
   responses as genericResponses,
   IResponse,
   statusCodes,
-} from "../../../defs/responses/generic";
-import { responses as userResponses } from "../../../defs/responses/user";
-import { handleCaughtErrorResponse, asyncRouteHandler } from "../../../utils";
+} from "@/defs/responses/generic";
+import { responses as userResponses } from "@/defs/responses/user";
+import { handleCaughtErrorResponse, asyncRouteHandler } from "@/utils";
 const router = Router();
 
 router.get("/:token", asyncRouteHandler(async (req: express.Request, res: express.Response<IResponse>) => {

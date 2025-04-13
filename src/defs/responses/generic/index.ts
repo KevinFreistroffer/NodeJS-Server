@@ -7,9 +7,9 @@ import {
   ROUTE_NOT_FOUND,
   SOMETHING_WENT_WRONG,
   TOO_MANY_REQUESTS,
-} from "../../constants";
-import { EMessageType } from "../../enums";
-import { ISanitizedUser, IJournal, IAvatar } from "../../interfaces";
+} from "@/defs/constants";
+import { EMessageType } from "@/defs/enums";
+import { ISanitizedUser, IJournal, IAvatar } from "@/defs/interfaces";
 
 export interface IResponseBase {
   message: EMessageType;

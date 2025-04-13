@@ -8,9 +8,9 @@ import {
   IResponse,
   responses,
   statusCodes,
-} from "../../../defs/responses/generic";
-import { ERROR_GENERATING_JWT } from "../../../defs/constants";
-import { handleCaughtErrorResponse, asyncRouteHandler } from "../../../utils";
+} from "@/defs/responses/generic";
+import { ERROR_GENERATING_JWT } from "@/defs/constants";
+import { handleCaughtErrorResponse, asyncRouteHandler } from "@/utils";
 dotenv.config();
 
 const router = Router();

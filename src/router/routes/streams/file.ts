@@ -5,8 +5,8 @@ import {
   IResponse,
   responses,
   statusCodes,
-} from "../../../defs/responses/generic";
-import { getFilePath, asyncRouteHandler } from "../../../utils";
+} from "@/defs/responses/generic";
+import { getFilePath, asyncRouteHandler } from "@/utils";
 import { stat } from "node:fs/promises";
 
 const router = express.Router();

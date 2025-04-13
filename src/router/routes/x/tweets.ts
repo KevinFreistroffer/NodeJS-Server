@@ -3,7 +3,7 @@
 import * as express from "express";
 import { Client, auth } from "twitter-api-sdk";
 import dotenv from "dotenv";
-import { handleCaughtErrorResponse, asyncRouteHandler } from "../../../utils";
+import { handleCaughtErrorResponse, asyncRouteHandler } from "@/utils";
 dotenv.config();
 const URL = (process.env.URL as string) || "http://127.0.0.1";
 const PORT = process.env.PORT ? parseInt(process.env.PORT) : 3001;

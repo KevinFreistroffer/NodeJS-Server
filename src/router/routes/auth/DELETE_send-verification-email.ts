@@ -5,11 +5,11 @@ import {
   IResponse,
   responses,
   statusCodes,
-} from "../../../defs/responses/generic";
-import { handleCaughtErrorResponse, asyncRouteHandler } from "../../../utils";
-import { findOneById } from "../../../db/operations/user_operations";
+} from "@/defs/responses/generic";
+import { handleCaughtErrorResponse, asyncRouteHandler } from "@/utils";
+import { findOneById } from "@/db/operations/user_operations";
 import { ObjectId } from "mongodb";
-import { sendAccountActivationEmail } from "../../../utils";
+import { sendAccountActivationEmail } from "@/utils";
 const router = express.Router();
 
 router.get(

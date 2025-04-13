@@ -11,9 +11,9 @@ import {
   USERNAME_OR_EMAIL_ALREADY_REGISTERED,
   USERS_NOT_FOUND,
   USER_NOT_FOUND,
-} from "../../constants";
-import { EMessageType } from "../../enums";
-import { ISanitizedUser } from "../../interfaces";
+} from "@/defs/constants";
+import { EMessageType } from "@/defs/enums";
+import { ISanitizedUser } from "@/defs/interfaces";
 import {
   IResponse,
   responses as genericResponses,

@@ -1,6 +1,6 @@
 import { Filter, InsertOneResult, ObjectId, OptionalId } from "mongodb";
-import { getClient, errorLogsCollection } from "../../db";
-import { IErrorLog } from "../../defs/interfaces";
+import { getClient, errorLogsCollection } from "@/db";
+import { IErrorLog } from "@/defs/interfaces";
 
 export async function findOne({
   query,
